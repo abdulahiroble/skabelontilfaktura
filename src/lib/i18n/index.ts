@@ -53,6 +53,17 @@ const da: MessageCatalog = {
 	'party.phone': 'Telefon',
 	'party.ean': 'EAN-nummer',
 
+	// CVR / VIES lookups
+	'party.cvrLookup': 'Slå op',
+	'party.cvrLooking': 'Søger…',
+	'party.cvrLookupFailed': 'CVR ikke fundet',
+	'party.cvrLookupSuccess': 'Udfyldt fra CVR-registret',
+	'party.viesValidate': 'Valider EU-moms',
+	'party.viesValidating': 'Validerer…',
+	'party.viesValid': 'Gyldigt EU-momsnummer',
+	'party.viesInvalid': 'Ugyldigt EU-momsnummer',
+	'party.viesHint': 'Brug formatet «LANDKODE momsnummer», f.eks. «SE1234567890»',
+
 	// Item fields
 	'items.description': 'Beskrivelse',
 	'items.quantity': 'Antal',
@@ -63,6 +74,16 @@ const da: MessageCatalog = {
 	'items.lineTotal': 'Beløb',
 	'items.addLine': 'Tilføj linje',
 	'items.empty': 'Tilføj mindst én varelinje.',
+
+	// Totals summary
+	'totals.subtotal': 'Subtotal (ekskl. moms)',
+	'totals.vat': 'Moms',
+	'totals.total': 'Total (inkl. moms)',
+	'totals.empty': 'Tilføj mindst én linje',
+	'totals.taxableBase': 'Momspligtig del (20%)',
+	'totals.exemptBase': 'Momsfri del (80%)',
+	'totals.vatMismatch':
+		'Linjerne har blandede momssatser, men fakturaen er i standard-tilstand. Moms beregnes ud fra fakturaens momstilstand.',
 
 	// Payment
 	'payment.regNr': 'Registreringsnummer',
@@ -153,6 +174,17 @@ const en: MessageCatalog = {
 	'party.phone': 'Phone',
 	'party.ean': 'EAN number',
 
+	// CVR / VIES lookups
+	'party.cvrLookup': 'Look up',
+	'party.cvrLooking': 'Searching…',
+	'party.cvrLookupFailed': 'CVR not found',
+	'party.cvrLookupSuccess': 'Filled from the CVR register',
+	'party.viesValidate': 'Validate EU VAT',
+	'party.viesValidating': 'Validating…',
+	'party.viesValid': 'Valid EU VAT number',
+	'party.viesInvalid': 'Invalid EU VAT number',
+	'party.viesHint': 'Use the format “COUNTRYCODE VATNUMBER”, e.g. “SE1234567890”',
+
 	// Item fields
 	'items.description': 'Description',
 	'items.quantity': 'Quantity',
@@ -163,6 +195,16 @@ const en: MessageCatalog = {
 	'items.lineTotal': 'Amount',
 	'items.addLine': 'Add line',
 	'items.empty': 'Add at least one line item.',
+
+	// Totals summary
+	'totals.subtotal': 'Subtotal (excl. VAT)',
+	'totals.vat': 'VAT',
+	'totals.total': 'Total (incl. VAT)',
+	'totals.empty': 'Add at least one line',
+	'totals.taxableBase': 'Taxable portion (20%)',
+	'totals.exemptBase': 'VAT-exempt portion (80%)',
+	'totals.vatMismatch':
+		'Lines have mixed VAT rates but the invoice is in standard mode. VAT is computed from the invoice VAT mode.',
 
 	// Payment
 	'payment.regNr': 'Registration number',

@@ -24,6 +24,36 @@ const routes: SitemapEntry[] = [
 	{ path: '/generator/', priority: '0.9', changefreq: 'monthly' },
 	{ path: '/pris/', priority: '0.8', changefreq: 'monthly' },
 	{ path: '/blog/', priority: '0.7', changefreq: 'weekly' },
+	{
+		path: '/blog/faktura-skabelon-faq/',
+		priority: '0.7',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/faktura-skabelon-sammenligning/',
+		priority: '0.7',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/bogforingslov-2026-guide/',
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/faktura-uden-cvr/',
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/faktura-skabelon-word/',
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/faktura-freelancer/',
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
 	{ path: '/privatlivspolitik/', priority: '0.3', changefreq: 'yearly' },
 	{ path: '/cookiepolitik/', priority: '0.3', changefreq: 'yearly' }
 ];

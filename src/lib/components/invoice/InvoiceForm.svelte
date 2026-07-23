@@ -9,8 +9,10 @@
 	 * The two-column grid layout and the live preview are owned by the parent
 	 * generator page; this component renders only the editor column.
 	 *
-	 * PDF rendering, the VAT calculation engine, and CVR lookup are
-	 * intentionally left as stubs (separate tasks).
+	 * CVR lookup, VIES validation, and the VAT calculation engine are wired
+	 * through their respective child components (`PartySection`,
+	 * `TotalsSummary`); the store stays the single source of truth for the
+	 * draft.
 	 */
 	import { createInvoiceStore, type InvoiceStore } from '$lib/invoice/store.svelte';
 	import { createTranslator } from '$lib/i18n';
@@ -18,6 +20,7 @@
 	import ItemTable from './ItemTable.svelte';
 	import PaymentSection from './PaymentSection.svelte';
 	import SettingsBar from './SettingsBar.svelte';
+	import TotalsSummary from './TotalsSummary.svelte';
 	import ValidationWarnings from './ValidationWarnings.svelte';
 
 	let { store = createInvoiceStore() }: { store?: InvoiceStore } = $props();
@@ -40,19 +43,27 @@
 
 	<ValidationWarnings validation={store.validation} {t} locale={store.data.language} />
 
-	<PartySection party={store.data.seller} {t}>
+	<PartySection party={store.data.seller} {t} role="seller">
 		{#snippet title()}
 			{t('section.seller')}
 		{/snippet}
 	</PartySection>
 
-	<PartySection party={store.data.buyer} {t}>
+	<PartySection party={store.data.buyer} {t} role="buyer">
 		{#snippet title()}
 			{t('section.buyer')}
 		{/snippet}
 	</PartySection>
 
 	<ItemTable items={store.data.items} {t} onAdd={store.addItem} onRemove={store.removeItem} />
+
+	<TotalsSummary
+		items={store.data.items}
+		vatMode={store.data.vatMode}
+		vatRate={0.25}
+		currency={store.data.currency}
+		language={store.data.language}
+	/>
 
 	<PaymentSection invoice={store.data} {t} />
 

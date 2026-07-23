@@ -1,0 +1,14 @@
+.svelte-kit
+node_modules
+build
+.wrangler
+worker-configuration.d.ts
+*.min.js
+.taskmaster
+.cursor
+.github
+.vscode
+CLAUDE.md
+skabelontilfaktura-prd.md
+.mcp.json
+drizzle

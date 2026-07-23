@@ -1,0 +1,544 @@
+# PRD v2.0: skabelontilfaktura.dk
+## Danish Invoice Template Web App (Lifestyle Mini SaaS)
+
+**Document version**: 2.0 (supersedes v1.0)
+**Date**: 2026-07-22
+**Status**: MVP build phase, fresh SvelteKit scaffold in place
+**Domain**: skabelontilfaktura.dk (to be purchased)
+
+---
+
+## 0. What Changed Since PRD v1.0 (Research-Driven Updates)
+
+The original PRD (v1.0) was strong on market/SEO but had several material gaps
+that 2025-2026 regulatory and ecosystem changes have exposed. v2.0 corrects:
+
+1. **E-invoicing format is no longer OIOUBL.** Denmark officially cancelled
+   OIOUBL 3.0 in January 2026 and committed to a single Peppol-based standard
+   (Nemhandel BIS 4 / Peppol BIS 3.0 today, migrating to Peppol PINT by 2029).
+   v1.0 referenced "OIOUBL export" which is now a dead end.
+2. **NemHandel auto-enrollment from 1 July 2026.** All entities on registered
+   bookkeeping systems will be enrolled in NemHandel by default and prompted to
+   issue e-invoices unless they opt out. This re-positions our "EAN export"
+   Business-tier feature: real Peppol connectivity is now table stakes, not a
+   nice-to-have.
+3. **SAF-T 2.0 export required from 1 January 2027.** Registered bookkeeping
+   systems must be able to export SAF-T 2.0 XML. Even though we are a
+   "pre-bookkeeping" tool, supporting SAF-T 2.0 export is a strong upsell and
+   accountant-handoff feature v1.0 missed entirely.
+4. **Lucia Auth is deprecated (March 2025).** v1.0 recommended Lucia Auth.
+   Lucia v3 is now a learning resource only; we use **Better Auth** (actively
+   maintained, SvelteKit-native, plugins for passkey/2FA/org).
+5. **MobilePay is now Vipps MobilePay.** The legacy MobilePay Invoice / POS
+   facade APIs were retired; the joint **ePayment API** is the only supported
+   path. v1.0's "MobilePay Subscriptions" open question is resolved: integrate
+   via Vipps MobilePay ePayment API (or rely on Stripe via Autumn, which wraps it).
+6. **Better tooling has landed.** Drizzle ORM on porsager `postgres` is the
+   preferred self-hosted-Postgres-on-Workers path; shadcn-svelte is now
+   runes-native on Tailwind v4; Autumn (useautumn.com) replaces raw Stripe
+   for billing/entitlements with far less webhook code.
+7. **Sequential numbering rules clarified.** EU/DK law requires a unique,
+   sequential, *unbroken* series, but it may be alphanumeric and may run in
+   parallel series. v1.0's "no gaps" rule is stricter than the law requires
+   and would block legitimate series-per-year / series-per-currency patterns.
+8. **Cookie consent hardened (Datatilsynet May 2025).** New joint guidance with
+   DIGST tightened consent requirements; Google Consent Mode v2 is required
+   for AdSense to function. Cookiebot/Usercentrics CMP is the de-facto DK
+   standard.
+9. **PDF strategy must be true-text, not rasterised.** html2canvas+jsPDF
+   produces image-only PDFs that fail text-selectability and accessibility and
+   are weaker for digital bookkeeping attachments. We standardise on **pdf-lib**
+   for true-text PDFs with selectable text and embedded fonts (incl. Danish
+   æøå and EUR/DKK currency glyphs).
+10. **Self-hosted Postgres + porsager, NOT Neon + Hyperdrive.** Per the
+    owner's default stack, we use a flat-rate self-hosted Postgres box
+    (e.g. Hetzner CX22 in EU) with PgBouncer (transaction mode) + TLS. The
+    **porsager `postgres`** driver connects directly from Workers with
+    `ssl:'require', prepared:false`, creating a fresh `postgres()` instance
+    per `getDb()` call (`max:1, idle_timeout:5`) — never cached at module
+    level on Workers (causes "Cannot perform I/O on behalf of a different
+    request" errors). This avoids Neon cold-start costs, Hyperdrive
+    complexity, and vendor lock-in.
+
+---
+
+## 1. Vision & Positioning (unchanged)
+
+Become the default "first invoice" tool for every Danish freelancer and small
+business: the lightweight on-ramp that feeds users into real accounting
+software (taking affiliate fees along the way).
+
+- NOT a replacement for Dinero / Billy / e-conomic.
+- IS the simplest, fastest way to make a compliant Danish invoice.
+- IS the bridge between "I just need to send one invoice" and "I need real
+  accounting".
+
+---
+
+## 2. Regulatory Landscape (UPDATED - critical for scope)
+
+### 2.1 Bogføringslov phase-in (complete)
+
+- Class-A companies (>300K DKK turnover two consecutive years): digital
+  registered bookkeeping system required since **1 Jan 2026**; in-house
+  systems since **1 Jul 2026**.
+- ~118,000 additional sole traders + foreign PE entities pulled in from
+  1 Jan 2026.
+
+### 2.2 NemHandel default e-invoicing (NEW - effective 1 Jul 2026)
+
+- All entities on registered bookkeeping systems are auto-enrolled in
+  NemHandel unless they opt out.
+- Registered systems must auto-check NemHandel when a recipient is selected
+  and route via Peppol if the recipient is reachable.
+- **Implication for us**: A genuinely useful Business-tier feature is
+  "Peppol-aware send" (lookup recipient EAS code, offer to deliver via an
+  Access Point partner). We do NOT need to become a registered bogføringssystem.
+
+### 2.3 Format transition: OIOUBL -> Peppol (NEW)
+
+- OIOUBL 3.0 cancelled Jan 2026. Existing OIOUBL 2.1 still accepted during
+  transition.
+- Nemhandel BIS 4 (Peppol BIS 3.0 + DK extensions) is the going-forward
+  format.
+- Migration to Peppol PINT targeted by 2028-2029.
+- EU ViDA directive mandates structured e-invoicing for intra-EU B2B from
+  2030; same EN 16931 family as Peppol.
+
+### 2.4 SAF-T 2.0 export (NEW - required from 1 Jan 2027)
+
+- Registered systems must export SAF-T 2.0 XML on demand for Skat / Danmarks
+  Statistik / audit.
+- We add SAF-T 2.0 XML export as a Pro/Business feature and as the
+  accountant-handoff format (replaces ad-hoc CSV for serious users).
+
+### 2.5 Mandatory invoice fields (unchanged from v1.0)
+
+Per Momsloven § 52a + Bekendtgørelse § 58 + EN 16931:
+- Fakturanummer (unique, sequential, may be alphanumeric, may be one of
+  several parallel series - but each series must be unbroken)
+- Udstedelsesdato, Forfaldsdato + betalingsbetingelser
+- Sælger: navn, adresse, CVR/SE
+- Køber: navn, adresse (EAS code + Peppol ID for e-invoices)
+- Leveringsdato if different
+- Line items: beskrivelse, mængde, enhed, pris pr. enhed ekskl. moms
+- Momsgrundlag, momssats, momsbeløb, total inkl. moms
+- Valuta (DKK default)
+- For Peppol: BT-24..BT-31 semantic fields per EN 16931
+
+### 2.6 Edge cases (unchanged from v1.0)
+
+| Scenario | Rule |
+|---|---|
+| Uden CVR (sub-50K) | CPR first 6 digits (fødselsdato); never store full CPR |
+| Momsfritaget | "Momsfritaget efter momslovens § 13" |
+| EU B2B reverse charge | "Moms omvendt betalingspligt" + buyer VAT |
+| Public sector | EAN/GLN + OIOUBL/Peppol via NemHandel |
+| Kunstnermoms | 20% moms-pligtig / 80% moms-fri split |
+| Proformafaktura | "Proformafaktura - ikke en regning" |
+| Kreditnota | Negative amounts, references original |
+| Acontofaktura | Moms on each partial payment |
+
+### 2.7 Storage & retention
+
+- Invoices + attachments retained 5 years (Bogføringslov).
+- For Pro: encrypted at rest, EU-hosted (self-hosted Postgres EU box +
+  Cloudflare R2 EU).
+- PDFs must be stored with the structured source data so an accountant or
+  auditor can reconcile (relevant for SAF-T 2.0 export).
+
+### 2.8 Liability & GDPR
+
+- Mandatory disclaimer on every page (see v1.0 §6.4).
+- Cookie consent: implement via Cookiebot/Usercentrics CMP with Google
+  Consent Mode v2 (required for AdSense to fire on content pages).
+- CPR: never stored in free tier. In Pro only with explicit consent + DPIA
+  on file. Prefer the 6-digit fødselsdato fallback.
+- DPO/contact email published; privacy policy + cookie policy pages.
+
+---
+
+## 3. Target Users (unchanged from v1.0)
+
+Personas: New Freelancer (50%), Sole Proprietor with CVR (30%), Tradesperson
+(15%), Sub-50K Side Hustler (5%).
+
+---
+
+## 4. Product Features (REFRESHED)
+
+### 4.1 Free Tier (traffic engine)
+
+**Generator:**
+- Live PDF preview as user types (debounced, true-text via pdf-lib).
+- Auto-calc moms 25% with inkl./ekskl. toggle; kunstnermoms 20/80 preset;
+  momsfritaget preset; reverse-charge preset.
+- CVR field with auto-lookup (cvrapi.dk community endpoint, with rate-limit
+  handling and graceful fallback to manual entry; document the daily cap).
+- VIES validation for EU buyer VAT (ec.europa.eu/taxation_customs/vies).
+- Reg. nr. + kontonr. fields with Danish modulus-11 check on kontonr.
+- MobilePay number field (Vipps MobilePay ePayment-compatible phone format).
+- EAN/GLN field for public-sector recipients.
+- Sequential invoice numbering in localStorage (year-stamped series, e.g.
+  `2026-0001`; resets Jan 1, parallel series allowed).
+- Multi-currency: DKK default, EUR/USD toggle (no live FX in free tier).
+- Danish + English UI + invoice language toggle.
+- No signup required; localStorage-only persistence.
+
+**Templates:**
+- 2 clean designs (minimalist + modern), 2 brand color presets.
+- Logo upload (client-side, embedded in PDF as PNG/JPEG bytes).
+- A4 + Letter page sizes.
+
+**Output:**
+- PDF download via pdf-lib (true text, selectable, embedded fonts incl. æøå,
+  EUR/DKK glyphs, no watermark).
+- Print-friendly CSS view (`window.print()` path).
+- Compressed email-friendly variant (pdf-lib object-stream compression).
+
+**Compliance helpers:**
+- Auto-include all Momsloven § 52a mandatory fields.
+- Inline validation warnings ("Du mangler fakturanummer", "Forfaldsdato
+  mangler", "Momsbeløb stemmer ikke overens med grundlag x 25%").
+- "Overholder bogføringsloven 2026" badge on the rendered PDF (toggleable).
+
+### 4.2 Pro Tier (49 DKK/month)
+
+| Feature | Why |
+|---|---|
+| Cloud storage of all invoices (5+ years) | Bogføringslov retention |
+| Client database (recurring customers) | Speed per invoice |
+| Cross-device invoice numbering | Sequential numbers stay correct across devices |
+| All template designs (8+) | Branding flexibility |
+| Logo upload + brand color theming | Pro look |
+| 1-click rykker (reminder) emails via Cloudflare Email Service | Get paid faster |
+| **SAF-T 2.0 XML export** (NEW) | Accountant handoff, audit-ready |
+| **CSV export to standardkontoplanen** | Hands off to Dinero/Billy |
+| **Peppol lookup** for recipient (NEW) | Pre-flight: is the buyer on NemHandel? |
+| MobilePay QR code on invoice | Faster payment |
+| Multi-currency with cached FX rates | International clients |
+| Danish + English + German invoice languages | Cross-border |
+| Magic-link + passkey login (Better Auth) | Frictionless auth |
+
+**Conversion lever**: After 3-5 free invoices, prompt: "Vil du gemme dine
+fakturaer automatisk og overholde bogføringslovens opbevaringskrav? Opgrader
+til Pro."
+
+### 4.3 Business Tier (149 DKK/month)
+
+| Feature | Target User |
+|---|---|
+| **Peppol send via Access Point partner** (NEW) | Real e-invoicing, not just PDF |
+| EAN/OIOUBL legacy export (deprecated path) | Legacy public-sector vendors |
+| Multi-user (2-5 seats, Better Auth Organization plugin) | Small teams |
+| Recurring/subscription billing templates | Agencies |
+| API access (Better Auth apiKey plugin, rate-limited) | Power users |
+| White-label PDFs (no skabelontilfaktura branding) | Revisors, resellers |
+| Priority support | Businesses |
+
+### 4.4 One-Time Purchases
+
+| Product | Price | Description |
+|---|---|---|
+| Premium template pack (10 designs) | 149 DKK | Lifetime use |
+| Lifetime Pro | 999 DKK | Captures subscription-haters |
+| Branch-specific premium bundle | 249 DKK | Niche templates |
+
+### 4.5 Smart differentiators
+
+- CVR auto-fill (cvrapi.dk).
+- VIES validation (the exact feature Stripe lacks).
+- Bogføringslov 2026 badge.
+- Smart rykker email templates in Danish.
+- MobilePay QR auto-generation.
+- Moms calculator (inkl./ekskl.).
+- Peppol recipient pre-check (Pro).
+- SAF-T 2.0 export (Pro).
+
+---
+
+## 5. Monetization Strategy (unchanged structure, refined)
+
+### 5.1 Revenue streams (Year 1 / Year 2 / Year 3)
+
+- Pro subscriptions: 2,500 / 16,000 / 35,000 DKK/mo
+- Business subscriptions: 1,000 / 5,000 / 15,000 DKK/mo
+- One-time purchases: 1,000 / 3,000 / 5,000 DKK/mo
+- Affiliate (Dinero / Billy / e-conomic / revisor matchmaking): 2,000 /
+  8,000 / 20,000 DKK/mo
+- Sponsorships / direct ads: 0 / 2,000 / 5,000 DKK/mo
+- AdSense (content pages only): 500 / 3,000 / 6,000 DKK/mo
+
+### 5.2 Payment provider decision
+
+**Primary: Autumn** (`autumn-js` SDK, https://useautumn.com) as the
+billing/entitlements layer on top of **Stripe** as the underlying payment
+processor. Autumn handles subscription state, one-time purchases, credit
+packs, metered usage, feature entitlements, and checkout flows via three
+core functions: `attach` (subscribe/checkout), `check` (entitlements
+gating), `track` (usage metering). Plans and features are defined in
+`autumn.config.ts`. Stripe still processes payments and holds customer
+data; Autumn manages all billing logic so we don't need Stripe webhook
+handlers for subscription state sync. Stripe still needs to be configured
+with the product/price catalogue that Autumn references.
+
+MobilePay is delivered as a Stripe payment method in Denmark where
+possible, removing the need for a direct Vipps MobilePay merchant contract.
+
+Products in `autumn.config.ts`:
+- `pro` (49 DKK/month, or 470 DKK/year): cloud storage, client DB, SAF-T
+  export, rykker emails, cross-device numbering.
+- `business` (149 DKK/month): Peppol send, multi-seat org, API access,
+  white-label PDFs.
+- `lifetime_pro` (999 DKK one-time): all Pro features forever.
+- `template_pack` (149 DKK one-time): 10 premium designs.
+- `branch_bundle` (249 DKK one-time): niche templates.
+
+### 5.3 Affiliate partners
+
+Dinero (500-1,000 DKK/customer), Billy (500-1,000), e-conomic (1,000-2,000),
+revisor matchmaking (200-500/lead), erhvervsansvarsforsikring (100-300/lead),
+MobilePay Merchant (revenue share).
+
+---
+
+## 6. Technical Architecture (REFRESHED)
+
+### 6.1 Tech Stack (confirmed against current scaffold)
+
+| Layer | Choice | Status |
+|---|---|---|
+| Framework | **SvelteKit 2** + **Svelte 5 (runes)** | already installed |
+| Build / dev | Vite 8 + @sveltejs/vite-plugin-svelte | installed |
+| Styling | **TailwindCSS 4** + @tailwindcss/forms + @tailwindcss/typography | installed |
+| UI primitives | **shadcn-svelte** (new-york style, runes-native) + lucide-svelte | to add |
+| Adapter / hosting | **@sveltejs/adapter-cloudflare** (Cloudflare Workers, `nodejs_compat` flag) | installed |
+| Package manager | **npm** (user preference; scaffold currently uses pnpm - migrate) | migrate |
+| Database | **Self-hosted Postgres** (flat-rate single box, e.g. Hetzner CX22) + **PgBouncer** (transaction mode) + TLS | to provision |
+| DB driver | **porsager `postgres`** driver with `ssl:'require', prepared:false`; fresh `postgres()` per `getDb()` call (`max:1, idle_timeout:5`) - never cached at module level on Workers | to add |
+| ORM | **Drizzle ORM** (`drizzle-orm/postgres-js` sits on porsager) - schema is single source of truth | to add |
+| Auth | **Better Auth** (self-hosted, NOT Lucia - deprecated) + Drizzle adapter | to add |
+| Auth plugins | magic-link, passkey, twoFactor, organization, apiKey | to add |
+| Payments | **Autumn** (`autumn-js`) as billing/entitlements layer on top of **Stripe** (payment processor); MobilePay via Stripe | to add |
+| PDF generation | **pdf-lib** (true-text, embedded fonts, no raster) | to add |
+| Forms | **Superforms** + **zod** for typed validation | to add |
+| CVR lookup | cvrapi.dk community endpoint (rate-limited) + manual fallback | to add |
+| VIES validation | EU VIES SOAP/REST API | to add |
+| Email | **Cloudflare Email Service** (Email Routing free inbound, Workers Paid for sending) - NOT Resend | to add |
+| Object storage | **Cloudflare R2** (EU bucket) for logo + invoice PDF blobs | to add |
+| Background jobs | Cloudflare Workers Cron Triggers (rykker reminders) | to add |
+| Analytics | **Plausible** self-hosted (GDPR-friendly, no cookies needed) | to add |
+| Error monitoring | **Sentry** free tier | to add |
+| Cookie consent | **Cookiebot/Usercentrics CMP** + Google Consent Mode v2 | to add |
+| E-invoicing (Business) | Peppol Access Point partner (e.g. Pagero/Tradeshift/Storecove) | later |
+| SAF-T 2.0 export | In-house XML serializer per Erhvervsstyrelsen schema | to add |
+
+### 6.2 Architecture principles
+
+- **SSR/SSG** for SEO-critical pages; CSR for the generator.
+- **Client-side PDF generation** with pdf-lib for the free tier (no server
+  cost); server-side via Worker for Pro features (email attach, R2 store).
+- **EU data residency** end-to-end (self-hosted Postgres EU box, R2 EU,
+  Cloudflare EU edge).
+- **Progressive enhancement** for crawlers (Googlebot JS-less fallback).
+- **LocalStorage-first** for free tier (zero backend cost).
+- **No Hyperdrive**: self-hosted Postgres + PgBouncer handles pooling
+  server-side; Workers connect directly via porsager with a fresh
+  per-request client (`max:1, idle_timeout:5`). Never cache a `postgres()`
+  pool at module level on Workers.
+- **TypeScript strict** mode; Drizzle schema is the single source of truth.
+
+### 6.3 Data model (Pro tier, Drizzle schema)
+
+Tables: `user`, `session`, `account`, `verification` (Better Auth core) +
+`business`, `client`, `invoice`, `invoice_item`, `reminder_log`,
+`subscription` (mirrors Autumn customer/product state for Pro/Business).
+
+Key columns on `invoice`:
+- `invoice_number` (string, unique per business per series)
+- `series` (e.g. `2026`, default per business)
+- `status` (draft | sent | paid | overdue | void)
+- `currency`, `subtotal`, `vat_rate`, `vat_amount`, `total`
+- `items` (jsonb array, also denormalized to `invoice_item` for SAF-T)
+- `pdf_r2_key`, `peppol_id` (nullable, Business tier)
+- `client_id` (FK)
+- `issued_at`, `due_at`, `paid_at`
+
+### 6.4 Repo / project structure target
+
+```
+src/
+  lib/
+    server/
+      db/             # drizzle schema, porsager getDb() factory, migrations
+      auth/           # better-auth instance, plugins, hooks
+      email/          # cloudflare email service client + templates
+      payments/       # autumn-js client + stripe product catalogue + optional webhook
+      pdf/            # pdf-lib invoice renderer
+      saft/           # SAF-T 2.0 XML builder
+      peppol/         # peppol access point client (Business)
+      cvr/            # cvrapi.dk client + cache
+      vies/           # VIES client
+    components/       # shadcn-svelte + app components
+    i18n/             # da/en message catalogs
+    invoice/          # client-side generator store + types
+  routes/
+    (app)/...         # authenticated app (Pro/Business)
+    (marketing)/...   # landing, blog, pSEO pages
+    api/auth/[...ba]/ # better-auth handler
+    api/autumn/webhook  # optional: side-effect webhooks (billing.updated via Svix)
+    api/cvr/lookup
+```
+
+---
+
+## 7. SEO & Content Strategy (unchanged structure, kept for context)
+
+Primary keyword "skabelon til faktura" (1,900/mo, KD 23 Easy, CPC 86.25 DKK).
+Programmatic SEO across 40-60 Danish industries + 6 format pages + 8 document
+types + 10 scenario pages. 5 cornerstone articles. Schema.org (FAQPage,
+HowTo, SoftwareApplication, BreadcrumbList). Plausible analytics.
+
+Full keyword tables, page tiers, and content calendar carried over verbatim
+from PRD v1.0 §10.
+
+---
+
+## 8. Roadmap (REFRESHED with new regulatory deadlines)
+
+### Phase 0: Foundations (Week 1)
+- Buy skabelontilfaktura.dk; set up Cloudflare zone; GitHub repo + Actions.
+- Lock tooling: shadcn-svelte, Better Auth, Drizzle + porsager, pdf-lib,
+  Cloudflare Email Service.
+- TypeScript strict; eslint + prettier; CI on push.
+- Plausible + Sentry wiring.
+- Cookiebot CMP + Google Consent Mode v2.
+
+### Phase 1: Free generator MVP (Weeks 2-3)
+- Invoice form (Superforms + zod).
+- Live pdf-lib preview, Danish fonts incl. æøå.
+- Moms calc (inkl/ekskl, 25%, momsfritaget, reverse charge, kunstnermoms).
+- CVR lookup (cvrapi.dk, rate-limited) + manual fallback.
+- Reg./kontonr. (modulus-11), MobilePay number, EAN field.
+- Sequential numbering in localStorage (year-stamped series).
+- DA/EN UI + invoice language toggle.
+- 2 templates, logo upload, brand color.
+- PDF download (no watermark), print view.
+- Deploy to Cloudflare Workers; submit to Google Search Console.
+
+### Phase 2: Content + SEO foundation (Weeks 4-8)
+- 3 cornerstone articles; 10 industry pages; 4 scenario pages.
+- Schema.org markup; XML sitemap; internal linking.
+- AdSense on content pages only (Consent Mode v2 gated).
+
+### Phase 3: Pro tier (Weeks 9-14)
+- Better Auth (magic-link + passkey), Drizzle + porsager + self-hosted Postgres.
+- Autumn billing integration (`autumn.config.ts` with pro/business/lifetime
+  products); Stripe product/price catalogue configured as Autumn backend.
+- R2 invoice storage; client database; cross-device numbering.
+- All 8 templates; logo + brand theming.
+- Rykker emails via Cloudflare Email Service (Workers Cron).
+- **SAF-T 2.0 XML export**.
+- CSV export to standardkontoplanen.
+- MobilePay QR; multi-currency with cached FX.
+
+### Phase 4: Growth (Months 4-6)
+- 30+ industry pages; affiliate CTAs (Dinero, Billy).
+- Email capture + nurture.
+- Branch-specific template bundles.
+- A/B test pricing.
+
+### Phase 5: Business tier (Months 7-12)
+- **Peppol send via Access Point partner** (real e-invoicing).
+- Better Auth Organization (multi-seat) + apiKey plugin.
+- Recurring billing templates; white-label PDFs; API access.
+- Reviso/accountant matchmaking.
+
+### Phase 6: Optimisation & scale (Year 2)
+- CRO, onboarding, possibly a PWA/mobile shell.
+- Norway/Sweden research (Peppol reuse is a tailwind).
+
+---
+
+## 9. Risks & Mitigations (additions)
+
+| Risk | Mitigation |
+|---|---|
+| Peppol Access Point cost/complexity blocks Business tier | Use a managed AP partner (Storecove/Pagero) on revenue-share; gate behind paid tier |
+| SAF-T 2.0 schema drift | Track Erhvervsstyrelsen GitLab; pin schema version; quarterly audit |
+| cvrapi.dk community rate limit | Cache aggressively in KV; fall back to manual entry; commercial tier if needed |
+| Autumn/Stripe MobilePay method coverage gaps | Direct Vipps MobilePay ePayment integration as fallback |
+| Cookie CMP blocks AdSense scripts pre-consent | Wire Consent Mode v2 + Cookiebot deny-by-default; show ad placeholders |
+| Lucia deprecation surprise | Already migrated plan to Better Auth in Phase 0 |
+| CPR storage risk | Never store full CPR; use fødselsdato 6-digit fallback everywhere |
+
+---
+
+## 10. Out of Scope (V1)
+
+- Full accounting/bookkeeping (we are pre-accounting).
+- Payroll, årsregnskab, bank integration (Nordic APIs).
+- Native mobile apps (web-first; PWA possible in Phase 6).
+- Becoming a registered bogføringssystem (we sit upstream).
+- Direct Vipps MobilePay merchant contract (Stripe via Autumn covers MobilePay in DK).
+- AI features (later phase).
+- Norway/Sweden expansion (Year 2 research; Peppol makes it cheaper).
+
+---
+
+## 11. Open Questions
+
+1. Peppol Access Point partner: Storecove (developer-friendly, EU), Pagero
+   (enterprise), or Tradeshift (legacy NemHandel lineage)? Decide in Phase 5.
+2. Pricing for SAF-T 2.0 export: bundle into Pro, or Business-only upsell?
+3. Lifetime tier: 999 DKK confirmed, or raise to 1,499?
+4. CPR handling: stick with fødselsdato fallback (recommended), or add Pro
+   CPR with DPIA? Recommendation: fallback only.
+5. Content language: Danish-only cornerstone, or translate top 1-2 to EN for
+   expat SEO? Recommendation: Danish-only initially.
+6. Autumn vs raw Stripe long-term: revisit pricing model complexity if we add
+   per-invoice metered billing.
+7. White-label reseller for revisors: yes/no in Phase 5?
+
+---
+
+## 12. Appendix - Sources for v2.0 changes
+
+- OIOUBL cancellation + Peppol strategy:
+  https://nemhandel.dk (Strategi for dokumentstandard, 5 Mar 2026)
+  https://www.peppol.nu/blog-items/denmark-e-invoicing-peppol-standard/
+- NemHandel default e-invoicing from 1 Jul 2026:
+  https://kpmg.com/dk/en/insights/vat-and-customs/news-regarding-digital-bookkeeping-requirements-in-denmark.html
+  https://www.vatupdate.com/2026/06/30/bookkeeping-act-phase-in-complete-nemhandel-by-default-from-july-2026/
+- SAF-T 2.0:
+  https://erhvervsstyrelsen.dk/saf-t-version-2-og-rettelser-til-standardkontoplanen
+  https://git.erst.dk/standard-filformater/standard-filformater/-/tree/master/SAF-T
+- Lucia deprecation:
+  https://github.com/lucia-auth/lucia/discussions/1714
+  https://lucia-auth.com/lucia-v3/migrate
+- Vipps MobilePay ePayment API:
+  https://developer.vippsmobilepay.com/docs/APIs/epayment-api/api-guide/
+- Better Auth on Cloudflare Workers + Drizzle (porsager):
+  https://hono.dev/examples/better-auth-on-cloudflare
+  https://github.com/zpg6/better-auth-cloudflare
+- Drizzle + porsager postgres on Workers (per-request client, no module cache):
+  https://orm.drizzle.team/docs/connect-postgres-js
+- Cloudflare Email Service (replaces Resend for this project):
+  https://developers.cloudflare.com/email-routing/
+  https://developers.cloudflare.com/workers/tutorials/send-emails-with-workers/
+- shadcn-svelte Tailwind 4 + Svelte 5:
+  https://www.shadcn-svelte.com/docs/migration/tailwind-v4
+- Autumn billing docs (SvelteKit, attach/check/track, config):
+  https://docs.useautumn.com
+  https://github.com/useautumn/autumn
+- Danish cookie consent guidance (Datatilsynet + DIGST, May 2025):
+  https://www.datatilsynet.dk/Media/638829899950476628/F%c3%a6llesvejledning%20med%20DIGST%20-%20Cookie%20og%20lignende%20teknologier.pdf
+- Bogføringslov:
+  https://www.retsinformation.dk/eli/lta/2022/700/pdf
+
+---
+
+**Document owner**: Abdul Ahir
+**Next action**: Confirm tech choices in §6.1, buy domain, start Phase 0/1
+implementation per generated Task Master task list.
+**Review cadence**: Monthly until launch, then quarterly.

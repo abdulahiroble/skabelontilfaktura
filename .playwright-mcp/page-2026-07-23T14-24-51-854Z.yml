@@ -1,0 +1,120 @@
+- generic [ref=f12e3]:
+  - banner [ref=f12e4]:
+    - generic [ref=f12e5]:
+      - link "skabelontilfaktura .dk" [ref=f12e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f12e7]: skabelontilfaktura
+        - generic [ref=f12e8]: .dk
+      - navigation [ref=f12e9]:
+        - link "Fakturagenerator" [ref=f12e10] [cursor=pointer]:
+          - /url: /
+        - link "Priser" [ref=f12e11] [cursor=pointer]:
+          - /url: /pris/
+        - link "Guides" [ref=f12e12] [cursor=pointer]:
+          - /url: /blog/
+      - generic [ref=f12e13]:
+        - link "Log ind" [ref=f12e14] [cursor=pointer]:
+          - /url: /login/
+        - link "Lav faktura" [ref=f12e15] [cursor=pointer]:
+          - /url: /generator/
+  - main [ref=f12e16]:
+    - generic [ref=f12e17]:
+      - paragraph [ref=f12e18]: Enkelt og gennemsigtigt
+      - heading "Priser" [level=1] [ref=f12e19]
+      - paragraph [ref=f12e20]: Begynd gratis. Betal kun, når du har brug for mere. Ingen skjulte gebyrer, ingen binding.
+    - generic [ref=f12e22]:
+      - paragraph [ref=f12e23]: Ellers gratis — som altid. Ubegrænsede fakturaer, PDF uden vandmærke, CVR-opslag og automatisk moms.
+      - generic [ref=f12e24]:
+        - generic [ref=f12e25]: Ubegrænsede fakturaer
+        - generic [ref=f12e27]: PDF uden vandmærke
+        - generic [ref=f12e29]: CVR-opslag
+        - generic [ref=f12e31]: Automatisk moms
+        - generic [ref=f12e33]: Dansk og engelsk
+    - generic [ref=f12e36]:
+      - generic [ref=f12e37]:
+        - paragraph [ref=f12e38]: Pro
+        - generic [ref=f12e39]:
+          - generic [ref=f12e40]: "49"
+          - generic [ref=f12e41]: DKK /måned
+        - paragraph [ref=f12e42]: For selvstændige, der vil have mere. Cloud-sikkerhedskopi, klientdatabase og regnskabseksport — alt i ét.
+        - generic [ref=f12e43]:
+          - generic [ref=f12e44]: Cloud-lagring (5 år)
+          - generic [ref=f12e46]: Klientdatabase
+          - generic [ref=f12e48]: SAF-T 2.0 eksport
+          - generic [ref=f12e50]: Rykkermails
+          - generic [ref=f12e52]: Nummerering på tværs af enheder
+        - generic [ref=f12e54]:
+          - link "Opgrader til Pro" [ref=f12e55] [cursor=pointer]:
+            - /url: /generator/
+          - generic [ref=f12e56]: Inkluderer alt fra Gratis
+      - generic [ref=f12e57]:
+        - paragraph [ref=f12e58]: Business
+        - generic [ref=f12e59]:
+          - generic [ref=f12e60]: "149"
+          - generic [ref=f12e61]: DKK /måned
+        - paragraph [ref=f12e62]: Til små teams, der skal sende e-faktura via Peppol og dele adgang.
+        - generic [ref=f12e63]:
+          - generic [ref=f12e64]: Peppol e-faktura
+          - generic [ref=f12e66]: 2–5 brugere
+          - generic [ref=f12e68]: API-adgang
+          - generic [ref=f12e70]: White-label PDF’er
+        - link "Vælg Business" [ref=f12e73] [cursor=pointer]:
+          - /url: /generator/
+    - generic [ref=f12e76]:
+      - generic [ref=f12e77]:
+        - heading "Livstids-Pro" [level=2] [ref=f12e78]
+        - paragraph [ref=f12e79]: Betal én gang, brug for evigt. Alt fra Pro — uden månedlig regning.
+      - generic [ref=f12e80]:
+        - generic [ref=f12e81]:
+          - generic [ref=f12e82]: 999 DKK
+          - generic [ref=f12e83]: én gang
+        - link "Vælg livstids-Pro" [ref=f12e84] [cursor=pointer]:
+          - /url: /generator/
+    - generic [ref=f12e85]:
+      - generic [ref=f12e86]:
+        - generic [ref=f12e87]:
+          - generic [ref=f12e88]: 📊
+          - generic [ref=f12e90]:
+            - heading "Brug for et rigtigt regnskabsprogram?" [level=3] [ref=f12e91]
+            - paragraph [ref=f12e92]: Dinero er Danmarks mest populære regnskabsprogram til små virksomheder.
+        - link "Gå til Dinero" [ref=f12e94] [cursor=pointer]:
+          - /url: https://dinero.dk
+        - paragraph [ref=f12e95]: Vi kan modtage provision hvis du klikker på disse links.
+      - generic [ref=f12e96]:
+        - generic [ref=f12e97]:
+          - generic [ref=f12e98]: 👤
+          - generic [ref=f12e100]:
+            - heading "Brug for hjælp fra en revisor?" [level=3] [ref=f12e101]
+            - paragraph [ref=f12e102]: Vi kan sætte dig i kontakt med kvalificerede revisorer i dit område.
+        - link "Find en revisor" [ref=f12e104] [cursor=pointer]:
+          - /url: /revisor
+        - paragraph [ref=f12e105]: Vi kan modtage provision hvis du klikker på disse links.
+    - generic [ref=f12e108]:
+      - generic [ref=f12e109]:
+        - heading "Klar til din første faktura?" [level=2] [ref=f12e110]
+        - paragraph [ref=f12e111]: Det tager under et minut. Ingen konto, ingen kreditkort.
+      - link "Start gratis" [ref=f12e112] [cursor=pointer]:
+        - /url: /generator/
+  - contentinfo [ref=f12e113]:
+    - generic [ref=f12e114]:
+      - generic [ref=f12e115]:
+        - generic [ref=f12e116]:
+          - paragraph [ref=f12e117]: skabelontilfaktura.dk
+          - paragraph [ref=f12e118]: Danmarks nemmeste fakturaskabelon. Gratis, lovlig, og klar på 60 sekunder.
+        - generic [ref=f12e119]:
+          - paragraph [ref=f12e120]: Værktøj
+          - link "Fakturagenerator" [ref=f12e121] [cursor=pointer]:
+            - /url: /generator/
+          - link "Priser" [ref=f12e122] [cursor=pointer]:
+            - /url: /pris/
+        - generic [ref=f12e123]:
+          - paragraph [ref=f12e124]: Viden
+          - link "Guides" [ref=f12e125] [cursor=pointer]:
+            - /url: /blog/
+        - generic [ref=f12e126]:
+          - paragraph [ref=f12e127]: Juridisk
+          - link "Privatlivspolitik" [ref=f12e128] [cursor=pointer]:
+            - /url: /privatlivspolitik/
+          - link "Cookiepolitik" [ref=f12e129] [cursor=pointer]:
+            - /url: /cookiepolitik/
+      - paragraph [ref=f12e131]: Skabelontilfaktura.dk er et værktøj til at generere fakturaer og udgør ikke juridisk rådgivning. Brugeren er selv ansvarlig for overholdelse af gældende lovgivning. Ved komplekse situationer anbefales konsultation af revisor.

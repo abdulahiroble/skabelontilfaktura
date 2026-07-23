@@ -80,7 +80,7 @@
 			<p class="text-foreground text-sm font-medium">{t('validation.title')}</p>
 		</div>
 		<ul class="text-destructive mt-2 list-inside list-disc space-y-1 text-sm">
-			{#each messages as message (message)}
+			{#each messages as message, i (i)}
 				<li>{message}</li>
 			{/each}
 		</ul>

@@ -80,7 +80,10 @@
 	}
 </script>
 
-<section class="border-border bg-card rounded-lg border p-4 sm:p-6" aria-label={t('totals.total')}>
+<section
+	class="border-border bg-muted/30 rounded-lg border p-4 sm:p-6"
+	aria-label={t('totals.total')}
+>
 	{#if !hasItems}
 		<p class="text-muted-foreground inline-flex items-center gap-1.5 text-sm">
 			<TriangleAlert size={14} />
@@ -109,11 +112,14 @@
 				<dd class="text-foreground tabular-nums">{formatted.vatAmount}</dd>
 			</div>
 
-			<div
-				class="border-border mt-1 flex items-baseline justify-between gap-4 border-t pt-2 text-base font-semibold"
-			>
-				<dt class="text-foreground">{t('totals.total')}</dt>
-				<dd class="text-foreground tabular-nums">{formatted.total}</dd>
+			<div class="border-border mt-2 flex items-baseline justify-between gap-4 border-t pt-3">
+				<dt class="text-foreground text-base font-semibold">{t('totals.total')}</dt>
+				<dd
+					class="text-foreground text-xl font-semibold tabular-nums"
+					style="font-family: var(--font-display)"
+				>
+					{formatted.total}
+				</dd>
 			</div>
 		</dl>
 

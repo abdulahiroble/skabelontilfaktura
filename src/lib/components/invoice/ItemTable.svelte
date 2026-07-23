@@ -44,14 +44,16 @@
 	<div class="overflow-x-auto">
 		<table class="w-full border-collapse text-sm">
 			<thead>
-				<tr class="text-muted-foreground border-border border-b text-left text-xs uppercase">
-					<th class="py-2 pr-2 font-medium">{t('items.description')}</th>
-					<th class="w-20 px-2 py-2 font-medium">{t('items.quantity')}</th>
-					<th class="w-20 px-2 py-2 font-medium">{t('items.unit')}</th>
-					<th class="w-28 px-2 py-2 font-medium">{t('items.unitPrice')}</th>
-					<th class="w-20 px-2 py-2 font-medium">{t('items.vatRate')}</th>
-					<th class="w-24 px-2 py-2 font-medium">{t('items.discount')}</th>
-					<th class="w-28 px-2 py-2 text-right font-medium">{t('items.lineTotal')}</th>
+				<tr
+					class="text-muted-foreground border-border border-b text-left text-[0.65rem] font-medium tracking-wider uppercase"
+				>
+					<th class="py-2 pr-2">{t('items.description')}</th>
+					<th class="w-20 px-2 py-2">{t('items.quantity')}</th>
+					<th class="w-20 px-2 py-2">{t('items.unit')}</th>
+					<th class="w-28 px-2 py-2">{t('items.unitPrice')}</th>
+					<th class="w-20 px-2 py-2">{t('items.vatRate')}</th>
+					<th class="w-24 px-2 py-2">{t('items.discount')}</th>
+					<th class="w-28 px-2 py-2 text-right">{t('items.lineTotal')}</th>
 					<th class="w-10 px-2 py-2"></th>
 				</tr>
 			</thead>
@@ -124,13 +126,13 @@
 						<td class="px-2 py-2 align-top">
 							<button
 								type="button"
-								class="text-muted-foreground hover:text-destructive inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed disabled:opacity-30"
+								class="text-muted-foreground hover:text-destructive hover:bg-accent/50 inline-flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
 								onclick={() => onRemove(item.id ?? '')}
 								disabled={items.length <= 1}
 								aria-label={t('common.remove')}
 								title={t('common.remove')}
 							>
-								<Trash2 size={16} />
+								<Trash2 size={14} />
 							</button>
 						</td>
 					</tr>
@@ -141,10 +143,10 @@
 
 	<button
 		type="button"
-		class="border-border text-foreground hover:bg-accent mt-3 inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors"
+		class="text-muted-foreground hover:text-foreground hover:bg-accent/50 mt-3 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors"
 		onclick={onAdd}
 	>
-		<Plus size={16} />
+		<Plus size={15} />
 		{t('button.addLine')}
 	</button>
 </section>

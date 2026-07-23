@@ -1,84 +1,84 @@
 - generic [ref=f13e3]:
-  - banner [ref=f13e4]:
-    - generic [ref=f13e5]:
-      - link "skabelontilfaktura .dk" [ref=f13e6] [cursor=pointer]:
-        - /url: /
-        - generic [ref=f13e7]: skabelontilfaktura
-        - generic [ref=f13e8]: .dk
-      - navigation [ref=f13e9]:
-        - link "Fakturagenerator" [ref=f13e10] [cursor=pointer]:
-          - /url: /
-        - link "Priser" [ref=f13e11] [cursor=pointer]:
-          - /url: /pris/
-        - link "Guides" [ref=f13e12] [cursor=pointer]:
-          - /url: /blog/
-      - generic [ref=f13e13]:
-        - link "Log ind" [ref=f13e14] [cursor=pointer]:
-          - /url: /login/
-        - link "Lav faktura" [ref=f13e15] [cursor=pointer]:
-          - /url: /generator/
-  - main [ref=f13e16]:
-    - generic [ref=f13e17]:
-      - generic [ref=f13e18]:
-        - heading "Guides og artikler" [level=1] [ref=f13e19]
-        - paragraph [ref=f13e20]: Danske guides om fakturering, bogføring, moms og skat - skrevet så alle kan være med.
-      - generic [ref=f13e21]:
-        - link [ref=f13e22] [cursor=pointer]:
-          - /url: /blog/bogforingslov-2026-guide/
-          - paragraph [ref=f13e23]: Lovgivning
-          - 'heading "Ny bogføringslov 2026: Komplet guide for selvstændige" [level=2] [ref=f13e24]'
-          - paragraph [ref=f13e25]: Alt om overgangen til digital bogføring, SAF-T 2.0 og NemHandel - forklaret simpelt uden juridisk volapyk.
-          - paragraph [ref=f13e26]: Læs mere →
-        - link [ref=f13e27] [cursor=pointer]:
-          - /url: /blog/faktura-uden-cvr/
-          - paragraph [ref=f13e28]: Privatpersoner
-          - 'heading "Faktura uden CVR: Sådan fakturerer du som privatperson (2026)" [level=2] [ref=f13e29]'
-          - paragraph [ref=f13e30]: Regler for fakturering uden CVR-nummer, grænsen på 50.000 DKK og hvornår du skal registrere dig.
-          - paragraph [ref=f13e31]: Læs mere →
-        - link [ref=f13e32] [cursor=pointer]:
-          - /url: /blog/faktura-skabelon-word/
-          - paragraph [ref=f13e33]: Skabeloner
-          - 'heading "Faktura skabelon Word: Sådan laver du en i Microsoft Word (2026)" [level=2] [ref=f13e34]'
-          - paragraph [ref=f13e35]: Trin-for-trin guide til at bygge en fakturaskabelon i Word - og et nemmere online alternativ.
-          - paragraph [ref=f13e36]: Læs mere →
-        - link [ref=f13e37] [cursor=pointer]:
-          - /url: /blog/faktura-freelancer/
-          - paragraph [ref=f13e38]: Freelancere
-          - 'heading "Faktura for freelancere: Den komplette guide (2026)" [level=2] [ref=f13e39]'
-          - paragraph [ref=f13e40]: "Alt hvad freelancere skal vide: CVR, moms, F-skattenummer, betalingsbetingelser og selvangivelse."
-          - paragraph [ref=f13e41]: Læs mere →
-        - link [ref=f13e42] [cursor=pointer]:
-          - /url: /blog/faktura-skabelon-faq/
-          - paragraph [ref=f13e43]: FAQ
-          - heading "Faktura skabelon FAQ - alt du skal vide (2026)" [level=2] [ref=f13e44]
-          - paragraph [ref=f13e45]: "Svar på de mest almindelige spørgsmål om fakturaskabeloner: obligatoriske felter, moms, CVR og opbevaring."
-          - paragraph [ref=f13e46]: Læs mere →
-        - link [ref=f13e47] [cursor=pointer]:
-          - /url: /blog/faktura-skabelon-sammenligning/
-          - paragraph [ref=f13e48]: Sammenligning
-          - heading "De 5 bedste faktura skabeloner i Danmark (2026)" [level=2] [ref=f13e49]
-          - paragraph [ref=f13e50]: Sammenligning af gratis og betalte fakturaskabeloner - funktioner, priser og hvilken der passer til dig.
-          - paragraph [ref=f13e51]: Læs mere →
-  - contentinfo [ref=f13e52]:
-    - generic [ref=f13e53]:
-      - generic [ref=f13e54]:
-        - generic [ref=f13e55]:
-          - paragraph [ref=f13e56]: skabelontilfaktura.dk
-          - paragraph [ref=f13e57]: Danmarks nemmeste fakturaskabelon. Gratis, lovlig, og klar på 60 sekunder.
-        - generic [ref=f13e58]:
-          - paragraph [ref=f13e59]: Værktøj
-          - link "Fakturagenerator" [ref=f13e60] [cursor=pointer]:
-            - /url: /generator/
-          - link "Priser" [ref=f13e61] [cursor=pointer]:
-            - /url: /pris/
-        - generic [ref=f13e62]:
-          - paragraph [ref=f13e63]: Viden
-          - link "Guides" [ref=f13e64] [cursor=pointer]:
-            - /url: /blog/
-        - generic [ref=f13e65]:
-          - paragraph [ref=f13e66]: Juridisk
-          - link "Privatlivspolitik" [ref=f13e67] [cursor=pointer]:
-            - /url: /privatlivspolitik/
-          - link "Cookiepolitik" [ref=f13e68] [cursor=pointer]:
-            - /url: /cookiepolitik/
-      - paragraph [ref=f13e70]: Skabelontilfaktura.dk er et værktøj til at generere fakturaer og udgør ikke juridisk rådgivning. Brugeren er selv ansvarlig for overholdelse af gældende lovgivning. Ved komplekse situationer anbefales konsultation af revisor.
+    - banner [ref=f13e4]:
+        - generic [ref=f13e5]:
+            - link "skabelontilfaktura .dk" [ref=f13e6] [cursor=pointer]:
+                - /url: /
+                - generic [ref=f13e7]: skabelontilfaktura
+                - generic [ref=f13e8]: .dk
+            - navigation [ref=f13e9]:
+                - link "Fakturagenerator" [ref=f13e10] [cursor=pointer]:
+                    - /url: /
+                - link "Priser" [ref=f13e11] [cursor=pointer]:
+                    - /url: /pris/
+                - link "Guides" [ref=f13e12] [cursor=pointer]:
+                    - /url: /blog/
+            - generic [ref=f13e13]:
+                - link "Log ind" [ref=f13e14] [cursor=pointer]:
+                    - /url: /login/
+                - link "Lav faktura" [ref=f13e15] [cursor=pointer]:
+                    - /url: /generator/
+    - main [ref=f13e16]:
+        - generic [ref=f13e17]:
+            - generic [ref=f13e18]:
+                - heading "Guides og artikler" [level=1] [ref=f13e19]
+                - paragraph [ref=f13e20]: Danske guides om fakturering, bogføring, moms og skat - skrevet så alle kan være med.
+            - generic [ref=f13e21]:
+                - link [ref=f13e22] [cursor=pointer]:
+                    - /url: /blog/bogforingslov-2026-guide/
+                    - paragraph [ref=f13e23]: Lovgivning
+                    - 'heading "Ny bogføringslov 2026: Komplet guide for selvstændige" [level=2] [ref=f13e24]'
+                    - paragraph [ref=f13e25]: Alt om overgangen til digital bogføring, SAF-T 2.0 og NemHandel - forklaret simpelt uden juridisk volapyk.
+                    - paragraph [ref=f13e26]: Læs mere →
+                - link [ref=f13e27] [cursor=pointer]:
+                    - /url: /blog/faktura-uden-cvr/
+                    - paragraph [ref=f13e28]: Privatpersoner
+                    - 'heading "Faktura uden CVR: Sådan fakturerer du som privatperson (2026)" [level=2] [ref=f13e29]'
+                    - paragraph [ref=f13e30]: Regler for fakturering uden CVR-nummer, grænsen på 50.000 DKK og hvornår du skal registrere dig.
+                    - paragraph [ref=f13e31]: Læs mere →
+                - link [ref=f13e32] [cursor=pointer]:
+                    - /url: /blog/faktura-skabelon-word/
+                    - paragraph [ref=f13e33]: Skabeloner
+                    - 'heading "Faktura skabelon Word: Sådan laver du en i Microsoft Word (2026)" [level=2] [ref=f13e34]'
+                    - paragraph [ref=f13e35]: Trin-for-trin guide til at bygge en fakturaskabelon i Word - og et nemmere online alternativ.
+                    - paragraph [ref=f13e36]: Læs mere →
+                - link [ref=f13e37] [cursor=pointer]:
+                    - /url: /blog/faktura-freelancer/
+                    - paragraph [ref=f13e38]: Freelancere
+                    - 'heading "Faktura for freelancere: Den komplette guide (2026)" [level=2] [ref=f13e39]'
+                    - paragraph [ref=f13e40]: 'Alt hvad freelancere skal vide: CVR, moms, F-skattenummer, betalingsbetingelser og selvangivelse.'
+                    - paragraph [ref=f13e41]: Læs mere →
+                - link [ref=f13e42] [cursor=pointer]:
+                    - /url: /blog/faktura-skabelon-faq/
+                    - paragraph [ref=f13e43]: FAQ
+                    - heading "Faktura skabelon FAQ - alt du skal vide (2026)" [level=2] [ref=f13e44]
+                    - paragraph [ref=f13e45]: 'Svar på de mest almindelige spørgsmål om fakturaskabeloner: obligatoriske felter, moms, CVR og opbevaring.'
+                    - paragraph [ref=f13e46]: Læs mere →
+                - link [ref=f13e47] [cursor=pointer]:
+                    - /url: /blog/faktura-skabelon-sammenligning/
+                    - paragraph [ref=f13e48]: Sammenligning
+                    - heading "De 5 bedste faktura skabeloner i Danmark (2026)" [level=2] [ref=f13e49]
+                    - paragraph [ref=f13e50]: Sammenligning af gratis og betalte fakturaskabeloner - funktioner, priser og hvilken der passer til dig.
+                    - paragraph [ref=f13e51]: Læs mere →
+    - contentinfo [ref=f13e52]:
+        - generic [ref=f13e53]:
+            - generic [ref=f13e54]:
+                - generic [ref=f13e55]:
+                    - paragraph [ref=f13e56]: skabelontilfaktura.dk
+                    - paragraph [ref=f13e57]: Danmarks nemmeste fakturaskabelon. Gratis, lovlig, og klar på 60 sekunder.
+                - generic [ref=f13e58]:
+                    - paragraph [ref=f13e59]: Værktøj
+                    - link "Fakturagenerator" [ref=f13e60] [cursor=pointer]:
+                        - /url: /generator/
+                    - link "Priser" [ref=f13e61] [cursor=pointer]:
+                        - /url: /pris/
+                - generic [ref=f13e62]:
+                    - paragraph [ref=f13e63]: Viden
+                    - link "Guides" [ref=f13e64] [cursor=pointer]:
+                        - /url: /blog/
+                - generic [ref=f13e65]:
+                    - paragraph [ref=f13e66]: Juridisk
+                    - link "Privatlivspolitik" [ref=f13e67] [cursor=pointer]:
+                        - /url: /privatlivspolitik/
+                    - link "Cookiepolitik" [ref=f13e68] [cursor=pointer]:
+                        - /url: /cookiepolitik/
+            - paragraph [ref=f13e70]: Skabelontilfaktura.dk er et værktøj til at generere fakturaer og udgør ikke juridisk rådgivning. Brugeren er selv ansvarlig for overholdelse af gældende lovgivning. Ved komplekse situationer anbefales konsultation af revisor.

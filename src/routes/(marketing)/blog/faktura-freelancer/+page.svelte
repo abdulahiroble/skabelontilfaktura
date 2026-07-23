@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
 	import { buildMeta, breadcrumbSchema, type BreadcrumbItem } from '$lib/seo';
 
 	const meta = buildMeta({
@@ -51,26 +52,20 @@
 	{@html jsonLdScript}
 </svelte:head>
 
-<article class="mx-auto max-w-3xl px-4 py-12">
-	<nav class="text-muted-foreground mb-8 text-sm" aria-label="Brødkrummer">
+<ArticleLayout
+	title="Faktura for freelancere: Den komplette guide (2026)"
+	subtitle="Alt hvad freelancere skal vide om fakturering i Danmark: CVR, moms, F-skattenummer, betalingsbetingelser og skat."
+	category="Freelancere"
+	date="Opdateret juli 2026"
+	readingTime="9 min læsning"
+>
+	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">
 		<a href="/" class="hover:text-foreground">Forside</a>
 		<span class="mx-2">/</span>
 		<a href="/blog/" class="hover:text-foreground">Guides</a>
 		<span class="mx-2">/</span>
 		<span class="text-foreground">Faktura for freelancere</span>
 	</nav>
-
-	<header class="mb-10">
-		<p class="text-primary text-sm font-medium tracking-wide uppercase">Freelancere</p>
-		<h1 class="mt-2 text-4xl font-bold tracking-tight">
-			Faktura for freelancere: Den komplette guide (2026)
-		</h1>
-		<p class="text-muted-foreground mt-3 text-lg">
-			Alt hvad freelancere skal vide om fakturering i Danmark: CVR, moms, F-skattenummer,
-			betalingsbetingelser og skat.
-		</p>
-		<p class="text-muted-foreground mt-2 text-xs">Opdateret juli 2026</p>
-	</header>
 
 	<div class="space-y-8 leading-relaxed">
 		<section>
@@ -268,4 +263,4 @@
 			</p>
 		</section>
 	</div>
-</article>
+</ArticleLayout>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
 	import {
 		buildMeta,
 		howToSchema,
@@ -89,26 +90,20 @@
 	{@html jsonLdScript}
 </svelte:head>
 
-<article class="mx-auto max-w-3xl px-4 py-12">
-	<nav class="text-muted-foreground mb-8 text-sm" aria-label="Brødkrummer">
+<ArticleLayout
+	title="Faktura skabelon Word: Sådan laver du en i Microsoft Word (2026)"
+	subtitle="Trin-for-trin guide til at bygge din egen fakturaskabelon i Word - eller brug en nemmere og mere professionel online generator."
+	category="Skabeloner"
+	date="Opdateret juli 2026"
+	readingTime="6 min læsning"
+>
+	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">
 		<a href="/" class="hover:text-foreground">Forside</a>
 		<span class="mx-2">/</span>
 		<a href="/blog/" class="hover:text-foreground">Guides</a>
 		<span class="mx-2">/</span>
 		<span class="text-foreground">Faktura skabelon Word</span>
 	</nav>
-
-	<header class="mb-10">
-		<p class="text-primary text-sm font-medium tracking-wide uppercase">Skabeloner</p>
-		<h1 class="mt-2 text-4xl font-bold tracking-tight">
-			Faktura skabelon Word: Sådan laver du en i Microsoft Word (2026)
-		</h1>
-		<p class="text-muted-foreground mt-3 text-lg">
-			Trin-for-trin guide til at bygge din egen fakturaskabelon i Word - eller brug en nemmere og
-			mere professionel online generator.
-		</p>
-		<p class="text-muted-foreground mt-2 text-xs">Opdateret juli 2026</p>
-	</header>
 
 	<div class="space-y-8 leading-relaxed">
 		<section>
@@ -249,4 +244,4 @@
 			</p>
 		</section>
 	</div>
-</article>
+</ArticleLayout>

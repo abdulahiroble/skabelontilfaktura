@@ -1,121 +1,121 @@
 - generic [ref=e2]:
-  - generic [ref=e3]:
-    - banner [ref=e4]:
-      - generic [ref=e5]:
-        - link "skabelontilfaktura .dk" [ref=e6] [cursor=pointer]:
-          - /url: /
-          - generic [ref=e7]: skabelontilfaktura
-          - generic [ref=e8]: .dk
-        - navigation [ref=e9]:
-          - link "Fakturagenerator" [ref=e10] [cursor=pointer]:
-            - /url: /
-          - link "Priser" [ref=e11] [cursor=pointer]:
-            - /url: /pris/
-          - link "Guides" [ref=e12] [cursor=pointer]:
-            - /url: /blog/
-        - generic [ref=e13]:
-          - link "Log ind" [ref=e14] [cursor=pointer]:
-            - /url: /login/
-          - link "Lav faktura" [ref=e15] [cursor=pointer]:
-            - /url: /generator/
-    - main [ref=e16]:
-      - generic [ref=e17]:
-        - generic [ref=e18]:
-          - paragraph [ref=e19]: Gratis og lovlig faktura
-          - heading "Lav en faktura på 60 sekunder" [level=1] [ref=e20]
-          - paragraph [ref=e21]: Danmarks nemmeste fakturaskabelon. Automatisk moms, CVR-opslag og PDF-download. Ingen tilmelding, ingen vandmærke.
-          - generic [ref=e22]:
-            - link "Lav min faktura" [ref=e23] [cursor=pointer]:
-              - /url: /generator/
-            - link "Se priser og funktioner" [ref=e24] [cursor=pointer]:
-              - /url: /pris/
-        - generic [ref=e26]:
-          - generic [ref=e27]:
-            - generic [ref=e28]:
-              - paragraph [ref=e29]: Faktura
-              - paragraph [ref=e30]: 2026-0042
-            - generic [ref=e31]:
-              - paragraph [ref=e32]: Dato
-              - paragraph [ref=e33]: 23. jul 2026
-          - generic [ref=e34]:
-            - paragraph [ref=e35]: Fra
-            - paragraph [ref=e36]: Ahir Design Studio ApS
-            - paragraph [ref=e37]: CVR 42833716
-          - generic [ref=e38]:
-            - generic [ref=e39]:
-              - generic [ref=e40]: Webdesign - landingsside
-              - generic [ref=e41]: 8.000,00
-            - generic [ref=e42]:
-              - generic [ref=e43]: Konsultation (4 timer)
-              - generic [ref=e44]: 2.400,00
-          - generic [ref=e45]:
-            - generic [ref=e46]:
-              - generic [ref=e47]: Subtotal ekskl. moms
-              - generic [ref=e48]: 10.400,00 kr.
-            - generic [ref=e49]:
-              - generic [ref=e50]: Moms (25%)
-              - generic [ref=e51]: 2.600,00 kr.
-            - generic [ref=e52]:
-              - generic [ref=e53]: Total
-              - generic [ref=e54]: 13.000,00 kr.
-          - generic [ref=e55]: ✓
-      - generic [ref=e58]:
-        - generic [ref=e59]: Automatisk moms-beregning (25%)
-        - generic [ref=e61]: CVR-opslag fra Erhvervsstyrelsen
-        - generic [ref=e63]: Overholder Momsloven § 52a
-        - generic [ref=e65]: Uden vandmærke
-      - generic [ref=e68]:
-        - generic [ref=e69]:
-          - paragraph [ref=e70]: "01"
-          - heading "Alt hvad loven kræver, automatisk" [level=2] [ref=e71]
-          - paragraph [ref=e72]: Fakturanummer, momsbeløb, forfaldsdato, CVR. Vi kender reglerne i Momsloven, så du ikke behøver.
-        - generic [ref=e73]:
-          - paragraph [ref=e74]: "02"
-          - heading "Skriv dit CVR, vi udfylder resten" [level=2] [ref=e75]
-          - paragraph [ref=e76]: Indtast et CVR-nummer og vi henter firmanavn, adresse og postnummer direkte fra det offentlige register.
-        - generic [ref=e77]:
-          - paragraph [ref=e78]: "03"
-          - heading "Download som PDF, send med det samme" [level=2] [ref=e79]
-          - paragraph [ref=e80]: Professionelt udseende PDF uden vandmærke. Klar til at sende til din kunde på sekunder.
-      - generic [ref=e83]:
-        - generic [ref=e84]:
-          - heading "Klar til din første faktura?" [level=2] [ref=e85]
-          - paragraph [ref=e86]: Det tager under et minut. Ingen konto, ingen kreditkort.
-        - link "Start gratis" [ref=e87] [cursor=pointer]:
-          - /url: /generator/
-    - contentinfo [ref=e88]:
-      - generic [ref=e89]:
-        - generic [ref=e90]:
-          - generic [ref=e91]:
-            - paragraph [ref=e92]: skabelontilfaktura.dk
-            - paragraph [ref=e93]: Danmarks nemmeste fakturaskabelon. Gratis, lovlig, og klar på 60 sekunder.
-          - generic [ref=e94]:
-            - paragraph [ref=e95]: Værktøj
-            - link "Fakturagenerator" [ref=e96] [cursor=pointer]:
-              - /url: /generator/
-            - link "Priser" [ref=e97] [cursor=pointer]:
-              - /url: /pris/
-          - generic [ref=e98]:
-            - paragraph [ref=e99]: Viden
-            - link "Guides" [ref=e100] [cursor=pointer]:
-              - /url: /blog/
-          - generic [ref=e101]:
-            - paragraph [ref=e102]: Juridisk
-            - link "Privatlivspolitik" [ref=e103] [cursor=pointer]:
-              - /url: /privatlivspolitik/
-            - link "Cookiepolitik" [ref=e104] [cursor=pointer]:
-              - /url: /cookiepolitik/
-        - paragraph [ref=e106]: Skabelontilfaktura.dk er et værktøj til at generere fakturaer og udgør ikke juridisk rådgivning. Brugeren er selv ansvarlig for overholdelse af gældende lovgivning. Ved komplekse situationer anbefales konsultation af revisor.
-  - dialog "Samtykke til cookies" [ref=e107]:
-    - generic [ref=e109]:
-      - generic [ref=e110]:
-        - paragraph [ref=e111]: Vi respekterer dit privatliv
-        - paragraph [ref=e112]:
-          - text: Vi bruger Plausible Analytics, som er cookie-frit og ikke sporer dig på tværs af sider. Læs mere i vores
-          - link "privatlivspolitik" [ref=e113] [cursor=pointer]:
-            - /url: /privatlivspolitik/
-          - text: .
-      - generic [ref=e114]:
-        - button "Tilpas" [ref=e115]
-        - button "Afvis alle" [ref=e116]
-        - button "Accepter alle" [ref=e117]
+    - generic [ref=e3]:
+        - banner [ref=e4]:
+            - generic [ref=e5]:
+                - link "skabelontilfaktura .dk" [ref=e6] [cursor=pointer]:
+                    - /url: /
+                    - generic [ref=e7]: skabelontilfaktura
+                    - generic [ref=e8]: .dk
+                - navigation [ref=e9]:
+                    - link "Fakturagenerator" [ref=e10] [cursor=pointer]:
+                        - /url: /
+                    - link "Priser" [ref=e11] [cursor=pointer]:
+                        - /url: /pris/
+                    - link "Guides" [ref=e12] [cursor=pointer]:
+                        - /url: /blog/
+                - generic [ref=e13]:
+                    - link "Log ind" [ref=e14] [cursor=pointer]:
+                        - /url: /login/
+                    - link "Lav faktura" [ref=e15] [cursor=pointer]:
+                        - /url: /generator/
+        - main [ref=e16]:
+            - generic [ref=e17]:
+                - generic [ref=e18]:
+                    - paragraph [ref=e19]: Gratis og lovlig faktura
+                    - heading "Lav en faktura på 60 sekunder" [level=1] [ref=e20]
+                    - paragraph [ref=e21]: Danmarks nemmeste fakturaskabelon. Automatisk moms, CVR-opslag og PDF-download. Ingen tilmelding, ingen vandmærke.
+                    - generic [ref=e22]:
+                        - link "Lav min faktura" [ref=e23] [cursor=pointer]:
+                            - /url: /generator/
+                        - link "Se priser og funktioner" [ref=e24] [cursor=pointer]:
+                            - /url: /pris/
+                - generic [ref=e26]:
+                    - generic [ref=e27]:
+                        - generic [ref=e28]:
+                            - paragraph [ref=e29]: Faktura
+                            - paragraph [ref=e30]: 2026-0042
+                        - generic [ref=e31]:
+                            - paragraph [ref=e32]: Dato
+                            - paragraph [ref=e33]: 23. jul 2026
+                    - generic [ref=e34]:
+                        - paragraph [ref=e35]: Fra
+                        - paragraph [ref=e36]: Ahir Design Studio ApS
+                        - paragraph [ref=e37]: CVR 42833716
+                    - generic [ref=e38]:
+                        - generic [ref=e39]:
+                            - generic [ref=e40]: Webdesign - landingsside
+                            - generic [ref=e41]: 8.000,00
+                        - generic [ref=e42]:
+                            - generic [ref=e43]: Konsultation (4 timer)
+                            - generic [ref=e44]: 2.400,00
+                    - generic [ref=e45]:
+                        - generic [ref=e46]:
+                            - generic [ref=e47]: Subtotal ekskl. moms
+                            - generic [ref=e48]: 10.400,00 kr.
+                        - generic [ref=e49]:
+                            - generic [ref=e50]: Moms (25%)
+                            - generic [ref=e51]: 2.600,00 kr.
+                        - generic [ref=e52]:
+                            - generic [ref=e53]: Total
+                            - generic [ref=e54]: 13.000,00 kr.
+                    - generic [ref=e55]: ✓
+            - generic [ref=e58]:
+                - generic [ref=e59]: Automatisk moms-beregning (25%)
+                - generic [ref=e61]: CVR-opslag fra Erhvervsstyrelsen
+                - generic [ref=e63]: Overholder Momsloven § 52a
+                - generic [ref=e65]: Uden vandmærke
+            - generic [ref=e68]:
+                - generic [ref=e69]:
+                    - paragraph [ref=e70]: '01'
+                    - heading "Alt hvad loven kræver, automatisk" [level=2] [ref=e71]
+                    - paragraph [ref=e72]: Fakturanummer, momsbeløb, forfaldsdato, CVR. Vi kender reglerne i Momsloven, så du ikke behøver.
+                - generic [ref=e73]:
+                    - paragraph [ref=e74]: '02'
+                    - heading "Skriv dit CVR, vi udfylder resten" [level=2] [ref=e75]
+                    - paragraph [ref=e76]: Indtast et CVR-nummer og vi henter firmanavn, adresse og postnummer direkte fra det offentlige register.
+                - generic [ref=e77]:
+                    - paragraph [ref=e78]: '03'
+                    - heading "Download som PDF, send med det samme" [level=2] [ref=e79]
+                    - paragraph [ref=e80]: Professionelt udseende PDF uden vandmærke. Klar til at sende til din kunde på sekunder.
+            - generic [ref=e83]:
+                - generic [ref=e84]:
+                    - heading "Klar til din første faktura?" [level=2] [ref=e85]
+                    - paragraph [ref=e86]: Det tager under et minut. Ingen konto, ingen kreditkort.
+                - link "Start gratis" [ref=e87] [cursor=pointer]:
+                    - /url: /generator/
+        - contentinfo [ref=e88]:
+            - generic [ref=e89]:
+                - generic [ref=e90]:
+                    - generic [ref=e91]:
+                        - paragraph [ref=e92]: skabelontilfaktura.dk
+                        - paragraph [ref=e93]: Danmarks nemmeste fakturaskabelon. Gratis, lovlig, og klar på 60 sekunder.
+                    - generic [ref=e94]:
+                        - paragraph [ref=e95]: Værktøj
+                        - link "Fakturagenerator" [ref=e96] [cursor=pointer]:
+                            - /url: /generator/
+                        - link "Priser" [ref=e97] [cursor=pointer]:
+                            - /url: /pris/
+                    - generic [ref=e98]:
+                        - paragraph [ref=e99]: Viden
+                        - link "Guides" [ref=e100] [cursor=pointer]:
+                            - /url: /blog/
+                    - generic [ref=e101]:
+                        - paragraph [ref=e102]: Juridisk
+                        - link "Privatlivspolitik" [ref=e103] [cursor=pointer]:
+                            - /url: /privatlivspolitik/
+                        - link "Cookiepolitik" [ref=e104] [cursor=pointer]:
+                            - /url: /cookiepolitik/
+                - paragraph [ref=e106]: Skabelontilfaktura.dk er et værktøj til at generere fakturaer og udgør ikke juridisk rådgivning. Brugeren er selv ansvarlig for overholdelse af gældende lovgivning. Ved komplekse situationer anbefales konsultation af revisor.
+    - dialog "Samtykke til cookies" [ref=e107]:
+        - generic [ref=e109]:
+            - generic [ref=e110]:
+                - paragraph [ref=e111]: Vi respekterer dit privatliv
+                - paragraph [ref=e112]:
+                    - text: Vi bruger Plausible Analytics, som er cookie-frit og ikke sporer dig på tværs af sider. Læs mere i vores
+                    - link "privatlivspolitik" [ref=e113] [cursor=pointer]:
+                        - /url: /privatlivspolitik/
+                    - text: .
+            - generic [ref=e114]:
+                - button "Tilpas" [ref=e115]
+                - button "Afvis alle" [ref=e116]
+                - button "Accepter alle" [ref=e117]

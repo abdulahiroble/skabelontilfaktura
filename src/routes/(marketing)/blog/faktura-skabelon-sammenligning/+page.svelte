@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
 	import { buildMeta, breadcrumbSchema, softwareApplicationSchema } from '$lib/seo';
 
 	const tools = [
@@ -122,8 +123,14 @@
 	{@html jsonLdScript}
 </svelte:head>
 
-<article class="mx-auto max-w-4xl px-4 py-16">
-	<nav class="text-muted-foreground mb-6 text-sm" aria-label="Brødkrummer">
+<ArticleLayout
+	title="De 5 bedste faktura skabeloner i Danmark (2026)"
+	subtitle="Gratis og betalte løsninger sammenlignet"
+	category="Sammenligning"
+	date="Opdateret juli 2026"
+	readingTime="8 min læsning"
+>
+	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">
 		<a href="/" class="hover:text-foreground">Forside</a>
 		<span class="mx-2">/</span>
 		<a href="/blog/" class="hover:text-foreground">Guides</a>
@@ -131,10 +138,7 @@
 		<span class="text-foreground">Sammenligning af faktura skabeloner</span>
 	</nav>
 
-	<h1 class="text-4xl font-bold">De 5 bedste faktura skabeloner i Danmark (2026)</h1>
-	<p class="text-muted-foreground mt-3 text-lg">Gratis og betalte løsninger sammenlignet</p>
-
-	<p class="mt-6 text-lg leading-relaxed">
+	<p class="lead">
 		En god <strong>faktura skabelon</strong> er afgørende for at få betaling til tiden og samtidig overholde
 		dansk lovgivning. Med de nye krav om digital bogføring fra januar 2026 bliver valget af faktureringsværktøj
 		endnu vigtigere - især hvis din årlige omsætning overstiger 300.000 DKK. Når du vælger en skabelon
@@ -144,7 +148,7 @@
 	</p>
 
 	<!-- Comparison table -->
-	<div class="mt-10 overflow-x-auto">
+	<div class="not-prose mt-10 overflow-x-auto">
 		<table class="w-full border-collapse text-sm">
 			<thead>
 				<tr class="border-border border-b text-left">
@@ -184,7 +188,7 @@
 	</p>
 
 	<!-- Tool descriptions -->
-	<section class="mt-12 space-y-6">
+	<section class="not-prose mt-12 space-y-6">
 		{#each tools as tool (tool.name)}
 			<div
 				class={`border-border rounded-xl border p-5${tool.highlight ? ' border-primary bg-muted/30 border-2' : ''}`}
@@ -213,7 +217,7 @@
 	</section>
 
 	<!-- Decision section -->
-	<section class="mt-16">
+	<section class="not-prose mt-16">
 		<h2 class="text-3xl font-bold">Hvilken skabelon passer til dig?</h2>
 		<p class="text-muted-foreground mt-3">
 			Det rette valg afhænger af din virksomheds størrelse, behov og budget. Her er vores
@@ -265,7 +269,7 @@
 	</section>
 
 	<!-- CTA -->
-	<div class="bg-primary text-primary-foreground mt-16 rounded-xl p-8 text-center">
+	<div class="not-prose bg-primary text-primary-foreground mt-16 rounded-xl p-8 text-center">
 		<h2 class="text-2xl font-semibold">Start gratis i dag</h2>
 		<p class="mt-3 opacity-90">
 			Opret din første faktura med skabelontilfaktura.dk - gratis, lovlig og klar på 60 sekunder.
@@ -274,7 +278,7 @@
 	</div>
 
 	<!-- Related reading -->
-	<div class="mt-12 border-t pt-8">
+	<div class="not-prose border-border mt-12 border-t pt-8">
 		<h2 class="text-lg font-semibold">Læs også</h2>
 		<ul class="text-muted-foreground mt-3 space-y-2 text-sm">
 			<li>
@@ -287,4 +291,4 @@
 			</li>
 		</ul>
 	</div>
-</article>
+</ArticleLayout>

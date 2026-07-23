@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
 	import { buildMeta, faqPageSchema, breadcrumbSchema } from '$lib/seo';
 
 	const faqQuestions = [
@@ -96,8 +97,13 @@
 	{@html jsonLdScript}
 </svelte:head>
 
-<article class="mx-auto max-w-3xl px-4 py-16">
-	<nav class="text-muted-foreground mb-6 text-sm" aria-label="Brødkrummer">
+<ArticleLayout
+	title="Faktura skabelon FAQ - alt du skal vide (2026)"
+	category="FAQ"
+	date="Opdateret juli 2026"
+	readingTime="7 min læsning"
+>
+	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">
 		<a href="/" class="hover:text-foreground">Forside</a>
 		<span class="mx-2">/</span>
 		<a href="/blog/" class="hover:text-foreground">Guides</a>
@@ -105,9 +111,7 @@
 		<span class="text-foreground">Faktura skabelon FAQ</span>
 	</nav>
 
-	<h1 class="text-4xl font-bold">Faktura skabelon FAQ - alt du skal vide (2026)</h1>
-
-	<p class="text-muted-foreground mt-4 text-lg leading-relaxed">
+	<p class="lead">
 		At finde den rette <strong>skabelon til faktura</strong> kan være en udfordring, når reglerne faktisk
 		ændrer sig markant i 2026. Uanset om du er selvstændig, freelancer eller driver en lille virksomhed,
 		skal dine fakturaer overholde Momsloven og de nye krav om digital bogføring. På denne side samler
@@ -117,7 +121,7 @@
 	</p>
 
 	<!-- CTA box -->
-	<div class="bg-primary text-primary-foreground mt-8 rounded-xl p-6 text-center">
+	<div class="not-prose bg-primary text-primary-foreground mt-8 rounded-xl p-6 text-center">
 		<h2 class="text-xl font-semibold">Brug vores gratis fakturagenerator</h2>
 		<p class="mt-2 text-sm opacity-90">
 			Opret en lovlig dansk faktura på under et minut. Ingen tilmelding, ingen vandmærke.
@@ -142,7 +146,7 @@
 	</div>
 
 	<!-- Decision CTA -->
-	<div class="border-border bg-muted/30 mt-16 rounded-xl border p-6">
+	<div class="not-prose border-border bg-muted/30 mt-16 rounded-xl border p-6">
 		<h2 class="text-2xl font-semibold">Klar til at sende din første faktura?</h2>
 		<p class="text-muted-foreground mt-3">
 			Vores fakturaskabelon er gratis at bruge og overholder alle danske regler - inklusiv
@@ -157,7 +161,7 @@
 	</div>
 
 	<!-- Related reading -->
-	<div class="mt-12 border-t pt-8">
+	<div class="not-prose border-border mt-12 border-t pt-8">
 		<h2 class="text-lg font-semibold">Læs også</h2>
 		<ul class="text-muted-foreground mt-3 space-y-2 text-sm">
 			<li>
@@ -170,4 +174,4 @@
 			</li>
 		</ul>
 	</div>
-</article>
+</ArticleLayout>

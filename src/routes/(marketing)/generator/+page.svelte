@@ -170,38 +170,46 @@
 	<meta name="twitter:description" content={meta.description} />
 </svelte:head>
 
-<div class="mx-auto max-w-7xl px-4 py-8">
+<div class="mx-auto max-w-7xl px-4 py-10 sm:py-14">
 	<!-- Sticky action bar (hidden when printing) -->
 	<div
-		class="bg-background/95 border-border supports-[backdrop-filter]:bg-background/60 no-print sticky top-14 z-30 -mx-4 mb-6 flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3 backdrop-blur"
+		class="bg-background/95 border-border supports-[backdrop-filter]:bg-background/70 no-print sticky top-14 z-30 -mx-4 mb-10 flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3 backdrop-blur sm:mb-14"
 	>
-		<p class="text-muted-foreground hidden text-sm sm:block">
-			Din faktura gemmes automatisk i din browser.
+		<p class="text-muted-foreground inline-flex items-center gap-2 text-xs sm:text-sm">
+			<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
+			<span class="hidden sm:inline">Din faktura gemmes automatisk i din browser.</span>
+			<span class="sm:hidden">Gemmes automatisk</span>
 		</p>
 		<div class="ml-auto flex flex-wrap items-center gap-2">
-			<Button variant="outline" onclick={handlePrint} disabled={loading || compressedLoading}>
-				<Printer size={16} />
+			<Button
+				variant="ghost"
+				size="sm"
+				onclick={handlePrint}
+				disabled={loading || compressedLoading}
+			>
+				<Printer size={15} />
 				Udskriv
 			</Button>
 			<Button
 				variant="outline"
+				size="sm"
 				onclick={() => downloadPdf(true)}
 				disabled={loading || compressedLoading}
 			>
 				{#if compressedLoading}
-					<LoaderCircle size={16} class="animate-spin" />
+					<LoaderCircle size={15} class="animate-spin" />
 					Komprimerer…
 				{:else}
-					<FileDown size={16} />
-					Download (komprimeret)
+					<FileDown size={15} />
+					Komprimeret
 				{/if}
 			</Button>
-			<Button onclick={() => downloadPdf(false)} disabled={loading || compressedLoading}>
+			<Button size="sm" onclick={() => downloadPdf(false)} disabled={loading || compressedLoading}>
 				{#if loading}
-					<LoaderCircle size={16} class="animate-spin" />
+					<LoaderCircle size={15} class="animate-spin" />
 					Genererer…
 				{:else}
-					<Download size={16} />
+					<Download size={15} />
 					Download PDF
 				{/if}
 			</Button>
@@ -209,27 +217,32 @@
 	</div>
 
 	<!-- Two-column layout: editor (left) + live preview (right) -->
-	<div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+	<div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
 		<!-- Editor column (hidden when printing) -->
 		<div class="no-print">
 			<InvoiceForm {store} />
 		</div>
 
 		<!-- Live preview column (the only thing visible when printing) -->
-		<aside class="preview-column lg:sticky lg:top-20 lg:self-start">
+		<aside class="preview-column lg:sticky lg:top-24 lg:self-start">
 			<div
 				class="border-border bg-card relative flex min-h-[600px] flex-col overflow-hidden rounded-lg border shadow-sm"
 			>
 				<!-- Preview header (hidden when printing) -->
-				<div class="border-border no-print flex items-center justify-between border-b px-4 py-2">
-					<span class="text-foreground text-sm font-medium">Live preview</span>
+				<div class="border-border no-print flex items-center justify-between border-b px-4 py-2.5">
+					<span class="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+						Live preview
+					</span>
 					{#if previewLoading}
 						<span class="text-muted-foreground flex items-center gap-1.5 text-xs">
 							<LoaderCircle size={12} class="animate-spin" />
 							Opdaterer…
 						</span>
 					{:else}
-						<span class="text-muted-foreground text-xs">{store.data.invoiceNumber}</span>
+						<span
+							class="text-foreground text-sm tabular-nums"
+							style="font-family: var(--font-display)">{store.data.invoiceNumber}</span
+						>
 					{/if}
 				</div>
 

@@ -46,14 +46,19 @@
 	}
 </script>
 
-<section class="border-border bg-card flex flex-wrap items-end gap-4 rounded-lg border p-4 sm:p-6">
+<section
+	class="border-border bg-secondary/30 grid grid-cols-2 gap-x-4 gap-y-3 rounded-lg border p-4 sm:grid-cols-4 sm:p-5"
+>
 	<div class="flex flex-col gap-1">
-		<label class="text-muted-foreground text-xs font-medium uppercase" for="setting-language">
+		<label
+			class="text-muted-foreground text-[0.65rem] font-medium tracking-wider uppercase"
+			for="setting-language"
+		>
 			{t('settings.language')}
 		</label>
 		<select
 			id="setting-language"
-			class="border-border bg-background focus:border-ring focus:ring-ring text-foreground h-9 rounded-md border px-3 text-sm outline-none focus:ring-1"
+			class="border-border bg-background focus:border-ring focus:ring-ring text-foreground h-8 w-full rounded-md border px-2 text-sm outline-none focus:ring-1"
 			value={invoice.language}
 			onchange={handleLanguage}
 		>
@@ -64,12 +69,15 @@
 	</div>
 
 	<div class="flex flex-col gap-1">
-		<label class="text-muted-foreground text-xs font-medium uppercase" for="setting-currency">
+		<label
+			class="text-muted-foreground text-[0.65rem] font-medium tracking-wider uppercase"
+			for="setting-currency"
+		>
 			{t('settings.currency')}
 		</label>
 		<select
 			id="setting-currency"
-			class="border-border bg-background focus:border-ring focus:ring-ring text-foreground h-9 rounded-md border px-3 text-sm outline-none focus:ring-1"
+			class="border-border bg-background focus:border-ring focus:ring-ring text-foreground h-8 w-full rounded-md border px-2 text-sm outline-none focus:ring-1"
 			value={invoice.currency}
 			onchange={handleCurrency}
 		>
@@ -80,12 +88,15 @@
 	</div>
 
 	<div class="flex flex-col gap-1">
-		<label class="text-muted-foreground text-xs font-medium uppercase" for="setting-vat-mode">
+		<label
+			class="text-muted-foreground text-[0.65rem] font-medium tracking-wider uppercase"
+			for="setting-vat-mode"
+		>
 			{t('settings.vatMode')}
 		</label>
 		<select
 			id="setting-vat-mode"
-			class="border-border bg-background focus:border-ring focus:ring-ring text-foreground h-9 rounded-md border px-3 text-sm outline-none focus:ring-1"
+			class="border-border bg-background focus:border-ring focus:ring-ring text-foreground h-8 w-full rounded-md border px-2 text-sm outline-none focus:ring-1"
 			value={invoice.vatMode}
 			onchange={handleVatMode}
 		>
@@ -96,12 +107,15 @@
 	</div>
 
 	<div class="flex flex-col gap-1">
-		<label class="text-muted-foreground text-xs font-medium uppercase" for="setting-template">
+		<label
+			class="text-muted-foreground text-[0.65rem] font-medium tracking-wider uppercase"
+			for="setting-template"
+		>
 			{t('settings.template')}
 		</label>
 		<select
 			id="setting-template"
-			class="border-border bg-background focus:border-ring focus:ring-ring text-foreground h-9 rounded-md border px-3 text-sm outline-none focus:ring-1"
+			class="border-border bg-background focus:border-ring focus:ring-ring text-foreground h-8 w-full rounded-md border px-2 text-sm outline-none focus:ring-1"
 			value={invoice.template ?? 'minimalist'}
 			onchange={handleTemplate}
 		>

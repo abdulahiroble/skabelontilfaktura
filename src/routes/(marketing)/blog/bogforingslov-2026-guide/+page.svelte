@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
 	import {
 		buildMeta,
 		faqPageSchema,
@@ -81,26 +82,20 @@
 	{@html jsonLdScript}
 </svelte:head>
 
-<article class="mx-auto max-w-3xl px-4 py-12">
-	<nav class="text-muted-foreground mb-8 text-sm" aria-label="Brødkrummer">
+<ArticleLayout
+	title="Ny bogføringslov 2026: Komplet guide for selvstændige"
+	subtitle="Alt om overgangen til digital bogføring, SAF-T 2.0 og NemHandel - forklaret simpelt uden juridisk volapyk."
+	category="Lovgivning"
+	date="Opdateret juli 2026"
+	readingTime="10 min læsning"
+>
+	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">
 		<a href="/" class="hover:text-foreground">Forside</a>
 		<span class="mx-2">/</span>
 		<a href="/blog/" class="hover:text-foreground">Guides</a>
 		<span class="mx-2">/</span>
 		<span class="text-foreground">Bogføringslov 2026</span>
 	</nav>
-
-	<header class="mb-10">
-		<p class="text-primary text-sm font-medium tracking-wide uppercase">Lovgivning</p>
-		<h1 class="mt-2 text-4xl font-bold tracking-tight">
-			Ny bogføringslov 2026: Komplet guide for selvstændige
-		</h1>
-		<p class="text-muted-foreground mt-3 text-lg">
-			Alt om overgangen til digital bogføring, SAF-T 2.0 og NemHandel - forklaret simpelt uden
-			juridisk volapyk.
-		</p>
-		<p class="text-muted-foreground mt-2 text-xs">Opdateret juli 2026</p>
-	</header>
 
 	<div class="space-y-8 leading-relaxed">
 		<section>
@@ -350,4 +345,4 @@
 			</p>
 		</section>
 	</div>
-</article>
+</ArticleLayout>

@@ -145,11 +145,11 @@
 			</span>
 			<span class="flex items-center gap-2">
 				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
-				CVR-opslag fra Erhvervsstyrelsen
+				CVR-opslag fra CVR-registret
 			</span>
 			<span class="flex items-center gap-2">
 				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
-				Overholder Momsloven § 52a
+				Understøtter Momsloven § 52a
 			</span>
 			<span class="flex items-center gap-2">
 				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
@@ -174,8 +174,8 @@
 			<p class="text-accent mb-2 text-sm font-medium">02</p>
 			<h2 class="text-2xl leading-tight">Skriv dit CVR, vi udfylder resten</h2>
 			<p class="text-muted-foreground mt-4 text-sm leading-relaxed">
-				Indtast et CVR-nummer og vi henter firmanavn, adresse og postnummer direkte fra det
-				offentlige register.
+				Indtast et CVR-nummer og vi henter firmanavn, adresse og postnummer automatisk via
+				CVR-registret.
 			</p>
 		</div>
 		<div class="lg:col-span-1">

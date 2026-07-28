@@ -18,6 +18,7 @@
 	import { createTranslator } from '$lib/i18n';
 	import PartySection from './PartySection.svelte';
 	import ItemTable from './ItemTable.svelte';
+	import LogoUpload from './LogoUpload.svelte';
 	import PaymentSection from './PaymentSection.svelte';
 	import SettingsBar from './SettingsBar.svelte';
 	import TotalsSummary from './TotalsSummary.svelte';
@@ -56,6 +57,7 @@
 				{t('section.seller')}
 			{/snippet}
 		</PartySection>
+		<LogoUpload invoice={store.data} {t} />
 	</section>
 
 	<!-- 02 — Køber -->

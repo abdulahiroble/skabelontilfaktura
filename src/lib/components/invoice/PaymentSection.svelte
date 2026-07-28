@@ -2,7 +2,7 @@
 	/**
 	 * Payment details and date section.
 	 *
-	 * Binds to fields on the reactive draft: bank reg.nr + kontonr, MobilePay,
+	 * Binds to fields on the reactive draft: bank name, reg.nr + kontonr, MobilePay,
 	 * free-text payment terms, and the issue / due / delivery dates. The VAT
 	 * calculation engine is intentionally NOT implemented here — this component
 	 * only collects the inputs that the engine will later consume.
@@ -93,6 +93,19 @@
 				type="date"
 				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
 				bind:value={invoice.deliveryDate}
+			/>
+		</div>
+
+		<div>
+			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-bank-name">
+				{t('payment.bankName')}
+			</label>
+			<input
+				id="inv-bank-name"
+				type="text"
+				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
+				bind:value={invoice.bankName}
+				placeholder="Lunar Bank"
 			/>
 		</div>
 

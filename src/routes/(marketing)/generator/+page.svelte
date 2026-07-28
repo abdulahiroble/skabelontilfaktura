@@ -85,7 +85,8 @@
 				if (previewUrl) URL.revokeObjectURL(previewUrl);
 				previewUrl = URL.createObjectURL(blob);
 			} catch {
-				// Renderer failure is non-fatal for the preview — keep the last good URL.
+				if (previewUrl) URL.revokeObjectURL(previewUrl);
+				previewUrl = null;
 			} finally {
 				previewLoading = false;
 			}
@@ -117,6 +118,8 @@
 	 * object-stream optimisation for a smaller file.
 	 */
 	async function downloadPdf(compressed = false) {
+		if (!store.isValid) return;
+
 		if (compressed) {
 			compressedLoading = true;
 		} else {
@@ -148,6 +151,8 @@
 	}
 
 	function handlePrint() {
+		if (!store.isValid) return;
+
 		// Opens the browser print dialog. Print-specific CSS (below) hides the
 		// form, action bar and site chrome so only the invoice prints.
 		window.print();
@@ -185,7 +190,7 @@
 				variant="ghost"
 				size="sm"
 				onclick={handlePrint}
-				disabled={loading || compressedLoading}
+				disabled={!store.isValid || loading || compressedLoading}
 			>
 				<Printer size={15} />
 				Udskriv
@@ -194,7 +199,7 @@
 				variant="outline"
 				size="sm"
 				onclick={() => downloadPdf(true)}
-				disabled={loading || compressedLoading}
+				disabled={!store.isValid || loading || compressedLoading}
 			>
 				{#if compressedLoading}
 					<LoaderCircle size={15} class="animate-spin" />
@@ -204,7 +209,11 @@
 					Komprimeret
 				{/if}
 			</Button>
-			<Button size="sm" onclick={() => downloadPdf(false)} disabled={loading || compressedLoading}>
+			<Button
+				size="sm"
+				onclick={() => downloadPdf(false)}
+				disabled={!store.isValid || loading || compressedLoading}
+			>
 				{#if loading}
 					<LoaderCircle size={15} class="animate-spin" />
 					Genererer…

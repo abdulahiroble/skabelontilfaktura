@@ -42,6 +42,9 @@
 			case 'unitPrice':
 				return t('validation.unitPriceNonNegative');
 			case 'cvr':
+				if (issue.message === 'Sælger mangler CVR ved standard moms') {
+					return t('validation.sellerCvrMissing');
+				}
 				return t('validation.cvrFormat');
 			case 'ean':
 				return t('validation.eanFormat');

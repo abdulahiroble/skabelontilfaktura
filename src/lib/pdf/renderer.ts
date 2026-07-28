@@ -24,7 +24,7 @@ import {
 } from 'pdf-lib';
 import type { InvoiceData, InvoiceItem, InvoiceLanguage, InvoiceParty } from '$lib/invoice/types';
 import { calcLineTotal, calculateTotals } from '$lib/invoice/moms';
-import { formatCurrency } from '$lib/invoice/validation';
+import { formatCurrency, validateCvr } from '$lib/invoice/validation';
 
 /* -------------------------------------------------------------------------- */
 /* Page geometry                                                              */
@@ -104,7 +104,7 @@ interface Labels {
 	ean: string;
 	notes: string;
 	creditNoteRef: string;
-	footer: string;
+	paymentReference: string;
 }
 
 const LABELS: Record<InvoiceLanguage, Labels> = {
@@ -131,11 +131,11 @@ const LABELS: Record<InvoiceLanguage, Labels> = {
 		accountNo: 'Kontonr.',
 		mobilepay: 'MobilePay',
 		bankAccount: 'Bankkonto',
-		cvr: 'CVR',
+		cvr: 'CVR-nr.',
 		ean: 'EAN',
 		notes: 'Noter',
 		creditNoteRef: 'Kreditnota vedrører faktura',
-		footer: 'Denne faktura er genereret med skabelontilfaktura.dk – gratis dansk fakturaskabelon.'
+		paymentReference: 'Angiv fakturanr. {invoiceNumber} ved bankoverførsel.'
 	},
 	en: {
 		invoice: 'INVOICE',
@@ -164,7 +164,7 @@ const LABELS: Record<InvoiceLanguage, Labels> = {
 		ean: 'EAN',
 		notes: 'Notes',
 		creditNoteRef: 'Credit note for invoice',
-		footer: 'This invoice was generated with skabelontilfaktura.dk – free Danish invoice template.'
+		paymentReference: 'Use invoice no. {invoiceNumber} as the bank transfer reference.'
 	}
 };
 
@@ -272,13 +272,22 @@ function formatDate(iso: string | undefined, language: InvoiceLanguage): string 
 }
 
 /** Build the displayable address lines for an invoice party. */
-function partyLines(party: InvoiceParty, labels: Labels): string[] {
+function partyLines(
+	party: InvoiceParty,
+	labels: Labels,
+	language: InvoiceLanguage,
+	isSeller = false
+): string[] {
 	const lines: string[] = [];
 	if (party.name) lines.push(party.name);
 	if (party.address) lines.push(party.address);
 	const cityLine = [party.postalCode, party.city].filter(Boolean).join(' ');
 	if (cityLine) lines.push(cityLine);
-	if (party.cvr) lines.push(`${labels.cvr}: ${party.cvr}`);
+	if (party.cvr) {
+		const cvr = isSeller && language === 'en' ? `DK${party.cvr}` : party.cvr;
+		const separator = language === 'da' ? ' ' : ': ';
+		lines.push(`${labels.cvr}${separator}${cvr}`);
+	}
 	if (party.ean) lines.push(`${labels.ean}: ${party.ean}`);
 	if (party.email) lines.push(party.email);
 	if (party.phone) lines.push(party.phone);
@@ -438,7 +447,7 @@ function renderSeller(
 		ctx.page.drawImage(logo, { x: MARGIN, y: PAGE_HEIGHT - ctx.y - h, width: w, height: h });
 		ctx.y += h + 10;
 	}
-	const lines = partyLines(data.seller, labels);
+	const lines = partyLines(data.seller, labels, data.language, true);
 	if (lines.length) {
 		drawLine(ctx, lines[0], MARGIN, SIZE_BODY, { font: ctx.bold });
 		drawBlock(ctx, lines.slice(1), MARGIN, SIZE_BODY, TEXT);
@@ -449,7 +458,7 @@ function renderSeller(
 function renderBuyer(ctx: RenderCtx, data: InvoiceData, labels: Labels): void {
 	ensureSpace(ctx, 70);
 	drawLine(ctx, labels.buyer.toUpperCase(), MARGIN, SIZE_SMALL, { color: MUTED });
-	const lines = partyLines(data.buyer, labels);
+	const lines = partyLines(data.buyer, labels, data.language);
 	if (lines.length) {
 		drawLine(ctx, lines[0], MARGIN, SIZE_BODY, { font: ctx.bold });
 		drawBlock(ctx, lines.slice(1), MARGIN, SIZE_BODY, TEXT);
@@ -615,24 +624,33 @@ function renderTotals(ctx: RenderCtx, data: InvoiceData, labels: Labels): void {
 
 /** Render payment details, payment terms and notes (left-aligned). */
 function renderFooterSections(ctx: RenderCtx, data: InvoiceData, labels: Labels): void {
-	const hasBank = data.regNr || data.kontonr;
+	const hasBank = data.bankName || data.regNr || data.kontonr;
 	const hasMobilepay = data.mobilepay;
 	const hasTerms = data.paymentTerms;
 	const hasNotes = data.notes && data.notes.trim();
 
-	ensureSpace(ctx, 60);
+	ensureSpace(ctx, 72);
 
 	// Payment details column.
 	if (hasBank || hasMobilepay) {
 		drawLine(ctx, labels.bankAccount.toUpperCase(), MARGIN, SIZE_SMALL, { color: MUTED });
+		if (data.bankName) {
+			drawLine(ctx, data.bankName, MARGIN, SIZE_BODY, { font: ctx.bold });
+		}
 		if (data.regNr) {
-			drawLine(ctx, `${labels.regNr}: ${data.regNr}`, MARGIN, SIZE_BODY);
+			drawLine(ctx, `${labels.regNr} ${data.regNr}`, MARGIN, SIZE_BODY);
 		}
 		if (data.kontonr) {
-			drawLine(ctx, `${labels.accountNo}: ${data.kontonr}`, MARGIN, SIZE_BODY);
+			drawLine(ctx, `${labels.accountNo} ${data.kontonr}`, MARGIN, SIZE_BODY);
 		}
-		if (data.regNr && data.kontonr) {
-			drawLine(ctx, `${data.regNr} ${data.kontonr}`, MARGIN, SIZE_BODY, { font: ctx.bold });
+		if (hasBank) {
+			drawLine(
+				ctx,
+				labels.paymentReference.replace('{invoiceNumber}', data.invoiceNumber),
+				MARGIN,
+				SIZE_SMALL,
+				{ color: MUTED }
+			);
 		}
 		if (hasMobilepay) {
 			drawLine(ctx, `${labels.mobilepay}: ${data.mobilepay}`, MARGIN, SIZE_BODY);
@@ -653,19 +671,6 @@ function renderFooterSections(ctx: RenderCtx, data: InvoiceData, labels: Labels)
 		drawBlock(ctx, noteLines, MARGIN, SIZE_BODY, MUTED);
 		ctx.y += SECTION_GAP / 2;
 	}
-}
-
-/** Render the small disclaimer footer pinned near the bottom margin of the last page. */
-function renderFooterDisclaimer(ctx: RenderCtx, labels: Labels): void {
-	const footerY = PAGE_HEIGHT - MARGIN + 22;
-	const lastPage = ctx.doc.getPage(ctx.doc.getPageCount() - 1);
-	lastPage.drawText(labels.footer, {
-		x: MARGIN,
-		y: footerY,
-		size: SIZE_SMALL,
-		font: ctx.font,
-		color: MUTED
-	});
 }
 
 /* -------------------------------------------------------------------------- */
@@ -694,6 +699,10 @@ export async function renderInvoicePdf(
 	data: InvoiceData,
 	options: RenderInvoicePdfOptions = {}
 ): Promise<Uint8Array> {
+	if (data.vatMode === 'standard' && !validateCvr(data.seller.cvr ?? '')) {
+		throw new Error('A valid seller CVR number is required for a standard VAT invoice.');
+	}
+
 	const doc = await PDFDocument.create();
 	const font = await doc.embedFont(StandardFonts.Helvetica);
 	const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -731,7 +740,6 @@ export async function renderInvoicePdf(
 	renderTable(ctx, data.items, data, labels);
 	renderTotals(ctx, data, labels);
 	renderFooterSections(ctx, data, labels);
-	renderFooterDisclaimer(ctx, labels);
 
 	return doc.save({ useObjectStreams: options.useObjectStreams ?? false });
 }

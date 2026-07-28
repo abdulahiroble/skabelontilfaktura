@@ -11,4 +11,5 @@ worker-configuration.d.ts
 CLAUDE.md
 skabelontilfaktura-prd.md
 .mcp.json
+.playwright-mcp
 drizzle

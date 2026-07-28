@@ -102,6 +102,7 @@ export const InvoiceDataSchema = z
 		currency: CurrencySchema,
 		vatMode: VatModeSchema,
 		paymentTerms: z.string().optional(),
+		bankName: z.string().optional(),
 		regNr: z
 			.string()
 			.optional()
@@ -133,12 +134,7 @@ export const InvoiceDataSchema = z
 		message: 'Forfaldsdato skal være efter fakturadato',
 		path: ['dueDate']
 	})
-	/**
-	 * CVR soft check. We never want to hard-block a standard-rated invoice without
-	 * a CVR (the user may be a B2C sole trader), so we surface this as a warning
-	 * via the issues map instead of returning failure. Consumers can detect it by
-	 * inspecting the validation result for an issue with code 'seller_cvr_missing'.
-	 */
+	/** A standard VAT invoice must identify the seller with a valid CVR number. */
 	.refine(
 		(data) => {
 			if (data.vatMode !== 'standard') return true;

@@ -33,6 +33,7 @@ export function createDefaultInvoice(): InvoiceData {
 		currency: 'DKK',
 		vatMode: 'standard',
 		paymentTerms: 'Netto 8 dage',
+		bankName: '',
 		regNr: '',
 		kontonr: '',
 		mobilepay: '',

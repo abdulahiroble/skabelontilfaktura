@@ -47,6 +47,7 @@ export interface InvoiceData {
 	currency: Currency;
 	vatMode: VatMode;
 	paymentTerms?: string; // e.g., 'Netto 8 dage'
+	bankName?: string; // e.g., 'Lunar Bank'
 	regNr?: string; // bank registration number
 	kontonr?: string; // bank account number
 	mobilepay?: string; // phone number

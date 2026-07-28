@@ -86,6 +86,7 @@ const da: MessageCatalog = {
 		'Linjerne har blandede momssatser, men fakturaen er i standard-tilstand. Moms beregnes ud fra fakturaens momstilstand.',
 
 	// Payment
+	'payment.bankName': 'Bank',
 	'payment.regNr': 'Registreringsnummer',
 	'payment.kontonr': 'Kontonummer',
 	'payment.mobilepay': 'MobilePay-nummer',
@@ -95,6 +96,14 @@ const da: MessageCatalog = {
 	'payment.deliveryDate': 'Leveringsdato',
 	'payment.invoiceNumber': 'Fakturanummer',
 	'payment.series': 'Serie',
+
+	// Branding
+	'branding.logo': 'Logo (valgfrit)',
+	'branding.logoHint': 'PNG eller JPG, maks. 1 MB.',
+	'branding.logoPreview': 'Forhåndsvisning af logo',
+	'branding.removeLogo': 'Fjern logo',
+	'branding.invalidLogo': 'Vælg en PNG- eller JPG-fil.',
+	'branding.logoTooLarge': 'Logoet må højst være 1 MB.',
 
 	// Settings
 	'settings.language': 'Sprog',
@@ -207,6 +216,7 @@ const en: MessageCatalog = {
 		'Lines have mixed VAT rates but the invoice is in standard mode. VAT is computed from the invoice VAT mode.',
 
 	// Payment
+	'payment.bankName': 'Bank',
 	'payment.regNr': 'Registration number',
 	'payment.kontonr': 'Account number',
 	'payment.mobilepay': 'MobilePay number',
@@ -216,6 +226,14 @@ const en: MessageCatalog = {
 	'payment.deliveryDate': 'Delivery date',
 	'payment.invoiceNumber': 'Invoice number',
 	'payment.series': 'Series',
+
+	// Branding
+	'branding.logo': 'Logo (optional)',
+	'branding.logoHint': 'PNG or JPG, max. 1 MB.',
+	'branding.logoPreview': 'Logo preview',
+	'branding.removeLogo': 'Remove logo',
+	'branding.invalidLogo': 'Choose a PNG or JPG file.',
+	'branding.logoTooLarge': 'The logo must be no larger than 1 MB.',
 
 	// Settings
 	'settings.language': 'Language',

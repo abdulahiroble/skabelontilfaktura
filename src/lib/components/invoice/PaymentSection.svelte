@@ -25,7 +25,7 @@
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-number">
-				{t('payment.invoiceNumber')}
+				{t('payment.invoiceNumber')} <span class="text-destructive">*</span>
 			</label>
 			<input
 				id="inv-number"
@@ -37,7 +37,7 @@
 
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-series">
-				{t('payment.series')}
+				{t('payment.series')} <span class="text-destructive">*</span>
 			</label>
 			<input
 				id="inv-series"
@@ -50,6 +50,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-terms">
 				{t('payment.terms')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="inv-terms"
@@ -62,7 +63,7 @@
 
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-issue-date">
-				{t('payment.issueDate')}
+				{t('payment.issueDate')} <span class="text-destructive">*</span>
 			</label>
 			<input
 				id="inv-issue-date"
@@ -74,7 +75,7 @@
 
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-due-date">
-				{t('payment.dueDate')}
+				{t('payment.dueDate')} <span class="text-destructive">*</span>
 			</label>
 			<input
 				id="inv-due-date"
@@ -87,6 +88,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-delivery-date">
 				{t('payment.deliveryDate')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="inv-delivery-date"
@@ -99,6 +101,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-bank-name">
 				{t('payment.bankName')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="inv-bank-name"
@@ -112,6 +115,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-regnr">
 				{t('payment.regNr')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="inv-regnr"
@@ -127,6 +131,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-kontonr">
 				{t('payment.kontonr')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="inv-kontonr"
@@ -141,6 +146,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="inv-mobilepay">
 				{t('payment.mobilepay')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="inv-mobilepay"

@@ -155,6 +155,22 @@ export function calcMomsfritaget(items: InvoiceItem[]): InvoiceTotals {
 }
 
 /**
+ * Non-VAT-registered business. No VAT may be charged or presented as part of
+ * the price, for example where annual taxable turnover remains below the Danish
+ * VAT-registration threshold.
+ */
+export function calcIkkeMomsregistreret(items: InvoiceItem[]): InvoiceTotals {
+	const subtotal = calcSubtotal(items);
+	return {
+		subtotal,
+		vatRate: 0,
+		vatAmount: 0,
+		total: subtotal,
+		label: 'Virksomheden er ikke momsregistreret.'
+	};
+}
+
+/**
  * Reverse charge — applies to B2B cross-border / VAT-registered buyers where the
  * buyer accounts for the VAT. No VAT is charged on the invoice; the total equals
  * the subtotal.
@@ -179,7 +195,7 @@ export function calcReverseCharge(items: InvoiceItem[]): InvoiceTotals {
  * used by the UI and PDF generator.
  *
  * - `standard`: uses `vatRate` (defaults to 25%).
- * - `kunstnermoms` / `momsfritaget` / `reverse`: `vatRate` is ignored; the
+ * - `ikke_momsregistreret` / `kunstnermoms` / `momsfritaget` / `reverse`: `vatRate` is ignored; the
  *   statutory rules for each mode apply.
  */
 export function calculateTotals(
@@ -192,6 +208,8 @@ export function calculateTotals(
 			return calcStandard(items, vatRate);
 		case 'kunstnermoms':
 			return calcKunstnermoms(items);
+		case 'ikke_momsregistreret':
+			return calcIkkeMomsregistreret(items);
 		case 'momsfritaget':
 			return calcMomsfritaget(items);
 		case 'reverse':

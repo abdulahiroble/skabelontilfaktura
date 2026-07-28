@@ -12,6 +12,7 @@ import type { InvoiceItem } from './types';
 import {
 	calcKunstnermoms,
 	calcLineTotal,
+	calcIkkeMomsregistreret,
 	calcMomsfritaget,
 	calcReverseCharge,
 	calcStandard,
@@ -139,6 +140,16 @@ function testMomsfritaget(): void {
 	assertClose(t.total, 1000, 'total 1000');
 }
 
+function testIkkeMomsregistreret(): void {
+	console.log('calcIkkeMomsregistreret');
+	const t = calcIkkeMomsregistreret(items1000);
+	assertClose(t.subtotal, 1000, 'subtotal 1000');
+	assertClose(t.vatRate, 0, 'vatRate 0');
+	assertClose(t.vatAmount, 0, 'vat 0');
+	assertClose(t.total, 1000, 'total 1000');
+	assertEqual(t.label, 'Virksomheden er ikke momsregistreret.', 'non-registered label');
+}
+
 function testReverseCharge(): void {
 	console.log('calcReverseCharge');
 	const t = calcReverseCharge(items1000);
@@ -150,7 +161,13 @@ function testReverseCharge(): void {
 
 function testEmptyItems(): void {
 	console.log('empty items');
-	for (const mode of ['standard', 'kunstnermoms', 'momsfritaget', 'reverse'] as const) {
+	for (const mode of [
+		'standard',
+		'ikke_momsregistreret',
+		'kunstnermoms',
+		'momsfritaget',
+		'reverse'
+	] as const) {
 		const t = calculateTotals([], mode);
 		assertClose(t.subtotal, 0, `${mode}: subtotal 0`);
 		assertClose(t.vatAmount, 0, `${mode}: vat 0`);
@@ -178,6 +195,11 @@ function testDispatcher(): void {
 		calculateTotals(items1000, 'kunstnermoms').total,
 		calcKunstnermoms(items1000).total,
 		'kunstnermoms'
+	);
+	assertClose(
+		calculateTotals(items1000, 'ikke_momsregistreret').total,
+		calcIkkeMomsregistreret(items1000).total,
+		'ikke_momsregistreret'
 	);
 	assertClose(
 		calculateTotals(items1000, 'momsfritaget').total,
@@ -225,6 +247,7 @@ function main(): void {
 	testStandard();
 	testKunstnermoms();
 	testMomsfritaget();
+	testIkkeMomsregistreret();
 	testReverseCharge();
 	testEmptyItems();
 	testRounding();

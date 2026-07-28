@@ -6,7 +6,8 @@
  * type (re-exported from `schema.ts`) when you want the shape that Zod accepts.
  */
 
-export type VatMode = 'standard' | 'momsfritaget' | 'reverse' | 'kunstnermoms';
+export type VatMode =
+	'standard' | 'ikke_momsregistreret' | 'momsfritaget' | 'reverse' | 'kunstnermoms';
 
 export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'void';
 

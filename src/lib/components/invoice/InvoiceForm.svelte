@@ -37,6 +37,7 @@
 			{t('app.title')}
 		</h1>
 		<p class="text-muted-foreground text-sm sm:text-base">{t('app.subtitle')}</p>
+		<p class="text-muted-foreground text-sm">{t('form.requiredLegend')}</p>
 	</header>
 
 	<SettingsBar
@@ -52,7 +53,12 @@
 	<!-- 01 — Sælger -->
 	<section class="border-border border-t pt-8 sm:pt-10">
 		<p class="text-accent mb-4 text-xs font-medium tracking-wider uppercase">01 — Indhold</p>
-		<PartySection party={store.data.seller} {t} role="seller">
+		<PartySection
+			party={store.data.seller}
+			{t}
+			role="seller"
+			requiresCvr={store.data.vatMode === 'standard'}
+		>
 			{#snippet title()}
 				{t('section.seller')}
 			{/snippet}

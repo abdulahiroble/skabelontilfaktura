@@ -19,7 +19,13 @@ import {
 /* Enum schemas                                                               */
 /* -------------------------------------------------------------------------- */
 
-export const VatModeSchema = z.enum(['standard', 'momsfritaget', 'reverse', 'kunstnermoms']);
+export const VatModeSchema = z.enum([
+	'standard',
+	'ikke_momsregistreret',
+	'momsfritaget',
+	'reverse',
+	'kunstnermoms'
+]);
 
 export const InvoiceStatusSchema = z.enum(['draft', 'sent', 'paid', 'overdue', 'void']);
 

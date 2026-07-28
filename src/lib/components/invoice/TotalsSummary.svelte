@@ -38,6 +38,7 @@
 	const formatted = $derived(formatTotals(totals, currency, language));
 
 	const hasItems = $derived(items.length > 0);
+	const showVatRow = $derived(vatMode !== 'ikke_momsregistreret');
 
 	/**
 	 * In standard mode the moms engine ignores per-line `vatRate` and applies
@@ -67,6 +68,8 @@
 		translate: (key: string) => string
 	): string {
 		switch (mode) {
+			case 'ikke_momsregistreret':
+				return '';
 			case 'momsfritaget':
 				return 'Momsfritaget efter momslovens § 13';
 			case 'reverse':
@@ -107,10 +110,14 @@
 				</div>
 			{/if}
 
-			<div class="flex items-baseline justify-between gap-4">
-				<dt class="text-muted-foreground">{vatLabel}</dt>
-				<dd class="text-foreground tabular-nums">{formatted.vatAmount}</dd>
-			</div>
+			{#if showVatRow}
+				<div class="flex items-baseline justify-between gap-4">
+					<dt class="text-muted-foreground">{vatLabel}</dt>
+					<dd class="text-foreground tabular-nums">{formatted.vatAmount}</dd>
+				</div>
+			{:else if formatted.label}
+				<p class="text-muted-foreground text-xs">{formatted.label}</p>
+			{/if}
 
 			<div class="border-border mt-2 flex items-baseline justify-between gap-4 border-t pt-3">
 				<dt class="text-foreground text-base font-semibold">{t('totals.total')}</dt>

@@ -22,7 +22,7 @@
 	 * the persisted draft.
 	 */
 	import { onDestroy } from 'svelte';
-	import { Download, Printer, LoaderCircle, FileDown } from '@lucide/svelte';
+	import { Download, Printer, LoaderCircle, FileDown, FileText } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import InvoiceForm from '$lib/components/invoice/InvoiceForm.svelte';
 	import { createInvoiceStore } from '$lib/invoice/store.svelte';
@@ -235,14 +235,16 @@
 		<!-- Live preview column (the only thing visible when printing) -->
 		<aside class="preview-column lg:sticky lg:top-24 lg:self-start">
 			<div
-				class="border-border bg-card relative flex min-h-[600px] flex-col overflow-hidden rounded-lg border shadow-sm"
+				class="border-border bg-card relative flex min-h-[420px] flex-col overflow-hidden rounded-lg border shadow-sm sm:min-h-[600px]"
 			>
 				<!-- Preview header (hidden when printing) -->
 				<div class="border-border no-print flex items-center justify-between border-b px-4 py-2.5">
 					<span class="text-muted-foreground text-xs font-medium tracking-wider uppercase">
 						Live preview
 					</span>
-					{#if previewLoading}
+					{#if !store.isValid}
+						<span class="text-muted-foreground text-xs">Udfyld de påkrævede felter</span>
+					{:else if previewLoading}
 						<span class="text-muted-foreground flex items-center gap-1.5 text-xs">
 							<LoaderCircle size={12} class="animate-spin" />
 							Opdaterer…
@@ -256,7 +258,24 @@
 				</div>
 
 				<!-- PDF iframe or loading placeholder -->
-				{#if previewUrl}
+				{#if !store.isValid}
+					<div
+						class="text-muted-foreground flex flex-1 flex-col items-center justify-center gap-3 p-8 text-center"
+						aria-live="polite"
+					>
+						<div
+							class="bg-secondary text-foreground flex h-12 w-12 items-center justify-center rounded-full"
+						>
+							<FileText size={22} />
+						</div>
+						<div class="space-y-1">
+							<p class="text-foreground text-sm font-medium">Din faktura vises her</p>
+							<p class="max-w-xs text-sm">
+								Udfyld sælger, modtager og mindst én fakturalinje for at se forhåndsvisningen.
+							</p>
+						</div>
+					</div>
+				{:else if previewUrl}
 					<iframe
 						title="Faktura preview"
 						src={previewUrl}
@@ -265,6 +284,7 @@
 				{:else}
 					<div
 						class="text-muted-foreground flex flex-1 flex-col items-center justify-center gap-3 p-6"
+						aria-live="polite"
 					>
 						<LoaderCircle size={24} class="animate-spin" />
 						<p class="text-sm">Genererer forhåndsvisning…</p>

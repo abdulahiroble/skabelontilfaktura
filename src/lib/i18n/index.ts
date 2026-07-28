@@ -33,6 +33,7 @@ const da: MessageCatalog = {
 	'common.dkk': 'DKK',
 	'common.eur': 'EUR',
 	'common.usd': 'USD',
+	'form.requiredLegend': 'Felter med * skal udfyldes. (Valgfrit) kan udelades.',
 
 	// Sections
 	'section.seller': 'Sælger (afsender)',
@@ -114,6 +115,7 @@ const da: MessageCatalog = {
 
 	// VAT modes
 	'vat.standard': 'Standard (25%)',
+	'vat.ikke_momsregistreret': 'Ikke momsregistreret',
 	'vat.momsfritaget': 'Momsfritaget',
 	'vat.reverse': 'Reverse charge',
 	'vat.kunstnermoms': 'Kunstnermoms',
@@ -163,6 +165,7 @@ const en: MessageCatalog = {
 	'common.dkk': 'DKK',
 	'common.eur': 'EUR',
 	'common.usd': 'USD',
+	'form.requiredLegend': 'Fields marked with * are required. (Optional) fields can be left blank.',
 
 	// Sections
 	'section.seller': 'Seller (sender)',
@@ -244,6 +247,7 @@ const en: MessageCatalog = {
 
 	// VAT modes
 	'vat.standard': 'Standard (25%)',
+	'vat.ikke_momsregistreret': 'Not VAT registered',
 	'vat.momsfritaget': 'VAT exempt',
 	'vat.reverse': 'Reverse charge',
 	'vat.kunstnermoms': 'Artist VAT',

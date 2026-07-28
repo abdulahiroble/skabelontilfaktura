@@ -31,9 +31,11 @@
 		 * since reverse charge only applies on the buyer side in practice.
 		 */
 		role?: 'seller' | 'buyer';
+		/** Seller CVR is required when the invoice uses standard VAT. */
+		requiresCvr?: boolean;
 	};
 
-	let { party, title, t, role = 'seller' }: Props = $props();
+	let { party, title, t, role = 'seller', requiresCvr = false }: Props = $props();
 
 	// One lookup/validation container per component instance — never shared.
 	const cvrLookup = createCvrLookup();
@@ -118,6 +120,7 @@
 				for="party-address-{party.name}"
 			>
 				{t('party.address')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="party-address-{party.name}"
@@ -132,6 +135,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="party-postal-{party.name}">
 				{t('party.postalCode')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="party-postal-{party.name}"
@@ -147,6 +151,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="party-city-{party.name}">
 				{t('party.city')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="party-city-{party.name}"
@@ -161,6 +166,11 @@
 		<div class="sm:col-span-2">
 			<label class="text-foreground mb-1 block text-sm font-medium" for="party-cvr-{party.name}">
 				{t('party.cvr')}
+				{#if requiresCvr}
+					<span class="text-destructive">*</span>
+				{:else}
+					<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
+				{/if}
 			</label>
 			<div class="flex flex-wrap items-center gap-2">
 				<input
@@ -245,6 +255,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="party-email-{party.name}">
 				{t('party.email')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="party-email-{party.name}"
@@ -259,6 +270,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="party-phone-{party.name}">
 				{t('party.phone')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="party-phone-{party.name}"
@@ -273,6 +285,7 @@
 		<div>
 			<label class="text-foreground mb-1 block text-sm font-medium" for="party-ean-{party.name}">
 				{t('party.ean')}
+				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
 				id="party-ean-{party.name}"

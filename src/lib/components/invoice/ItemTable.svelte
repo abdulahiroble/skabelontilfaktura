@@ -47,12 +47,22 @@
 				<tr
 					class="text-muted-foreground border-border border-b text-left text-[0.65rem] font-medium tracking-wider uppercase"
 				>
-					<th class="py-2 pr-2">{t('items.description')}</th>
-					<th class="w-20 px-2 py-2">{t('items.quantity')}</th>
-					<th class="w-20 px-2 py-2">{t('items.unit')}</th>
-					<th class="w-28 px-2 py-2">{t('items.unitPrice')}</th>
-					<th class="w-20 px-2 py-2">{t('items.vatRate')}</th>
-					<th class="w-24 px-2 py-2">{t('items.discount')}</th>
+					<th class="py-2 pr-2">{t('items.description')} <span class="text-destructive">*</span></th
+					>
+					<th class="w-20 px-2 py-2"
+						>{t('items.quantity')} <span class="text-destructive">*</span></th
+					>
+					<th class="w-20 px-2 py-2">{t('items.unit')} <span class="text-destructive">*</span></th>
+					<th class="w-28 px-2 py-2"
+						>{t('items.unitPrice')} <span class="text-destructive">*</span></th
+					>
+					<th class="w-20 px-2 py-2"
+						>{t('items.vatRate')} <span class="text-destructive">*</span></th
+					>
+					<th class="w-24 px-2 py-2">
+						{t('items.discount')}
+						<span class="font-normal normal-case">({t('common.optional')})</span>
+					</th>
 					<th class="w-28 px-2 py-2 text-right">{t('items.lineTotal')}</th>
 					<th class="w-10 px-2 py-2"></th>
 				</tr>

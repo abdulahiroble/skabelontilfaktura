@@ -1,0 +1,269 @@
+- generic [ref=f14e2]:
+  - generic [ref=f14e3]:
+    - banner [ref=f14e4]:
+      - generic [ref=f14e5]:
+        - link "skabelontilfaktura .dk" [ref=f14e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f14e7]: skabelontilfaktura
+          - generic [ref=f14e8]: .dk
+        - navigation [ref=f14e9]:
+          - link "Fakturagenerator" [ref=f14e10] [cursor=pointer]:
+            - /url: /
+          - link "Priser" [ref=f14e11] [cursor=pointer]:
+            - /url: /pris/
+          - link "Guides" [ref=f14e12] [cursor=pointer]:
+            - /url: /blog/
+        - generic [ref=f14e13]:
+          - link "Log ind" [ref=f14e14] [cursor=pointer]:
+            - /url: /login/
+          - link "Lav faktura" [ref=f14e15] [cursor=pointer]:
+            - /url: /generator/
+    - main [ref=f14e16]:
+      - generic [ref=f14e17]:
+        - generic [ref=f14e18]:
+          - paragraph [ref=f14e19]:
+            - generic [ref=f14e21]: Din faktura gemmes automatisk i din browser.
+          - generic [ref=f14e22]:
+            - button "Udskriv" [ref=f14e246]
+            - button "Komprimeret" [ref=f14e251]
+            - button "Download PDF" [ref=f14e256]
+        - generic [ref=f14e23]:
+          - generic [ref=f14e25]:
+            - generic [ref=f14e26]:
+              - paragraph [ref=f14e27]: Gratis og lovlig
+              - heading "Fakturagenerator" [level=1] [ref=f14e28]
+              - paragraph [ref=f14e29]: Udfyld felterne nedenfor for at oprette din faktura.
+            - generic [ref=f14e30]:
+              - generic [ref=f14e31]:
+                - generic [ref=f14e32]: Sprog
+                - combobox "Sprog" [ref=f14e33]:
+                  - option "Dansk" [selected]
+                  - option "English"
+              - generic [ref=f14e34]:
+                - generic [ref=f14e35]: Valuta
+                - combobox "Valuta" [ref=f14e36]:
+                  - option "DKK" [selected]
+                  - option "EUR"
+                  - option "USD"
+              - generic [ref=f14e37]:
+                - generic [ref=f14e38]: Momstilstand
+                - combobox "Momstilstand" [ref=f14e39]:
+                  - option "Standard (25%)" [selected]
+                  - option "Momsfritaget"
+                  - option "Reverse charge"
+                  - option "Kunstnermoms"
+              - generic [ref=f14e40]:
+                - generic [ref=f14e41]: Skabelon
+                - combobox "Skabelon" [ref=f14e42]:
+                  - option "Minimalistisk" [selected]
+                  - option "Moderne"
+            - generic [ref=f14e260]: ✓ Fakturagenerator — OK
+            - generic [ref=f14e53]:
+              - paragraph [ref=f14e54]: 01 — Indhold
+              - generic [ref=f14e55]:
+                - heading "Sælger (afsender)" [level=2] [ref=f14e56]
+                - generic [ref=f14e57]:
+                  - generic [ref=f14e58]:
+                    - generic [ref=f14e59]: Navn / firmanavn *
+                    - textbox "Navn / firmanavn *" [ref=f14e261]:
+                      - /placeholder: Navn / firmanavn
+                      - text: Ace Solutions
+                  - generic [ref=f14e61]:
+                    - generic [ref=f14e62]: Adresse
+                    - textbox "Adresse" [ref=f14e262]: Avedøreholmen 96c
+                  - generic [ref=f14e64]:
+                    - generic [ref=f14e65]: Postnummer
+                    - textbox "Postnummer" [ref=f14e263]: "2650"
+                  - generic [ref=f14e67]:
+                    - generic [ref=f14e68]: By
+                    - textbox "By" [ref=f14e264]: Hvidovre
+                  - generic [ref=f14e70]:
+                    - generic [ref=f14e71]: CVR-nummer
+                    - generic [ref=f14e72]:
+                      - textbox "CVR-nummer" [ref=f14e265]:
+                        - /placeholder: "12345678"
+                        - text: "12345678"
+                      - button "Slå op" [ref=f14e266]
+                  - generic [ref=f14e74]:
+                    - generic [ref=f14e75]: E-mail
+                    - textbox "E-mail" [ref=f14e268]:
+                      - /placeholder: navn@firma.dk
+                  - generic [ref=f14e77]:
+                    - generic [ref=f14e78]: Telefon
+                    - textbox "Telefon" [ref=f14e269]:
+                      - /placeholder: +45 12 34 56 78
+                  - generic [ref=f14e80]:
+                    - generic [ref=f14e81]: EAN-nummer
+                    - textbox "EAN-nummer" [ref=f14e270]:
+                      - /placeholder: "5790000000000"
+            - generic [ref=f14e83]:
+              - paragraph [ref=f14e84]: 02 — Modtager
+              - generic [ref=f14e85]:
+                - heading "Køber (modtager)" [level=2] [ref=f14e86]
+                - generic [ref=f14e87]:
+                  - generic [ref=f14e88]:
+                    - generic [ref=f14e89]: Navn / firmanavn *
+                    - textbox "Navn / firmanavn *" [ref=f14e271]:
+                      - /placeholder: Navn / firmanavn
+                      - text: Byens Køleservice
+                  - generic [ref=f14e91]:
+                    - generic [ref=f14e92]: Adresse
+                    - textbox "Adresse" [ref=f14e93]: Hovedvejen 176
+                  - generic [ref=f14e94]:
+                    - generic [ref=f14e95]: Postnummer
+                    - textbox "Postnummer" [ref=f14e96]: "4320"
+                  - generic [ref=f14e97]:
+                    - generic [ref=f14e98]: By
+                    - textbox "By" [ref=f14e99]: Lejre
+                  - generic [ref=f14e100]:
+                    - generic [ref=f14e101]: CVR-nummer
+                    - textbox "CVR-nummer" [ref=f14e272]:
+                      - /placeholder: "12345678"
+                  - generic [ref=f14e104]:
+                    - generic [ref=f14e105]: E-mail
+                    - textbox "E-mail" [ref=f14e273]:
+                      - /placeholder: navn@firma.dk
+                  - generic [ref=f14e107]:
+                    - generic [ref=f14e108]: Telefon
+                    - textbox "Telefon" [ref=f14e274]:
+                      - /placeholder: +45 12 34 56 78
+                  - generic [ref=f14e110]:
+                    - generic [ref=f14e111]: EAN-nummer
+                    - textbox "EAN-nummer" [ref=f14e275]:
+                      - /placeholder: "5790000000000"
+            - generic [ref=f14e113]:
+              - paragraph [ref=f14e114]: 03 — Linjer
+              - generic [ref=f14e115]:
+                - heading "Linjer" [level=2] [ref=f14e116]
+                - table [ref=f14e118]:
+                  - rowgroup [ref=f14e119]:
+                    - row [ref=f14e120]:
+                      - columnheader "Beskrivelse" [ref=f14e121]
+                      - columnheader "Antal" [ref=f14e122]
+                      - columnheader "Enhed" [ref=f14e123]
+                      - columnheader "Stykpris" [ref=f14e124]
+                      - columnheader "Moms (%)" [ref=f14e125]
+                      - columnheader "Rabat (%)" [ref=f14e126]
+                      - columnheader "Beløb" [ref=f14e127]
+                      - columnheader [ref=f14e128]
+                  - rowgroup [ref=f14e129]:
+                    - row [ref=f14e276]:
+                      - cell [ref=f14e277]:
+                        - textbox "Beskrivelse" [ref=f14e132]: Udvikling af system til Byens Køleservice
+                      - cell [ref=f14e230]:
+                        - spinbutton "Antal" [ref=f14e134]: "1"
+                      - cell [ref=f14e135]:
+                        - textbox "Enhed" [ref=f14e136]: stk
+                      - cell [ref=f14e231]:
+                        - spinbutton "Stykpris" [ref=f14e138]: "10000"
+                      - cell "25%" [ref=f14e139]:
+                        - combobox "Moms (%)" [ref=f14e140]:
+                          - option "25%" [selected]
+                          - option "0%"
+                          - option "5%"
+                          - option "12%"
+                      - cell [ref=f14e232]:
+                        - spinbutton "Rabat (%)" [ref=f14e142]: "0"
+                      - cell "10000.00" [ref=f14e278]
+                      - cell [ref=f14e144]:
+                        - button "Fjern" [disabled] [ref=f14e145]
+                - button "Tilføj linje" [ref=f14e149]
+            - generic [ref=f14e151]:
+              - paragraph [ref=f14e152]: 04 — Total
+              - region "Total (inkl. moms)" [ref=f14e153]:
+                - generic [ref=f14e154]:
+                  - generic [ref=f14e155]:
+                    - term [ref=f14e156]: Subtotal (ekskl. moms)
+                    - definition [ref=f14e157]: 10.000,00 kr.
+                  - generic [ref=f14e158]:
+                    - term [ref=f14e159]: Moms (25%)
+                    - definition [ref=f14e160]: 2.500,00 kr.
+                  - generic [ref=f14e161]:
+                    - term [ref=f14e162]: Total (inkl. moms)
+                    - definition [ref=f14e163]: 12.500,00 kr.
+            - generic [ref=f14e164]:
+              - paragraph [ref=f14e165]: 05 — Betaling
+              - generic [ref=f14e166]:
+                - heading "Betaling" [level=2] [ref=f14e167]
+                - generic [ref=f14e168]:
+                  - generic [ref=f14e169]:
+                    - generic [ref=f14e170]: Fakturanummer
+                    - textbox "Fakturanummer" [ref=f14e171]: 2026-0013
+                  - generic [ref=f14e172]:
+                    - generic [ref=f14e173]: Serie
+                    - textbox "Serie" [ref=f14e174]: "2026"
+                  - generic [ref=f14e175]:
+                    - generic [ref=f14e176]: Betalingsbetingelser
+                    - textbox "Betalingsbetingelser" [ref=f14e177]: Netto 8 dage
+                  - generic [ref=f14e178]:
+                    - generic [ref=f14e179]: Fakturadato
+                    - textbox "Fakturadato" [ref=f14e180]: 2026-07-28
+                  - generic [ref=f14e181]:
+                    - generic [ref=f14e182]: Forfaldsdato
+                    - textbox "Forfaldsdato" [ref=f14e183]: 2026-08-05
+                  - generic [ref=f14e184]:
+                    - generic [ref=f14e185]: Leveringsdato
+                    - textbox "Leveringsdato" [ref=f14e186]: 2026-07-28
+                  - generic [ref=f14e187]:
+                    - generic [ref=f14e188]: Bank
+                    - textbox "Bank" [ref=f14e189]:
+                      - /placeholder: Lunar Bank
+                      - text: Lunar Bank
+                  - generic [ref=f14e190]:
+                    - generic [ref=f14e191]: Registreringsnummer
+                    - textbox "Registreringsnummer" [ref=f14e192]:
+                      - /placeholder: "1234"
+                      - text: "6695"
+                  - generic [ref=f14e193]:
+                    - generic [ref=f14e194]: Kontonummer
+                    - textbox "Kontonummer" [active] [ref=f14e195]:
+                      - /placeholder: "1234567890"
+                      - text: "2003060139"
+                  - generic [ref=f14e196]:
+                    - generic [ref=f14e197]: MobilePay-nummer
+                    - textbox "MobilePay-nummer" [ref=f14e198]:
+                      - /placeholder: "12345678"
+            - button "Nulstil formular" [ref=f14e200]
+          - complementary [ref=f14e201]:
+            - generic [ref=f14e202]:
+              - generic [ref=f14e203]:
+                - generic [ref=f14e204]: Live preview
+                - generic [ref=f14e281]: 2026-0013
+              - iframe [ref=f14e282]:
+                
+    - contentinfo [ref=f14e210]:
+      - generic [ref=f14e211]:
+        - generic [ref=f14e212]:
+          - generic [ref=f14e213]:
+            - paragraph [ref=f14e214]: skabelontilfaktura.dk
+            - paragraph [ref=f14e215]: Danmarks nemmeste fakturaskabelon. Gratis, lovlig, og klar på 60 sekunder.
+          - generic [ref=f14e216]:
+            - paragraph [ref=f14e217]: Værktøj
+            - link "Fakturagenerator" [ref=f14e218] [cursor=pointer]:
+              - /url: /generator/
+            - link "Priser" [ref=f14e219] [cursor=pointer]:
+              - /url: /pris/
+          - generic [ref=f14e220]:
+            - paragraph [ref=f14e221]: Viden
+            - link "Guides" [ref=f14e222] [cursor=pointer]:
+              - /url: /blog/
+          - generic [ref=f14e223]:
+            - paragraph [ref=f14e224]: Juridisk
+            - link "Privatlivspolitik" [ref=f14e225] [cursor=pointer]:
+              - /url: /privatlivspolitik/
+            - link "Cookiepolitik" [ref=f14e226] [cursor=pointer]:
+              - /url: /cookiepolitik/
+        - paragraph [ref=f14e228]: Skabelontilfaktura.dk er et værktøj til at generere fakturaer og udgør ikke juridisk rådgivning. Brugeren er selv ansvarlig for overholdelse af gældende lovgivning. Ved komplekse situationer anbefales konsultation af revisor.
+  - dialog "Samtykke til cookies" [ref=f14e234]:
+    - generic [ref=f14e236]:
+      - generic [ref=f14e237]:
+        - paragraph [ref=f14e238]: Vi respekterer dit privatliv
+        - paragraph [ref=f14e239]:
+          - text: Vi bruger Plausible Analytics, som er cookie-frit og ikke sporer dig på tværs af sider. Læs mere i vores
+          - link "privatlivspolitik" [ref=f14e240] [cursor=pointer]:
+            - /url: /privatlivspolitik/
+          - text: .
+      - generic [ref=f14e241]:
+        - button "Tilpas" [ref=f14e242]
+        - button "Afvis alle" [ref=f14e243]
+        - button "Accepter alle" [ref=f14e244]

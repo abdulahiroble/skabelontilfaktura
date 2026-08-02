@@ -28,7 +28,7 @@ import {
 // ---------------------------------------------------------------------------
 
 export const user = pgTable('user', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 	email: text('email').notNull().unique(),
 	name: text('name'),
 	emailVerified: boolean('email_verified').default(false),
@@ -39,18 +39,20 @@ export const user = pgTable('user', {
 
 export const session = pgTable('session', {
 	id: text('id').primaryKey(),
-	userId: uuid('user_id')
+	userId: text('user_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	expiresAt: timestamp('expires_at', { mode: 'date' }).notNull(),
 	token: text('token').notNull().unique(),
+	ipAddress: text('ip_address'),
+	userAgent: text('user_agent'),
 	createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()
 });
 
 export const account = pgTable('account', {
 	id: text('id').primaryKey(),
-	userId: uuid('user_id')
+	userId: text('user_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	accountId: text('account_id').notNull(),
@@ -79,7 +81,7 @@ export const verification = pgTable('verification', {
 
 export const business = pgTable('business', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	userId: uuid('user_id')
+	userId: text('user_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	name: text('name').notNull(),
@@ -165,7 +167,7 @@ export const reminderLog = pgTable('reminder_log', {
 
 export const subscription = pgTable('subscription', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	userId: uuid('user_id')
+	userId: text('user_id')
 		.notNull()
 		.references(() => user.id, { onDelete: 'cascade' }),
 	autumnCustomerId: text('autumn_customer_id'),

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import { trackEvent } from '$lib/analytics';
 
 	/**
 	 * Affiliate call-to-action component.
@@ -85,10 +86,8 @@
 	const DISCLOSURE = 'Vi kan modtage provision hvis du klikker på disse links.';
 
 	function trackClick() {
-		// Track via Plausible custom event
-		if (typeof window !== 'undefined' && typeof window.plausible === 'function') {
-			window.plausible('Affiliate Click', { props: { partner } });
-		}
+		// Track via GA4 custom event
+		trackEvent('affiliate_click', { partner });
 	}
 </script>
 

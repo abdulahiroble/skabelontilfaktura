@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { X, Sparkles } from '@lucide/svelte';
+	import { trackEvent } from '$lib/analytics';
 
 	/**
 	 * Reusable upgrade prompt for free-tier users hitting usage limits.
@@ -62,15 +63,11 @@
 		} catch {
 			// Ignore persistence failure; the prompt stays hidden for this session.
 		}
-		if (typeof window !== 'undefined' && typeof window.plausible === 'function') {
-			window.plausible('Upgrade Prompt Dismissed');
-		}
+		trackEvent('upgrade_prompt_dismissed');
 	}
 
 	function trackCta() {
-		if (typeof window !== 'undefined' && typeof window.plausible === 'function') {
-			window.plausible('Upgrade Prompt Clicked');
-		}
+		trackEvent('upgrade_prompt_clicked');
 	}
 </script>
 

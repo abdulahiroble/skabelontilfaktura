@@ -1,111 +1,129 @@
-/**
- * Autumn product / plan definition.
- *
- * This file is the single source of truth for Faktura's pricing plans and the
- * features each plan gates. It mirrors what is configured in the Autumn
- * dashboard (https://app.useautumn.com) and is what the Autumn CLI syncs when
- * running `npx autumn sync` (or `atmn`).
- *
- * NOTE: `defineConfig` is provided by Autumn's CLI package, not by `autumn-js`
- * (the runtime SDK). To avoid a hard dependency on the CLI in the app's type
- * graph, the config is authored as a plain, fully-typed object. Once the
- * Autumn CLI is installed it can be wrapped with `defineConfig()` from
- * `"autumn"` and re-synced — the shape below is intentionally compatible.
- *
- * @see https://docs.useautumn.com
- */
+import { feature, item, plan } from 'atmn';
 
-type PriceInterval = 'day' | 'week' | 'month' | 'year';
+export const cloudStorage = feature({
+	id: 'cloud_storage',
+	name: 'Cloud storage',
+	type: 'boolean'
+});
 
-interface ProductPrice {
-	id: string;
-	payment_mode: 'subscription' | 'one-time';
-	amount: number;
-	currency: string;
-	interval?: PriceInterval;
-}
+export const clientDatabase = feature({
+	id: 'client_database',
+	name: 'Client database',
+	type: 'boolean'
+});
 
-interface ProductFeature {
-	id: string;
-	name: string;
-	type: 'boolean' | 'metered';
-}
+export const saftExport = feature({
+	id: 'saft_export',
+	name: 'SAF-T export',
+	type: 'boolean'
+});
 
-interface Product {
-	id: string;
-	name: string;
-	description: string;
-	prices: ProductPrice[];
-	features: ProductFeature[];
-}
+export const reminderEmails = feature({
+	id: 'reminder_emails',
+	name: 'Reminder emails',
+	type: 'boolean'
+});
 
-const proFeatures: ProductFeature[] = [
-	{ id: 'cloud_storage', name: 'Cloud Storage', type: 'boolean' },
-	{ id: 'client_database', name: 'Client Database', type: 'boolean' },
-	{ id: 'saft_export', name: 'SAF-T Export', type: 'boolean' },
-	{ id: 'reminder_emails', name: 'Reminder Emails', type: 'boolean' },
-	{ id: 'cross_device_numbering', name: 'Cross-Device Numbering', type: 'boolean' }
+export const crossDeviceNumbering = feature({
+	id: 'cross_device_numbering',
+	name: 'Cross-device numbering',
+	type: 'boolean'
+});
+
+export const peppolSend = feature({
+	id: 'peppol_send',
+	name: 'Peppol send',
+	type: 'boolean'
+});
+
+export const multiUser = feature({
+	id: 'multi_user',
+	name: 'Team seats',
+	type: 'metered',
+	consumable: false
+});
+
+export const apiAccess = feature({
+	id: 'api_access',
+	name: 'API access',
+	type: 'boolean'
+});
+
+export const whiteLabel = feature({
+	id: 'white_label',
+	name: 'White-label PDFs',
+	type: 'boolean'
+});
+
+export const templatePack = feature({
+	id: 'template_pack',
+	name: 'Premium template pack',
+	type: 'boolean'
+});
+
+export const branchBundle = feature({
+	id: 'branch_bundle',
+	name: 'Branch-specific template bundle',
+	type: 'boolean'
+});
+
+const proItems = [
+	item({ featureId: cloudStorage.id }),
+	item({ featureId: clientDatabase.id }),
+	item({ featureId: saftExport.id }),
+	item({ featureId: reminderEmails.id }),
+	item({ featureId: crossDeviceNumbering.id })
 ];
 
-const config: { products: Product[] } = {
-	products: [
-		{
-			id: 'pro',
-			name: 'Pro',
-			description: 'Cloud-lagring, klientdatabase, SAF-T eksport, rykkermails',
-			prices: [
-				{
-					id: 'pro_monthly',
-					payment_mode: 'subscription',
-					amount: 49,
-					currency: 'dkk',
-					interval: 'month'
-				},
-				{
-					id: 'pro_yearly',
-					payment_mode: 'subscription',
-					amount: 470,
-					currency: 'dkk',
-					interval: 'year'
-				}
-			],
-			features: proFeatures
-		},
-		{
-			id: 'business',
-			name: 'Business',
-			description: 'Peppol e-faktura, multi-user, API, white-label',
-			prices: [
-				{
-					id: 'business_monthly',
-					payment_mode: 'subscription',
-					amount: 149,
-					currency: 'dkk',
-					interval: 'month'
-				}
-			],
-			features: [
-				{ id: 'peppol_send', name: 'Peppol Send', type: 'boolean' },
-				{ id: 'multi_user', name: 'Multi-User (2-5 seats)', type: 'metered' },
-				{ id: 'api_access', name: 'API Access', type: 'boolean' },
-				{ id: 'white_label', name: 'White-Label PDFs', type: 'boolean' }
-			]
-		},
-		{
-			id: 'lifetime_pro',
-			name: 'Lifetime Pro',
-			description: 'All Pro features forever',
-			prices: [
-				{
-					id: 'lifetime_pro_once',
-					payment_mode: 'one-time',
-					amount: 999,
-					currency: 'dkk'
-				}
-			],
-			features: proFeatures
-		}
-	]
-};
+export const pro = plan({
+	id: 'pro',
+	name: 'Pro',
+	group: 'subscription',
+	price: { amount: 49, interval: 'month' },
+	items: proItems
+});
 
-export default config;
+export const proAnnual = plan({
+	id: 'pro_annual',
+	name: 'Pro annual',
+	group: 'subscription',
+	price: { amount: 470, interval: 'year' },
+	items: proItems
+});
+
+export const business = plan({
+	id: 'business',
+	name: 'Business',
+	group: 'subscription',
+	price: { amount: 149, interval: 'month' },
+	items: [
+		...proItems,
+		item({ featureId: peppolSend.id }),
+		item({ featureId: multiUser.id, included: 5 }),
+		item({ featureId: apiAccess.id }),
+		item({ featureId: whiteLabel.id })
+	]
+});
+
+export const lifetimePro = plan({
+	id: 'lifetime_pro',
+	name: 'Lifetime Pro',
+	price: { amount: 999, interval: 'one_off' },
+	items: proItems
+});
+
+export const premiumTemplatePack = plan({
+	id: 'template_pack',
+	name: 'Premium template pack',
+	addOn: true,
+	price: { amount: 149, interval: 'one_off' },
+	items: [item({ featureId: templatePack.id })]
+});
+
+export const branchSpecificBundle = plan({
+	id: 'branch_bundle',
+	name: 'Branch-specific template bundle',
+	addOn: true,
+	price: { amount: 249, interval: 'one_off' },
+	items: [item({ featureId: branchBundle.id })]
+});

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import { trackEvent } from '$lib/analytics';
 	import { buildMeta } from '$lib/seo';
 
 	const meta = buildMeta({
@@ -44,11 +45,7 @@
 		event.preventDefault();
 		// Actual routing to a revisor partner happens in a later iteration.
 		// For now we just acknowledge the submission client-side.
-		if (typeof window !== 'undefined' && typeof window.plausible === 'function') {
-			window.plausible('Revisor Lead', {
-				props: { businessType: form.businessType || 'udfyldt' }
-			});
-		}
+		trackEvent('revisor_lead', { businessType: form.businessType || 'udfyldt' });
 		submitted = true;
 	}
 </script>

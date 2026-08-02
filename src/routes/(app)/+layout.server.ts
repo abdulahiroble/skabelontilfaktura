@@ -14,6 +14,10 @@ import { getEntitlements, serializeEntitlements } from '$lib/server/entitlements
  * individual pages can decide how to gate (the marketing/home redirect for
  * unauthenticated app traffic is handled elsewhere). Use the `guards.ts`
  * helpers for pages that must hard-enforce a plan.
+ *
+ * Note: `+layout.server.ts` cannot export `actions` in SvelteKit (only
+ * `+page.server.ts` can). Checkout lives in the API endpoint
+ * `POST /api/billing/checkout`; the layout CTA calls it via fetch.
  */
 export const load: LayoutServerLoad = async (event) => {
 	const user = event.locals.user;

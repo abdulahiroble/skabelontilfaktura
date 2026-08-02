@@ -38,20 +38,10 @@ declare global {
 	}
 
 	/**
-	 * Plausible Analytics (self-hosted, cookieless) custom-event API.
+	 * Google Analytics custom-event API (loaded via gtag.js).
 	 *
-	 * The script is injected via `plausibleScriptTag()` in
-	 * `src/lib/analytics/plausible.ts`. `window.plausible` is only available
-	 * in the browser, so it is declared optional.
+	 * `window.dataLayer` and `window.gtag` are declared in
+	 * `src/lib/analytics/consent.ts`. The `plausible` API from the old
+	 * self-hosted analytics setup has been removed.
 	 */
-	interface Window {
-		plausible?: (
-			event: string,
-			options?: {
-				props?: Record<string, string>;
-				revenue?: number;
-				callback?: () => void;
-			}
-		) => void;
-	}
 }

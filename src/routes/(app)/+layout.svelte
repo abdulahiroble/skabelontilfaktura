@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
+	import { Button } from '$lib/components/ui/button';
 	import UpgradePrompt from '$lib/components/UpgradePrompt.svelte';
 
 	/**
@@ -30,6 +31,25 @@
 	const features = $derived(new Set<FeatureId>(data.entitlements?.features ?? []));
 	const isProOrHigher = $derived(data.entitlements?.plan !== 'free' && !!data.entitlements);
 	const canExport = $derived(features.has('saft_export'));
+
+	/** Upgrade CTA for Pro users: POST the checkout endpoint with the plan. */
+	async function checkoutBusiness() {
+		const response = await fetch('/api/billing/checkout', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ planId: 'business' })
+		});
+		if (response.status === 401) {
+			window.location.href = '/login/';
+			return;
+		}
+		if (!response.ok) {
+			alert('Kunne ikke oprette betalingssession. Prøv igen.');
+			return;
+		}
+		const data = (await response.json()) as { paymentUrl: string };
+		window.location.href = data.paymentUrl;
+	}
 </script>
 
 <div class="flex min-h-screen flex-col">
@@ -52,6 +72,11 @@
 		<div class="mx-auto max-w-6xl px-4 py-4">
 			{#if !isProOrHigher}
 				<UpgradePrompt />
+			{/if}
+			{#if data.entitlements?.plan === 'pro' || data.entitlements?.plan === 'business'}
+				<div class="flex justify-end">
+					<Button size="sm" onclick={checkoutBusiness}>Prøv Business</Button>
+				</div>
 			{/if}
 		</div>
 		{@render children()}

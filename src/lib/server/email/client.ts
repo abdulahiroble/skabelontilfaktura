@@ -1,17 +1,4 @@
-/**
- * Email sending abstraction.
- *
- * This is the single integration point for outbound transactional email. The
- * production target is the Cloudflare Email Service (`send_email` Worker
- * binding / Mail API), which requires a Workers Paid plan. Until that is
- * activated this module is a stub that logs to the console so the reminder
- * automation can be developed and tested end-to-end.
- *
- * When wiring up the real provider, replace the body of `sendEmail` with a
- * call that resolves the `send_email` binding from `env` (or posts to the Mail
- * API) and returns `true` on success / `false` on failure. The `EmailParams`
- * contract and the call sites in `reminders/scheduler.ts` should not change.
- */
+const MAILEROO_SEND_URL = 'https://smtp.maileroo.com/api/v2/emails';
 
 export interface EmailParams {
 	/** Recipient email address. */
@@ -26,26 +13,42 @@ export interface EmailParams {
 	text?: string;
 }
 
-/**
- * Send a transactional email.
- *
- * @param params Message contents and recipients.
- * @param env    Optional Cloudflare env bindings — used once the real provider
- *               is wired up to resolve the `send_email` binding.
- * @returns `true` if the message was accepted for delivery, `false` otherwise.
- *
- * TODO: Wire to Cloudflare Email Service when Workers Paid is active.
- */
 export async function sendEmail(params: EmailParams, env?: Env): Promise<boolean> {
-	// Binding will be resolved from `env` once the real provider is wired up.
-	void env;
+	const apiKey = env?.MAILEROO_API_KEY;
+	if (!apiKey) {
+		console.error('[email] MAILEROO_API_KEY is not configured');
+		return false;
+	}
 
-	// Stub: log for local development.
-	console.log('[EMAIL]', {
-		to: params.to,
-		from: params.from,
-		subject: params.subject
-	});
+	try {
+		const response = await fetch(MAILEROO_SEND_URL, {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${apiKey}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				from: { address: params.from, display_name: 'skabelontilfaktura.dk' },
+				to: [{ address: params.to }],
+				subject: params.subject,
+				html: params.html,
+				plain: params.text ?? '',
+				tracking: false
+			})
+		});
 
-	return true;
+		if (!response.ok) {
+			console.error('[email] Maileroo rejected message', {
+				status: response.status,
+				statusText: response.statusText
+			});
+			return false;
+		}
+
+		const result = (await response.json()) as { success?: boolean };
+		return result.success === true;
+	} catch (error) {
+		console.error('[email] Maileroo request failed', error);
+		return false;
+	}
 }

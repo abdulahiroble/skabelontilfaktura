@@ -2,6 +2,33 @@
 	import { Button } from '$lib/components/ui/button';
 	import AffiliateCta from '$lib/components/AffiliateCta.svelte';
 
+	/**
+	 * Purchase handler for the pricing buttons.
+	 *
+	 * POSTs to `/api/billing/checkout` with the chosen plan id and redirects
+	 * to the returned Stripe checkout URL. The server responds 401 when the
+	 * visitor is not signed in, in which case we route to the login page
+	 * (Better Auth has no login UI yet — the marketing layout shows a "Log
+	 * ind" nav link to `/login/`).
+	 */
+	async function purchase(planId: string) {
+		const response = await fetch('/api/billing/checkout', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ planId })
+		});
+		if (response.status === 401) {
+			window.location.href = '/login/';
+			return;
+		}
+		if (!response.ok) {
+			alert('Kunne ikke oprette betalingssession. Prøv igen.');
+			return;
+		}
+		const data = (await response.json()) as { paymentUrl: string };
+		window.location.href = data.paymentUrl;
+	}
+
 	// Editorial pricing data — feature copy kept in Danish, rendered inline
 	// with accent dots rather than as card bullet lists.
 	const proFeatures = [
@@ -89,7 +116,7 @@
 			</div>
 
 			<div class="mt-9 flex flex-wrap items-center gap-4">
-				<Button size="lg" href="/generator/" class="px-7">Opgrader til Pro</Button>
+				<Button size="lg" class="px-7" onclick={() => purchase('pro')}>Opgrader til Pro</Button>
 				<span class="text-muted-foreground text-xs">Inkluderer alt fra Gratis</span>
 			</div>
 		</div>
@@ -118,7 +145,7 @@
 			</div>
 
 			<div class="mt-9">
-				<Button variant="outline" href="/generator/">Vælg Business</Button>
+				<Button variant="outline" onclick={() => purchase('business')}>Vælg Business</Button>
 			</div>
 		</div>
 	</div>
@@ -141,7 +168,8 @@
 					>
 					<span class="text-muted-foreground text-sm">én gang</span>
 				</div>
-				<Button variant="outline" href="/generator/">Vælg livstids-Pro</Button>
+				<Button variant="outline" onclick={() => purchase('lifetime_pro')}>Vælg livstids-Pro</Button
+				>
 			</div>
 		</div>
 	</div>

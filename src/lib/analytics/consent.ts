@@ -77,3 +77,30 @@ export function consentDefaultScriptTag(): string {
 		'</script>'
 	);
 }
+
+export function googleAnalyticsScriptTags(measurementId: string | undefined): string {
+	if (!measurementId || !/^G-[A-Z0-9]+$/.test(measurementId)) return '';
+
+	return (
+		`<script async src="https://www.googletagmanager.com/gtag/js?id=${measurementId}"></script>` +
+		'<script>' +
+		'window.dataLayer=window.dataLayer||[];' +
+		'function gtag(){dataLayer.push(arguments);}' +
+		"gtag('js',new Date());" +
+		`gtag('config','${measurementId}',{anonymize_ip:true});` +
+		'</script>'
+	);
+}
+
+/**
+ * Send a GA4 custom event from the browser.
+ *
+ * Uses the same `window.dataLayer` queue as the Consent Mode v2 shim, so events
+ * are recorded even before the async gtag.js finishes loading. No-op on the
+ * server.
+ */
+export function trackEvent(eventName: string, params: Record<string, string | number> = {}): void {
+	if (typeof window === 'undefined') return;
+	window.dataLayer = window.dataLayer || [];
+	window.dataLayer.push({ event: eventName, ...params });
+}

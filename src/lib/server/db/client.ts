@@ -22,7 +22,10 @@ export function getDb(databaseUrl: string) {
 		ssl: 'require',
 		prepare: false,
 		max: 1,
-		idle_timeout: 5
+		idle_timeout: 5,
+		// Fail fast instead of hanging the request if the DB is unreachable
+		// (a Workers request is otherwise canceled after ~15s with no error).
+		connect_timeout: 10
 	});
 	return drizzle(client, { schema });
 }

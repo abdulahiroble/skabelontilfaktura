@@ -11,7 +11,8 @@
 	"workers_dev": true,
 	"preview_urls": true,
 	"vars": {
-		"PUBLIC_APP_URL": "https://faktura.abdulahi-2610.workers.dev"
+		"PUBLIC_APP_URL": "https://skabelontilfaktura.dk",
+		"PUBLIC_GA_MEASUREMENT_ID": "G-9K8CQ4KZ1F"
 	},
 	"r2_buckets": [
 		{

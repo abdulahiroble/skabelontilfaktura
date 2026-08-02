@@ -73,8 +73,8 @@
 				<div class="space-y-1 text-sm">
 					<p class="text-foreground font-medium">Vi respekterer dit privatliv</p>
 					<p class="text-muted-foreground">
-						Vi bruger Plausible Analytics, som er cookie-frit og ikke sporer dig på tværs af sider.
-						Læs mere i vores
+						Vi bruger Google Analytics til at forstå, hvordan sitet bruges. Analytics-cookies
+						aktiveres først, hvis du accepterer. Læs mere i vores
 						<a href="/privatlivspolitik/" class="text-primary underline-offset-2 hover:underline"
 							>privatlivspolitik</a
 						>.
@@ -92,9 +92,9 @@
 			{#if showPreferences}
 				<div class="border-border text-muted-foreground mt-3 border-t pt-3 text-xs">
 					<p>
-						Plausible Analytics er cookie-frit og GDPR-kompliant som standard, så det indlæses
-						uanset dit valg. Markedsførings- og personaliseringskategorier forbliver afvist, med
-						mindre du klikker &laquo;Accepter alle&raquo;.
+						Nødvendig funktionalitet er altid aktiv. Analyse-, markedsførings- og
+						personaliseringsteknologier forbliver afvist, medmindre du klikker &laquo;Accepter
+						alle&raquo;.
 					</p>
 				</div>
 			{/if}

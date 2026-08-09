@@ -19,10 +19,5 @@
 			"binding": "INVOICES_BUCKET",
 			"bucket_name": "skabelontilfaktura-invoices"
 		}
-	],
-	// Daily at 09:00 UTC — fires the payment reminder job
-	// (src/routes/api/jobs/reminders/+server.ts).
-	"triggers": {
-		"crons": ["0 9 * * *"]
-	}
+	]
 }

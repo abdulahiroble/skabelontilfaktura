@@ -234,8 +234,8 @@
 					<strong>Gratis fakturagenerator</strong> - lav ubegrænsede fakturaer uden vandmærke.
 				</li>
 				<li>
-					<strong>Pro-tier (49 DKK/måned)</strong> - cloud-lagring i 5 år, klientdatabase, SAF-T 2.0 eksport
-					og rykkermails.
+					<strong>Pro-tier (49 DKK/måned)</strong> - cloud-arkiv, klientdatabase, SAF-T 2.0 eksport og
+					rykkermails.
 				</li>
 				<li>
 					<strong>Automatisk CVR-opslag</strong> - slip for at indtaste kundedata manuelt.

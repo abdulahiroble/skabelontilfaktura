@@ -214,7 +214,7 @@
 					at sende direkte til kunden.
 				</li>
 				<li>
-					<strong>Cloud-lagring i 5 år</strong> (Pro) - opfylder bogføringslovens krav om opbevaring.
+					<strong>Cloud-arkiv</strong> (Pro) - samler fakturaer og PDF-filer på tværs af enheder.
 				</li>
 				<li>
 					<strong>SAF-T 2.0 eksport</strong> (Pro) - klar til bogføringsloven 2026.

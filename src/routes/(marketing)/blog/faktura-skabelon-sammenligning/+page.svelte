@@ -285,7 +285,7 @@
 				>
 			</li>
 			<li>
-				<a href="/pris/" class="text-primary hover:underline">Priser på Pro og Business</a>
+				<a href="/pris/" class="text-primary hover:underline">Priser på Pro</a>
 			</li>
 		</ul>
 	</div>

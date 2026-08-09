@@ -26,6 +26,7 @@ export { generateNextInvoiceNumber } from './invoice-numbering';
 export {
 	getInvoices,
 	getInvoiceForBusiness,
+	getInvoiceReminderLogs,
 	createInvoice,
 	setInvoicePdfKey,
 	updateInvoiceStatus,

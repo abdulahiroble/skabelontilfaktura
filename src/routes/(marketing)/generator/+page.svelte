@@ -10,9 +10,8 @@
 	 * avoid memory leaks.
 	 *
 	 * The sticky action bar offers three actions:
-	 *  - **Print** — opens the browser print dialog. Print-specific CSS hides
-	 *    everything except the preview iframe so the printed output is the
-	 *    invoice itself.
+	 *  - **Print** — opens the generated PDF itself in a new tab for reliable
+	 *    browser printing without an extra blank page.
 	 *  - **Download PDF** — standard (maximally compatible) download.
 	 *  - **Download (komprimeret)** — same PDF saved with pdf-lib object streams
 	 *    for a smaller file size.
@@ -32,9 +31,9 @@
 	let { data }: { data: PageData } = $props();
 
 	const meta = buildMeta({
-		title: 'Fakturagenerator - Lav en gratis faktura | skabelontilfaktura.dk',
+		title: 'Fakturagenerator - Lav en gratis faktura',
 		description:
-			'Lav en gratis og lovlig dansk faktura på 60 sekunder. CVR-felter, automatisk momstilning, MobilePay og PDF-download. Ingen tilmelding nødvendig.',
+			'Lav en gratis og lovlig dansk faktura på 60 sekunder. CVR-felter, automatisk momsberegning, MobilePay og PDF-download. Ingen tilmelding nødvendig.',
 		canonical: '/generator/',
 		ogType: 'website'
 	});
@@ -50,6 +49,7 @@
 	let compressedLoading = $state(false);
 	let cloudLoading = $state(false);
 	let cloudError = $state('');
+	let printError = $state('');
 	let selectedClientId = $state('');
 	const canSaveToCloud = $derived(data.entitlements?.features.includes('cloud_storage') === true);
 
@@ -193,12 +193,34 @@
 		}
 	}
 
-	function handlePrint() {
-		if (!store.isValid) return;
+	async function handlePrint() {
+		if (!store.isValid || loading || compressedLoading) return;
+		printError = '';
 
-		// Opens the browser print dialog. Print-specific CSS (below) hides the
-		// form, action bar and site chrome so only the invoice prints.
-		window.print();
+		// Open synchronously to avoid popup blockers, then navigate the tab to
+		// the PDF itself. Printing the generator page around a PDF/preview can
+		// add an empty first page in Chromium and Safari.
+		const printWindow = window.open('', '_blank');
+		if (!printWindow) {
+			printError = 'Browseren blokerede printvinduet. Tillad pop op-vinduer og prøv igen.';
+			return;
+		}
+
+		loading = true;
+		try {
+			const { renderInvoicePdf } = await import('$lib/pdf/renderer');
+			const pdfBytes = await renderInvoicePdf(store.data);
+			const buffer = new ArrayBuffer(pdfBytes.byteLength);
+			new Uint8Array(buffer).set(pdfBytes);
+			const url = URL.createObjectURL(new Blob([buffer], { type: 'application/pdf' }));
+			printWindow.location.replace(url);
+			window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+		} catch {
+			printWindow.close();
+			printError = 'PDF’en kunne ikke klargøres til udskrift. Prøv igen.';
+		} finally {
+			loading = false;
+		}
 	}
 
 	async function saveToCloud() {
@@ -335,12 +357,12 @@
 		</div>
 	</div>
 
-	{#if cloudError}
+	{#if cloudError || printError}
 		<div
 			class="bg-destructive/10 text-destructive no-print mb-6 rounded-md p-3 text-sm"
 			role="alert"
 		>
-			{cloudError}
+			{cloudError || printError}
 		</div>
 	{/if}
 
@@ -421,59 +443,3 @@
 		</aside>
 	</div>
 </div>
-
-<style>
-	/* ----------------------------------------------------------------------- */
-	/* Print styles                                                            */
-	/* ----------------------------------------------------------------------- */
-	/*
-	 * When the user prints (via the "Udskriv" button → window.print()), hide
-	 * the form, the action bar, and all site chrome (header / footer live in the
-	 * marketing layout). Only the live preview PDF should be visible, expanded to
-	 * fill the page so the printed output is the invoice itself.
-	 *
-	 * The `.no-print` utility is applied to the editor column, the action bar,
-	 * and the preview header strip. The marketing layout's <header> and <footer>
-	 * are hidden via element selectors scoped to print media.
-	 */
-	@media print {
-		:global(body) {
-			margin: 0;
-			padding: 0;
-			background: white;
-		}
-
-		/* Hide site navigation, footer and consent banner from the marketing layout. */
-		:global(header),
-		:global(footer) {
-			display: none !important;
-		}
-
-		/* Remove the page-level padding/max-width so the preview fills the sheet. */
-		.preview-column {
-			position: static !important;
-			top: auto !important;
-			align-self: auto !important;
-		}
-
-		/* Hide everything tagged .no-print (form, action bar, preview header). */
-		:global(.no-print) {
-			display: none !important;
-		}
-
-		/* Make the preview card borderless and let the iframe fill the page. */
-		.preview-column :global(.border-border) {
-			border: none !important;
-			box-shadow: none !important;
-			min-height: auto !important;
-		}
-
-		/* Expand the PDF iframe to fill the printable area. */
-		.preview-frame {
-			width: 100% !important;
-			height: 100vh !important;
-			min-height: 100vh !important;
-			border: none !important;
-		}
-	}
-</style>

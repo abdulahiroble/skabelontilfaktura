@@ -14,9 +14,24 @@ import { Autumn } from 'autumn-js';
  *
  * @see https://docs.useautumn.com
  */
+export function getAutumnSecret(env: Env): string {
+	const secretKey = env.AUTUMN_SECRET_KEY?.trim();
+	if (!secretKey || /^["']|["']$/.test(secretKey)) {
+		throw new Error('AUTUMN_SECRET_KEY is missing or incorrectly formatted');
+	}
+	if (
+		secretKey.startsWith('am_sk_test_') &&
+		env.PUBLIC_APP_URL?.startsWith('https://skabelontilfaktura.dk')
+	) {
+		console.warn('[billing] Sandbox Autumn key is configured on the production application URL');
+	}
+	return secretKey;
+}
+
 export function createAutumnClient(env: Env): Autumn {
 	return new Autumn({
-		secretKey: env.AUTUMN_SECRET_KEY
+		secretKey: getAutumnSecret(env),
+		xApiVersion: '2.3.0'
 	});
 }
 

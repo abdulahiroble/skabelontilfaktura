@@ -29,20 +29,54 @@ export interface CvrResult {
 interface CvrApiResponse {
 	name?: string;
 	address?: string;
-	zipcode?: string;
+	zipcode?: string | number;
 	city?: string;
 	phone?: string;
 	email?: string;
-	vat?: string;
+	vat?: string | number;
 	/** cvrapi.dk returns an `error` field when the lookup fails. */
 	error?: string;
 }
 
 /** Base URL for the free community endpoint. */
 const CVRAPI_BASE = 'https://cvrapi.dk/api';
+const APICVR_BASE = 'https://apicvr.dk/api/v1';
 
 /** Request timeout (ms). cvrapi.dk is normally fast; bail out early on stalls. */
 const REQUEST_TIMEOUT_MS = 8000;
+
+function normalizeResult(data: CvrApiResponse, cvr: string): CvrResult | null {
+	if (data.error || !data.name) return null;
+	return {
+		name: data.name,
+		address: data.address ?? '',
+		zipcode: data.zipcode == null ? '' : String(data.zipcode),
+		city: data.city ?? '',
+		phone: data.phone || undefined,
+		email: data.email || undefined,
+		cvr: data.vat == null ? cvr : String(data.vat)
+	};
+}
+
+async function fetchProvider(url: string, fetchFn: typeof fetch): Promise<CvrApiResponse | null> {
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+	try {
+		const response = await fetchFn(url, {
+			signal: controller.signal,
+			headers: {
+				Accept: 'application/json',
+				'User-Agent': 'skabelontilfaktura.dk (kontakt@skabelontilfaktura.dk)'
+			}
+		});
+		if (!response.ok) return null;
+		return (await response.json()) as CvrApiResponse;
+	} catch {
+		return null;
+	} finally {
+		clearTimeout(timeout);
+	}
+}
 
 /**
  * Look up a Danish company by CVR number.
@@ -63,49 +97,15 @@ export async function lookupCvr(
 		return null;
 	}
 
-	const url = `${CVRAPI_BASE}?search=${encodeURIComponent(cvr)}&country=dk&format=json`;
+	const primary = await fetchProvider(
+		`${CVRAPI_BASE}?search=${encodeURIComponent(cvr)}&country=dk&format=json`,
+		fetchFn
+	);
+	const primaryResult = primary ? normalizeResult(primary, cvr) : null;
+	if (primaryResult) return primaryResult;
 
-	const controller = new AbortController();
-	const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
-	try {
-		// cvrapi.dk rejects requests that look like a plain browser (empty or
-		// default User-Agent). Send a descriptive UA identifying the app.
-		const response = await fetchFn(url, {
-			signal: controller.signal,
-			headers: {
-				Accept: 'application/json',
-				'User-Agent': 'Faktura/1.0 (https://github.com/faktura)'
-			}
-		});
-
-		if (!response.ok) {
-			// 404 / 429 / 5xx — treat uniformly as "not available right now".
-			return null;
-		}
-
-		const data = (await response.json()) as CvrApiResponse;
-
-		// cvrapi.dk signals lookup failure with an `error` field rather than a
-		// non-200 status.
-		if (data.error || !data.name) {
-			return null;
-		}
-
-		return {
-			name: data.name,
-			address: data.address ?? '',
-			zipcode: data.zipcode ?? '',
-			city: data.city ?? '',
-			phone: data.phone || undefined,
-			email: data.email || undefined,
-			// Prefer the VAT/CVR echoed back by the API; fall back to the input.
-			cvr: data.vat ?? cvr
-		};
-	} catch {
-		// Network error, abort (timeout), or JSON parse failure — never crash.
-		return null;
-	} finally {
-		clearTimeout(timeout);
-	}
+	// The original provider currently rejects some Cloudflare Worker egress
+	// addresses. APICVR is a free, open-source mirror of the same public data.
+	const fallback = await fetchProvider(`${APICVR_BASE}/${encodeURIComponent(cvr)}`, fetchFn);
+	return fallback ? normalizeResult(fallback, cvr) : null;
 }

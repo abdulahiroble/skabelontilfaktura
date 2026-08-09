@@ -33,6 +33,36 @@ export interface ReminderTemplateOutput {
 	text: string;
 }
 
+function escapeHtml(value: string): string {
+	return value.replace(
+		/[&<>"']/g,
+		(character) =>
+			(
+				({
+					'&': '&amp;',
+					'<': '&lt;',
+					'>': '&gt;',
+					'"': '&quot;',
+					"'": '&#39;'
+				}) as Record<string, string>
+			)[character]
+	);
+}
+
+function paragraphsToText(paragraphs: string[]): string {
+	return paragraphs
+		.map((paragraph) =>
+			paragraph
+				.replace(/<\/?strong>/g, '')
+				.replace(/&lt;/g, '<')
+				.replace(/&gt;/g, '>')
+				.replace(/&quot;/g, '"')
+				.replace(/&#39;/g, "'")
+				.replace(/&amp;/g, '&')
+		)
+		.join('\n\n');
+}
+
 /**
  * Minimal inline-styled HTML wrapper. Kept dependency-free and consistent
  * across templates so reminders render well in webmail + Outlook.
@@ -46,7 +76,7 @@ function wrapHtml(heading: string, paragraphs: string[], signatureBusiness: stri
 ${body}
     <p style="margin:24px 0 0;color:#6b7280;font-size:14px;">
       Venlig hilsen / Kind regards,<br />
-      <strong>${signatureBusiness}</strong>
+      <strong>${escapeHtml(signatureBusiness)}</strong>
     </p>
   </body>
 </html>`;
@@ -57,25 +87,29 @@ ${body}
  */
 export function firstReminderTemplate(opts: ReminderTemplateInput): ReminderTemplateOutput {
 	const { invoiceNumber, clientName, amount, dueDate, businessName, language } = opts;
+	const safeClientName = escapeHtml(clientName || (language === 'en' ? 'customer' : 'kunde'));
+	const safeInvoiceNumber = escapeHtml(invoiceNumber);
+	const safeAmount = escapeHtml(amount);
+	const safeDueDate = escapeHtml(dueDate);
 
 	if (language === 'en') {
 		const subject = `Payment reminder — invoice ${invoiceNumber}`;
 		const paragraphs = [
-			`Dear ${clientName || 'customer'},`,
-			`We have not yet received payment for invoice <strong>${invoiceNumber}</strong> in the amount of <strong>${amount}</strong>, which was due on <strong>${dueDate}</strong>.`,
+			`Dear ${safeClientName},`,
+			`We have not yet received payment for invoice <strong>${safeInvoiceNumber}</strong> in the amount of <strong>${safeAmount}</strong>, which was due on <strong>${safeDueDate}</strong>.`,
 			`If you have already paid, please disregard this reminder. Otherwise, we kindly ask you to settle the invoice as soon as possible.`
 		];
-		const text = paragraphs.map((p) => p.replace(/<\/?strong>/g, '')).join('\n\n');
+		const text = paragraphsToText(paragraphs);
 		return { subject, html: wrapHtml(subject, paragraphs, businessName), text };
 	}
 
 	const subject = `Betalingspåmindelse — faktura ${invoiceNumber}`;
 	const paragraphs = [
-		`Kære ${clientName || 'kunde'},`,
-		`Vi har endnu ikke modtaget betaling for faktura <strong>${invoiceNumber}</strong> på <strong>${amount}</strong>, som havde forfaldsdato <strong>${dueDate}</strong>.`,
+		`Kære ${safeClientName},`,
+		`Vi har endnu ikke modtaget betaling for faktura <strong>${safeInvoiceNumber}</strong> på <strong>${safeAmount}</strong>, som havde forfaldsdato <strong>${safeDueDate}</strong>.`,
 		`Hvis du allerede har betalt, kan du se bort fra denne påmindelse. Ellers vil vi bede dig betale fakturaen hurtigst muligt.`
 	];
-	const text = paragraphs.map((p) => p.replace(/<\/?strong>/g, '')).join('\n\n');
+	const text = paragraphsToText(paragraphs);
 	return { subject, html: wrapHtml(subject, paragraphs, businessName), text };
 }
 
@@ -84,25 +118,29 @@ export function firstReminderTemplate(opts: ReminderTemplateInput): ReminderTemp
  */
 export function secondReminderTemplate(opts: ReminderTemplateInput): ReminderTemplateOutput {
 	const { invoiceNumber, clientName, amount, dueDate, businessName, language } = opts;
+	const safeClientName = escapeHtml(clientName || (language === 'en' ? 'customer' : 'kunde'));
+	const safeInvoiceNumber = escapeHtml(invoiceNumber);
+	const safeAmount = escapeHtml(amount);
+	const safeDueDate = escapeHtml(dueDate);
 
 	if (language === 'en') {
 		const subject = `Second reminder — invoice ${invoiceNumber}`;
 		const paragraphs = [
-			`Dear ${clientName || 'customer'},`,
-			`The invoice <strong>${invoiceNumber}</strong> for <strong>${amount}</strong> (due ${dueDate}) is still unpaid despite our previous reminder.`,
+			`Dear ${safeClientName},`,
+			`The invoice <strong>${safeInvoiceNumber}</strong> for <strong>${safeAmount}</strong> (due ${safeDueDate}) is still unpaid despite our previous reminder.`,
 			`Please settle the amount promptly. In accordance with our terms, a reminder fee may be added to outstanding balances that remain unpaid.`
 		];
-		const text = paragraphs.map((p) => p.replace(/<\/?strong>/g, '')).join('\n\n');
+		const text = paragraphsToText(paragraphs);
 		return { subject, html: wrapHtml(subject, paragraphs, businessName), text };
 	}
 
 	const subject = `2. rykker — faktura ${invoiceNumber}`;
 	const paragraphs = [
-		`Kære ${clientName || 'kunde'},`,
-		`Faktura <strong>${invoiceNumber}</strong> på <strong>${amount}</strong> (forfald ${dueDate}) er stadig ubetalt på trods af vores forrige påmindelse.`,
+		`Kære ${safeClientName},`,
+		`Faktura <strong>${safeInvoiceNumber}</strong> på <strong>${safeAmount}</strong> (forfald ${safeDueDate}) er stadig ubetalt på trods af vores forrige påmindelse.`,
 		`Vi beder dig betale beløbet hurtigst muligt. I henhold til vores betingelser kan der pålægges et rykkergebyr for restancer, der forbliver ubetalte.`
 	];
-	const text = paragraphs.map((p) => p.replace(/<\/?strong>/g, '')).join('\n\n');
+	const text = paragraphsToText(paragraphs);
 	return { subject, html: wrapHtml(subject, paragraphs, businessName), text };
 }
 
@@ -111,25 +149,29 @@ export function secondReminderTemplate(opts: ReminderTemplateInput): ReminderTem
  */
 export function finalNoticeTemplate(opts: ReminderTemplateInput): ReminderTemplateOutput {
 	const { invoiceNumber, clientName, amount, dueDate, businessName, language } = opts;
+	const safeClientName = escapeHtml(clientName || (language === 'en' ? 'customer' : 'kunde'));
+	const safeInvoiceNumber = escapeHtml(invoiceNumber);
+	const safeAmount = escapeHtml(amount);
+	const safeDueDate = escapeHtml(dueDate);
 
 	if (language === 'en') {
 		const subject = `Final notice before debt collection — invoice ${invoiceNumber}`;
 		const paragraphs = [
-			`Dear ${clientName || 'customer'},`,
-			`This is our final notice regarding invoice <strong>${invoiceNumber}</strong> for <strong>${amount}</strong> (due ${dueDate}), which remains unpaid.`,
-			`If the amount is not received within 7 days, the case will be handed over to debt collection, which may incur additional fees and interest.`
+			`Dear ${safeClientName},`,
+			`This is our final notice regarding invoice <strong>${safeInvoiceNumber}</strong> for <strong>${safeAmount}</strong> (due ${safeDueDate}), which remains unpaid.`,
+			`If the amount is not received within 10 days, the case may be handed over to debt collection, which may incur additional fees and interest.`
 		];
-		const text = paragraphs.map((p) => p.replace(/<\/?strong>/g, '')).join('\n\n');
+		const text = paragraphsToText(paragraphs);
 		return { subject, html: wrapHtml(subject, paragraphs, businessName), text };
 	}
 
-	const subject = `Sidste indkaldelse før inkasso — faktura ${invoiceNumber}`;
+	const subject = `Inkassovarsel — faktura ${invoiceNumber}`;
 	const paragraphs = [
-		`Kære ${clientName || 'kunde'},`,
-		`Dette er vores sidste indkaldelse vedrørende faktura <strong>${invoiceNumber}</strong> på <strong>${amount}</strong> (forfald ${dueDate}), som fortsat er ubetalt.`,
-		`Hvis beløbet ikke modtages inden 7 dage, vil sagen blive overdraget til inkasso, hvilket kan medføre yderligere gebyrer og renter.`
+		`Kære ${safeClientName},`,
+		`Dette er vores sidste indkaldelse vedrørende faktura <strong>${safeInvoiceNumber}</strong> på <strong>${safeAmount}</strong> (forfald ${safeDueDate}), som fortsat er ubetalt.`,
+		`Hvis beløbet ikke modtages inden 10 dage, kan sagen blive overdraget til inkasso, hvilket kan medføre yderligere gebyrer og renter.`
 	];
-	const text = paragraphs.map((p) => p.replace(/<\/?strong>/g, '')).join('\n\n');
+	const text = paragraphsToText(paragraphs);
 	return { subject, html: wrapHtml(subject, paragraphs, businessName), text };
 }
 

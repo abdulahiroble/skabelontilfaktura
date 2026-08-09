@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import AffiliateCta from '$lib/components/AffiliateCta.svelte';
+	import { startCheckout } from '$lib/billing/checkout-client';
 
 	let purchasingPlan = $state<string | null>(null);
+	let checkoutError = $state('');
 
 	/**
 	 * Purchase handler for the pricing buttons.
@@ -16,26 +18,18 @@
 	async function purchase(planId: string) {
 		if (purchasingPlan) return;
 		purchasingPlan = planId;
+		checkoutError = '';
 		try {
-			const response = await fetch('/api/billing/checkout', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ planId })
-			});
-			if (response.status === 401) {
-				window.location.href = `/login/?next=${encodeURIComponent('/pris/')}`;
+			const result = await startCheckout(planId);
+			if ('error' in result) {
+				if (result.status === 401) {
+					window.location.href = `/login/?next=${encodeURIComponent('/pris/')}`;
+					return;
+				}
+				checkoutError = result.error;
 				return;
 			}
-			if (!response.ok) {
-				alert(
-					response.status === 429
-						? 'En betaling behandles allerede. Vent et øjeblik og prøv igen.'
-						: 'Kunne ikke oprette betalingssession. Prøv igen.'
-				);
-				return;
-			}
-			const data = (await response.json()) as { paymentUrl: string };
-			window.location.href = data.paymentUrl;
+			window.location.href = result.paymentUrl;
 		} finally {
 			purchasingPlan = null;
 		}
@@ -44,14 +38,12 @@
 	// Editorial pricing data — feature copy kept in Danish, rendered inline
 	// with accent dots rather than as card bullet lists.
 	const proFeatures = [
-		'Cloud-lagring (5 år)',
+		'Cloud-arkiv og fakturahistorik',
 		'Klientdatabase',
 		'SAF-T 2.0 eksport',
-		'Rykkermails',
+		'Rykkerflow og e-mails',
 		'Nummerering på tværs af enheder'
 	];
-
-	const businessFeatures = ['2–5 brugere', 'API-adgang', 'White-label PDF’er'];
 
 	const gratisFeatures = [
 		'Ubegrænsede fakturaer',
@@ -63,10 +55,10 @@
 </script>
 
 <svelte:head>
-	<title>Priser - Pro og Business | skabelontilfaktura.dk</title>
+	<title>Priser - Gratis og Pro | skabelontilfaktura.dk</title>
 	<meta
 		name="description"
-		content="Pro fra 49 DKK/måned. Cloud-lagring, klientdatabase, SAF-T 2.0 eksport og rykkermails. Business med multi-bruger, API-adgang og white-label PDF."
+		content="Pro fra 49 DKK/måned. Cloud-arkiv, fakturahistorik, klientdatabase, SAF-T 2.0 eksport og rykkermails."
 	/>
 </svelte:head>
 
@@ -99,8 +91,19 @@
 	</div>
 </section>
 
-<!-- Pricing spread: Pro as hero, Business as secondary -->
+<!-- Pricing spread: Pro as hero, with a discoverable product tour. -->
 <section class="mx-auto max-w-6xl px-6 py-16">
+	{#if checkoutError}
+		<div
+			class="border-destructive/30 bg-destructive/10 text-destructive mb-8 rounded-lg border px-4 py-3 text-sm"
+			role="alert"
+			aria-live="assertive"
+		>
+			<p class="font-medium">Betalingen kunne ikke åbnes</p>
+			<p class="mt-1">{checkoutError}</p>
+		</div>
+	{/if}
+
 	<div class="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
 		<!-- Pro: hero tier, accent color -->
 		<div>
@@ -147,37 +150,36 @@
 			</div>
 		</div>
 
-		<!-- Business: secondary, divided by a vertical rule on large screens -->
+		<!-- Product tour: make every paid feature discoverable before purchase. -->
 		<div class="border-border lg:border-l lg:pl-16">
-			<p class="text-muted-foreground text-sm font-medium tracking-wide">Business</p>
-			<div class="mt-3 flex items-baseline gap-2">
-				<span
-					class="text-4xl font-semibold tracking-tight sm:text-5xl"
-					style="font-family: var(--font-display)">149</span
-				>
-				<span class="text-muted-foreground text-sm">DKK /måned</span>
-			</div>
-			<p class="text-muted-foreground mt-5 max-w-sm text-sm leading-relaxed">
-				Til små teams, der vil dele adgang og bruge API-integrationer.
-			</p>
-
-			<div class="mt-7 flex flex-wrap gap-x-6 gap-y-2.5 text-sm">
-				{#each businessFeatures as feature (feature)}
-					<span class="flex items-center gap-2">
-						<span class="bg-muted-foreground h-1.5 w-1.5 rounded-full"></span>
-						{feature}
-					</span>
-				{/each}
-			</div>
-
-			<div class="mt-9">
-				<Button
-					variant="outline"
-					onclick={() => purchase('business')}
-					disabled={purchasingPlan !== null}
-				>
-					{purchasingPlan === 'business' ? 'Åbner betaling…' : 'Vælg Business'}
-				</Button>
+			<p class="text-muted-foreground text-sm font-medium tracking-wide">Sådan bruges Pro</p>
+			<h2 class="mt-3 text-3xl leading-tight">Alle værktøjer samlet under Min konto</h2>
+			<div class="mt-6 space-y-5 text-sm">
+				<div>
+					<p class="font-semibold">Fakturaer</p>
+					<p class="text-muted-foreground mt-1">
+						Gem PDF og fakturadata i cloud, find tidligere fakturaer og skift status.
+					</p>
+				</div>
+				<div>
+					<p class="font-semibold">Klienter</p>
+					<p class="text-muted-foreground mt-1">
+						Gem kundedata én gang og vælg klienten direkte i generatoren.
+					</p>
+				</div>
+				<div>
+					<p class="font-semibold">Eksport</p>
+					<p class="text-muted-foreground mt-1">
+						Hent SAF-T XML eller CSV for en valgt regnskabsperiode.
+					</p>
+				</div>
+				<div>
+					<p class="font-semibold">Rykkere og nummerering</p>
+					<p class="text-muted-foreground mt-1">
+						Cloud-fakturaer nummereres automatisk. På fakturasiden kan du sende næste lovlige
+						rykkertrin.
+					</p>
+				</div>
 			</div>
 		</div>
 	</div>

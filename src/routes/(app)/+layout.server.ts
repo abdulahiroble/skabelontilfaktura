@@ -1,10 +1,7 @@
 import type { LayoutServerLoad } from './$types';
-import { getDb } from '$lib/server/db/client';
-import { getEntitlements, serializeEntitlements } from '$lib/server/entitlements';
-
 /**
- * App layout load: resolve the signed-in user's entitlements once per request
- * so every page under `(app)` can gate UI without re-querying.
+ * App layout load: reuse the root layout's entitlement snapshot so every page
+ * under `(app)` can gate UI without issuing a duplicate subscription query.
  *
  * Returns `{ entitlements: null }` for anonymous users or when the DB binding
  * is unavailable (e.g. during a partial build). The entitlement check is
@@ -20,13 +17,6 @@ import { getEntitlements, serializeEntitlements } from '$lib/server/entitlements
  * `POST /api/billing/checkout`; the layout CTA calls it via fetch.
  */
 export const load: LayoutServerLoad = async (event) => {
-	const user = event.locals.user;
-	if (!user) return { entitlements: null };
-
-	const databaseUrl = event.platform?.env?.DATABASE_URL;
-	if (!databaseUrl) return { entitlements: null };
-
-	const db = getDb(databaseUrl);
-	const ctx = await getEntitlements(db, user.id);
-	return { entitlements: serializeEntitlements(ctx) };
+	const parent = await event.parent();
+	return { entitlements: parent.entitlements };
 };

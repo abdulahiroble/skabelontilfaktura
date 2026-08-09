@@ -10,6 +10,9 @@
 	 * Fields: name (required), CVR, address, email.
 	 */
 	import { Button } from '$lib/components/ui/button';
+	import { Check, LoaderCircle, Search } from '@lucide/svelte';
+	import { createCvrLookup } from '$lib/invoice/useCvrLookup.svelte';
+	import { validateCvr } from '$lib/invoice/validation';
 
 	type ClientFields = {
 		name?: string;
@@ -30,6 +33,20 @@
 	};
 
 	let { action = '', submitLabel = 'Gem', cancelHref, values = {}, errors = {} }: Props = $props();
+
+	function initialValues(): ClientFields {
+		return { ...values };
+	}
+
+	let formValues = $state<ClientFields>(initialValues());
+	const cvrLookup = createCvrLookup();
+
+	async function lookupClient() {
+		const result = await cvrLookup.lookup(formValues.cvr ?? '');
+		if (!result) return;
+		formValues.name = result.name;
+		formValues.address = [result.address, result.zipcode, result.city].filter(Boolean).join(', ');
+	}
 
 	const fields: {
 		name: keyof ClientFields;
@@ -76,16 +93,41 @@
 				{field.label}
 				{#if field.required}<span class="text-destructive">*</span>{/if}
 			</span>
-			<input
-				type={field.type}
-				name={field.name}
-				value={values[field.name] ?? ''}
-				placeholder={field.placeholder}
-				autocomplete={field.autocomplete ?? 'off'}
-				class="border-border bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-			/>
+			<div class="flex gap-2">
+				<input
+					type={field.type}
+					name={field.name}
+					bind:value={formValues[field.name]}
+					placeholder={field.placeholder}
+					autocomplete={field.autocomplete ?? 'off'}
+					inputmode={field.name === 'cvr' ? 'numeric' : undefined}
+					class="border-border bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 min-w-0 flex-1 rounded-md border px-3 py-1 text-sm shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+				/>
+				{#if field.name === 'cvr'}
+					<Button
+						type="button"
+						variant="outline"
+						onclick={lookupClient}
+						disabled={cvrLookup.loading || !validateCvr(formValues.cvr ?? '')}
+					>
+						{#if cvrLookup.loading}
+							<LoaderCircle size={15} class="animate-spin" />
+						{:else}
+							<Search size={15} />
+						{/if}
+						Slå op
+					</Button>
+				{/if}
+			</div>
 			{#if errors[field.name]}
 				<span class="text-destructive text-xs">{errors[field.name]}</span>
+			{/if}
+			{#if field.name === 'cvr' && cvrLookup.error}
+				<span class="text-destructive text-xs">{cvrLookup.error}</span>
+			{:else if field.name === 'cvr' && cvrLookup.result}
+				<span class="text-muted-foreground inline-flex items-center gap-1 text-xs">
+					<Check size={12} /> Udfyldt fra CVR-registret
+				</span>
 			{/if}
 		</label>
 	{/each}

@@ -1,19 +1,36 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import { Check, LoaderCircle, Search } from '@lucide/svelte';
+	import { createCvrLookup } from '$lib/invoice/useCvrLookup.svelte';
+	import { validateCvr } from '$lib/invoice/validation';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
-	const values = $derived({
-		name: form?.values?.name ?? data.profile?.name ?? '',
-		cvr: form?.values?.cvr ?? data.profile?.cvr ?? '',
-		address: form?.values?.address ?? data.profile?.address ?? '',
-		regNr: form?.values?.regNr ?? data.profile?.regNr ?? '',
-		kontonr: form?.values?.kontonr ?? data.profile?.kontonr ?? '',
-		mobilepay: form?.values?.mobilepay ?? data.profile?.mobilepay ?? '',
-		brandColor: form?.values?.brandColor ?? data.profile?.brandColor ?? '#000000'
-	});
+	function initialValues() {
+		return {
+			name: form?.values?.name ?? data.profile?.name ?? '',
+			cvr: form?.values?.cvr ?? data.profile?.cvr ?? '',
+			address: form?.values?.address ?? data.profile?.address ?? '',
+			regNr: form?.values?.regNr ?? data.profile?.regNr ?? '',
+			kontonr: form?.values?.kontonr ?? data.profile?.kontonr ?? '',
+			mobilepay: form?.values?.mobilepay ?? data.profile?.mobilepay ?? '',
+			brandColor: form?.values?.brandColor ?? data.profile?.brandColor ?? '#000000'
+		};
+	}
+
+	let values = $state(initialValues());
 	const errors = $derived((form?.errors ?? {}) as Record<string, string>);
+	const cvrLookup = createCvrLookup();
+
+	async function lookupBusiness() {
+		const result = await cvrLookup.lookup(values.cvr);
+		if (!result) return;
+		values.name = result.name;
+		values.address = [result.address, [result.zipcode, result.city].filter(Boolean).join(' ')]
+			.filter(Boolean)
+			.join('\n');
+	}
 </script>
 
 <svelte:head>
@@ -47,23 +64,45 @@
 				<input
 					name="name"
 					required
-					value={values.name}
+					bind:value={values.name}
 					class="border-input bg-background h-10 w-full rounded-md border px-3 text-sm"
 				/>
 				{#if errors.name}<span class="text-destructive text-xs">{errors.name}</span>{/if}
 			</label>
 
 			<div class="grid gap-4 sm:grid-cols-2">
-				<label class="block space-y-1.5">
+				<div class="block space-y-1.5">
 					<span class="text-sm font-medium">CVR</span>
-					<input
-						name="cvr"
-						inputmode="numeric"
-						value={values.cvr}
-						class="border-input bg-background h-10 w-full rounded-md border px-3 text-sm"
-					/>
+					<div class="flex gap-2">
+						<input
+							name="cvr"
+							inputmode="numeric"
+							bind:value={values.cvr}
+							class="border-input bg-background h-10 min-w-0 flex-1 rounded-md border px-3 text-sm"
+						/>
+						<Button
+							type="button"
+							variant="outline"
+							onclick={lookupBusiness}
+							disabled={cvrLookup.loading || !validateCvr(values.cvr)}
+						>
+							{#if cvrLookup.loading}
+								<LoaderCircle size={15} class="animate-spin" />
+							{:else}
+								<Search size={15} />
+							{/if}
+							Slå op
+						</Button>
+					</div>
 					{#if errors.cvr}<span class="text-destructive text-xs">{errors.cvr}</span>{/if}
-				</label>
+					{#if cvrLookup.error}
+						<span class="text-destructive text-xs">{cvrLookup.error}</span>
+					{:else if cvrLookup.result}
+						<span class="text-muted-foreground inline-flex items-center gap-1 text-xs">
+							<Check size={12} /> Udfyldt fra CVR-registret
+						</span>
+					{/if}
+				</div>
 
 				<label class="block space-y-1.5">
 					<span class="text-sm font-medium">Brandfarve</span>
@@ -71,7 +110,7 @@
 						<input
 							name="brandColor"
 							type="color"
-							value={values.brandColor}
+							bind:value={values.brandColor}
 							class="border-input bg-background h-10 w-14 rounded-md border p-1"
 						/>
 						<span class="text-muted-foreground text-sm">{values.brandColor}</span>
@@ -87,9 +126,9 @@
 				<textarea
 					name="address"
 					rows="3"
+					bind:value={values.address}
 					class="border-input bg-background w-full rounded-md border px-3 py-2 text-sm"
-					placeholder="Gade 1&#10;1000 København K">{values.address}</textarea
-				>
+					placeholder="Gade 1&#10;1000 København K"></textarea>
 			</label>
 		</section>
 
@@ -105,7 +144,7 @@
 					<input
 						name="regNr"
 						inputmode="numeric"
-						value={values.regNr}
+						bind:value={values.regNr}
 						class="border-input bg-background h-10 w-full rounded-md border px-3 text-sm"
 					/>
 					{#if errors.regNr}<span class="text-destructive text-xs">{errors.regNr}</span>{/if}
@@ -116,7 +155,7 @@
 					<input
 						name="kontonr"
 						inputmode="numeric"
-						value={values.kontonr}
+						bind:value={values.kontonr}
 						class="border-input bg-background h-10 w-full rounded-md border px-3 text-sm"
 					/>
 					{#if errors.kontonr}
@@ -130,7 +169,7 @@
 				<input
 					name="mobilepay"
 					inputmode="tel"
-					value={values.mobilepay}
+					bind:value={values.mobilepay}
 					class="border-input bg-background h-10 w-full rounded-md border px-3 text-sm"
 				/>
 				{#if errors.mobilepay}

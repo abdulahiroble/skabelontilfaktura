@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Download, Trash2 } from '@lucide/svelte';
+	import { Bell, Check, Download, Trash2 } from '@lucide/svelte';
 	import { INVOICE_STATUS_OPTIONS } from '$lib/invoice/types';
 	import { formatDanishDate, formatMoney } from '$lib/utils';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
+
+	const reminderLabels: Record<string, string> = {
+		first: 'Betalingspåmindelse',
+		second: '2. rykker',
+		final: 'Inkassovarsel'
+	};
 </script>
 
 <svelte:head>
@@ -88,7 +94,7 @@
 				<div>
 					<h2 class="font-semibold">Status</h2>
 					<p class="text-muted-foreground mt-1 text-xs">
-						Rykkermails sendes til sendte fakturaer efter forfald.
+						Rykkere kræver status Sendt og en e-mailadresse på kunden.
 					</p>
 				</div>
 				<select
@@ -102,6 +108,54 @@
 				</select>
 				<Button type="submit" variant="outline" class="w-full">Gem status</Button>
 			</form>
+
+			<section class="border-border rounded-lg border p-5">
+				<div class="flex items-start gap-3">
+					<Bell size={18} class="text-primary mt-0.5 shrink-0" />
+					<div>
+						<h2 class="font-semibold">Rykkere</h2>
+						<p class="text-muted-foreground mt-1 text-xs leading-relaxed">
+							Første påmindelse sendes 3 dage efter forfald. Senere trin venter mindst 10 dage.
+						</p>
+					</div>
+				</div>
+				{#if data.reminderLogs.length === 0}
+					<p class="text-muted-foreground mt-4 text-sm">Ingen rykkere sendt endnu.</p>
+				{:else}
+					<div class="border-border mt-4 space-y-3 border-t pt-4">
+						{#each data.reminderLogs as log (log.id)}
+							<div class="flex gap-2 text-sm">
+								<Check size={15} class="text-primary mt-0.5 shrink-0" />
+								<div>
+									<p class="font-medium">{reminderLabels[log.template ?? ''] ?? 'Rykker'}</p>
+									<p class="text-muted-foreground text-xs">{formatDanishDate(log.sentAt)}</p>
+								</div>
+							</div>
+						{/each}
+					</div>
+				{/if}
+				{#if form?.reminderSent}
+					<p class="mt-4 text-sm font-medium text-green-700" role="status">Rykkeren er sendt.</p>
+				{/if}
+				{#if form?.reminderError}
+					<p class="text-destructive mt-4 text-sm" role="alert">{form.reminderError}</p>
+				{/if}
+				<form method="POST" action="?/reminder" class="mt-4">
+					<Button
+						type="submit"
+						variant="outline"
+						class="w-full"
+						disabled={data.invoice.status !== 'sent'}
+					>
+						Send næste rykker
+					</Button>
+				</form>
+				{#if data.invoice.status !== 'sent'}
+					<p class="text-muted-foreground mt-2 text-xs">
+						Skift status til Sendt for at aktivere rykkerflowet.
+					</p>
+				{/if}
+			</section>
 
 			<form
 				method="POST"

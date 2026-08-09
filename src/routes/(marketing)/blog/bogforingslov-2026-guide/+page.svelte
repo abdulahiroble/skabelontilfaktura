@@ -294,7 +294,7 @@
 					<strong>SAF-T 2.0 eksport</strong> - Hent hele dit regnskab som gyldig XML med ét klik.
 				</li>
 				<li>
-					<strong>5 års cloud-opbevaring</strong> af alle fakturaer og bilag - som loven kræver.
+					<strong>Cloud-arkiv</strong> af fakturaer og PDF-filer på tværs af enheder.
 				</li>
 				<li>
 					<strong>Klientdatabase</strong> - hold styr på alle dine kunder på tværs af enheder.
@@ -303,7 +303,7 @@
 					<strong>Automatisk nummerering</strong> - fakturanumre, der følger bogføringslovens krav.
 				</li>
 				<li>
-					<strong>Rykkermails</strong> - send automatisk rykker og inkassovarsel efter reglerne.
+					<strong>Rykkermails</strong> - send næste rykkertrin fra den gemte faktura.
 				</li>
 			</ul>
 			<p class="mt-4">
@@ -327,8 +327,7 @@
 		<section class="border-border bg-muted/30 rounded-xl border p-8 text-center">
 			<h2 class="text-2xl font-bold">Klar til at overholde bogføringsloven?</h2>
 			<p class="text-muted-foreground mt-2">
-				Opgrader til Pro og få SAF-T 2.0 eksport, 5 års cloud-opbevaring og rykkermails. Fra kun 49
-				DKK/måned.
+				Opgrader til Pro og få SAF-T 2.0 eksport, cloud-arkiv og rykkermails. Fra kun 49 DKK/måned.
 			</p>
 			<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
 				<Button size="lg" href="/pris/">Se Pro-prisen</Button>

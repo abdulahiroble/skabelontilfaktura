@@ -1,4 +1,4 @@
-import { json, error } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { createCheckoutSession, isCheckoutPlanId } from '$lib/server/payments/checkout';
 
@@ -21,8 +21,8 @@ import { createCheckoutSession, isCheckoutPlanId } from '$lib/server/payments/ch
  * `subscription` row that drives entitlements.
  *
  * Request body: `{ planId: string }` — one of the plan ids in
- * `autumn.config.ts` (`pro`, `pro_annual`, `business`, `lifetime_pro`,
- * `template_pack`, `branch_bundle`).
+ * `autumn.config.ts` (`pro`, `pro_annual`, `lifetime_pro`). Other catalog
+ * products are intentionally not exposed until their workflows exist.
  *
  * Note: the user's DB row is not required here — Autumn's customer ID is the
  * Better Auth user ID (1:1), so checkout works even before a business row
@@ -31,29 +31,38 @@ import { createCheckoutSession, isCheckoutPlanId } from '$lib/server/payments/ch
 export const POST: RequestHandler = async ({ request, platform, locals }) => {
 	const user = locals.user;
 	if (!user) {
-		throw error(401, 'Log ind for at opgradere');
+		return json({ error: 'Log ind for at opgradere.', code: 'AUTH_REQUIRED' }, { status: 401 });
 	}
 
 	const env = platform?.env;
 	if (!env?.AUTUMN_SECRET_KEY) {
-		throw error(500, 'Autumn er ikke konfigureret');
+		return json(
+			{ error: 'Betaling er ikke konfigureret.', code: 'BILLING_NOT_CONFIGURED' },
+			{ status: 503 }
+		);
 	}
 
 	let body: { planId?: unknown };
 	try {
 		body = (await request.json()) as { planId?: unknown };
 	} catch {
-		throw error(400, 'Ugyldig anmodning');
+		return json({ error: 'Ugyldig anmodning.', code: 'INVALID_REQUEST' }, { status: 400 });
 	}
 
 	const planId = body.planId;
 	if (typeof planId !== 'string' || !isCheckoutPlanId(planId)) {
-		throw error(400, 'Ugyldig betalingsplan');
+		return json({ error: 'Ugyldig betalingsplan.', code: 'INVALID_PLAN' }, { status: 400 });
 	}
 
 	const result = await createCheckoutSession(env, user, planId);
 	if ('error' in result) {
-		throw error(result.status ?? 502, result.error);
+		return json(
+			{
+				error: result.error,
+				code: result.code
+			},
+			{ status: result.status }
+		);
 	}
 
 	return json({ paymentUrl: result.paymentUrl });

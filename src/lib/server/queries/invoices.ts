@@ -1,5 +1,5 @@
 import { and, desc, eq } from 'drizzle-orm';
-import { invoice, invoiceItem } from '$lib/server/db/schema';
+import { invoice, invoiceItem, reminderLog } from '$lib/server/db/schema';
 import type { Database } from '$lib/server/db/client';
 import type { InvoiceData, InvoiceStatus } from '$lib/invoice/types';
 import { calculateTotals } from '$lib/invoice/moms';
@@ -42,6 +42,19 @@ export async function getInvoiceForBusiness(db: Database, id: string, businessId
 		.where(and(eq(invoice.id, id), eq(invoice.businessId, businessId)))
 		.limit(1);
 	return rows[0] ?? null;
+}
+
+/** Reminder delivery history for one invoice, newest first. */
+export async function getInvoiceReminderLogs(db: Database, invoiceId: string) {
+	return db
+		.select({
+			id: reminderLog.id,
+			template: reminderLog.template,
+			sentAt: reminderLog.sentAt
+		})
+		.from(reminderLog)
+		.where(eq(reminderLog.invoiceId, invoiceId))
+		.orderBy(desc(reminderLog.sentAt));
 }
 
 /**

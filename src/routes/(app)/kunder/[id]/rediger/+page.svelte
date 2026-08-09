@@ -38,13 +38,15 @@
 		<p class="text-muted-foreground text-sm">Opdater oplysningerne for {data.client.name}.</p>
 	</header>
 
-	<ClientForm
-		action="?/update"
-		submitLabel="Gem ændringer"
-		cancelHref="/kunder/"
-		{values}
-		{errors}
-	/>
+	{#key data.client.id}
+		<ClientForm
+			action="?/update"
+			submitLabel="Gem ændringer"
+			cancelHref="/kunder/"
+			{values}
+			{errors}
+		/>
+	{/key}
 
 	<div class="border-border mt-8 border-t pt-6">
 		<form

@@ -32,7 +32,7 @@
 		{
 			question: 'Hvor længe skal man gemme sine fakturaer?',
 			answer:
-				'Bogføringsloven kræver, at du opbevarer dine fakturaer og regnskabsmateriale i 5 år. Fra januar 2026 stilles der desuden krav om digital bogføring for virksomheder med en omsætning på over 300.000 DKK, hvilket betyder, at fakturaer skal opbevares digitalt i et godkendt bogføringssystem sammen med bilag. Vores Pro-abonnement tilbyder cloud-lagring i 5 år, så du altid er dækket.'
+				'Bogføringsloven kræver, at du opbevarer dine fakturaer og regnskabsmateriale i 5 år. Fra januar 2026 stilles der desuden krav om digital bogføring for virksomheder med en omsætning på over 300.000 DKK. Pro giver et cloud-arkiv og eksportmuligheder, men du er selv ansvarlig for at sikre, at din samlede bogføringsløsning opfylder kravene.'
 		},
 		{
 			question: 'Hvordan beregner man moms på en faktura?',
@@ -152,7 +152,7 @@
 			Vores fakturaskabelon er gratis at bruge og overholder alle danske regler - inklusiv
 			automatisk momsberegning, CVR-opslag og PDF-download. Se også vores
 			<a href="/pris/" class="text-primary font-medium hover:underline">priser</a>
-			for Pro og Business, hvis du har brug for cloud-lagring og klientdatabase.
+			for Pro, hvis du har brug for cloud-arkiv og klientdatabase.
 		</p>
 		<div class="mt-4 flex flex-wrap gap-3">
 			<Button href="/generator/">Lav en gratis faktura</Button>
@@ -170,7 +170,7 @@
 				>
 			</li>
 			<li>
-				<a href="/pris/" class="text-primary hover:underline">Priser på Pro og Business</a>
+				<a href="/pris/" class="text-primary hover:underline">Priser på Pro</a>
 			</li>
 		</ul>
 	</div>

@@ -101,6 +101,7 @@ export const business = plan({
 export const lifetimePro = plan({
 	id: 'lifetime_pro',
 	name: 'Lifetime Pro',
+	group: 'subscription',
 	price: { amount: 999, interval: 'one_off' },
 	items: proItems
 });

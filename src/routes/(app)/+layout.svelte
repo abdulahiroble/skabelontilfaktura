@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
-	import { Button } from '$lib/components/ui/button';
 	import { authClient } from '$lib/auth/client';
 	import UpgradePrompt from '$lib/components/UpgradePrompt.svelte';
 
@@ -42,32 +41,14 @@
 	const canExport = $derived(features.has('saft_export'));
 	const canStoreInvoices = $derived(features.has('cloud_storage'));
 	const canManageClients = $derived(features.has('client_database'));
-
-	/** Upgrade CTA for Pro users: POST the checkout endpoint with the plan. */
-	async function checkoutBusiness() {
-		const response = await fetch('/api/billing/checkout', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ planId: 'business' })
-		});
-		if (response.status === 401) {
-			window.location.href = '/login/';
-			return;
-		}
-		if (!response.ok) {
-			alert('Kunne ikke oprette betalingssession. Prøv igen.');
-			return;
-		}
-		const data = (await response.json()) as { paymentUrl: string };
-		window.location.href = data.paymentUrl;
-	}
 </script>
 
 <div class="flex min-h-screen flex-col">
-	<header class="border-border border-b">
-		<div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+	<header class="border-border bg-background/95 sticky top-0 z-50 border-b backdrop-blur">
+		<div class="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
 			<a href="/" class="font-semibold">skabelontilfaktura.dk</a>
-			<nav class="flex items-center gap-4 text-sm">
+			<nav class="hidden items-center gap-5 text-sm md:flex">
+				<a href="/konto/" class="text-muted-foreground hover:text-foreground">Overblik</a>
 				<a href="/generator/" class="text-muted-foreground hover:text-foreground">Ny faktura</a>
 				{#if canStoreInvoices}
 					<a href="/faktura/" class="text-muted-foreground hover:text-foreground">Fakturaer</a>
@@ -94,17 +75,30 @@
 					</button>
 				{/if}
 			</nav>
+			<a href="/konto/" class="text-primary text-sm font-medium md:hidden">Min konto</a>
 		</div>
+		<nav
+			class="border-border flex gap-4 overflow-x-auto border-t px-4 py-2 text-sm md:hidden"
+			aria-label="Kontoværktøjer"
+		>
+			<a href="/konto/" class="text-muted-foreground whitespace-nowrap">Overblik</a>
+			<a href="/generator/" class="text-muted-foreground whitespace-nowrap">Ny faktura</a>
+			{#if canStoreInvoices}
+				<a href="/faktura/" class="text-muted-foreground whitespace-nowrap">Fakturaer</a>
+			{/if}
+			{#if canManageClients}
+				<a href="/kunder/" class="text-muted-foreground whitespace-nowrap">Klienter</a>
+			{/if}
+			{#if canExport}
+				<a href="/eksport/" class="text-muted-foreground whitespace-nowrap">Eksport</a>
+			{/if}
+			<a href="/indstillinger/" class="text-muted-foreground whitespace-nowrap">Indstillinger</a>
+		</nav>
 	</header>
 	<main class="flex-1">
 		<div class="mx-auto max-w-6xl px-4 py-4">
 			{#if !isProOrHigher}
 				<UpgradePrompt />
-			{/if}
-			{#if data.entitlements?.plan === 'pro' || data.entitlements?.plan === 'business'}
-				<div class="flex justify-end">
-					<Button size="sm" onclick={checkoutBusiness}>Prøv Business</Button>
-				</div>
 			{/if}
 		</div>
 		{@render children()}

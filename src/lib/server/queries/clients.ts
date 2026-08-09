@@ -17,7 +17,6 @@ export type NewClient = {
 	cvr?: string;
 	address?: string;
 	email?: string;
-	peppolId?: string;
 };
 
 /** Fields that may be patched when updating a client. */
@@ -26,7 +25,6 @@ export type ClientUpdate = Partial<{
 	cvr: string;
 	address: string;
 	email: string;
-	peppolId: string;
 }>;
 
 /**

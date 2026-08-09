@@ -48,7 +48,6 @@
 						<th class="px-4 py-2.5 font-medium">Navn</th>
 						<th class="px-4 py-2.5 font-medium">CVR</th>
 						<th class="px-4 py-2.5 font-medium">E-mail</th>
-						<th class="px-4 py-2.5 font-medium">EAN / Peppol</th>
 						<th class="px-4 py-2.5 text-right font-medium">Handlinger</th>
 					</tr>
 				</thead>
@@ -58,7 +57,6 @@
 							<td class="px-4 py-2.5 font-medium">{c.name}</td>
 							<td class="text-muted-foreground px-4 py-2.5">{c.cvr ?? '—'}</td>
 							<td class="text-muted-foreground px-4 py-2.5">{c.email ?? '—'}</td>
-							<td class="text-muted-foreground px-4 py-2.5">{c.peppolId ?? '—'}</td>
 							<td class="px-4 py-2.5 text-right">
 								<Button variant="ghost" size="sm" href={`/kunder/${c.id}/rediger/`}>
 									<Pencil size={14} />

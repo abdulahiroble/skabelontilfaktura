@@ -22,8 +22,7 @@
 			name: data.client.name ?? '',
 			cvr: data.client.cvr ?? '',
 			address: data.client.address ?? '',
-			email: data.client.email ?? '',
-			peppolId: data.client.peppolId ?? ''
+			email: data.client.email ?? ''
 		}
 	);
 	const errors = $derived(form && 'errors' in form ? form.errors : {});

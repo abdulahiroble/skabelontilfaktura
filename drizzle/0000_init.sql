@@ -34,7 +34,6 @@ CREATE TABLE "client" (
 	"cvr" text,
 	"address" text,
 	"email" text,
-	"peppol_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );

@@ -142,10 +142,11 @@
 					</p>
 				</li>
 				<li>
-					<h3 class="font-semibold">1. juli 2026 - NemHandel bliver standard</h3>
+					<h3 class="font-semibold">1. juli 2026 - NemHandel opdateres</h3>
 					<p class="text-muted-foreground text-sm">
-						NemHandel overgår til Peppol-netværket som standard for e-fakturering til det
-						offentlige. OIOUBL-formatet udfases gradvist og erstattes af Peppol BIS 4.0.
+						Det danske system for elektronisk fakturering til det offentlige (B2G) moderniseres og
+						bliver i stigende grad baseret på Peppol-standarden. OIOUBL-formatet udfases gradvist.
+						Der er fortsat ikke krav om e-fakturering mellem private virksomheder (B2B) i Danmark.
 					</p>
 				</li>
 				<li>
@@ -218,8 +219,8 @@
 					<div class="text-primary text-2xl font-bold">3</div>
 					<h3 class="mt-2 font-semibold">Automatisering</h3>
 					<p class="text-muted-foreground mt-1 text-sm">
-						Systemet skal understøtte elektronisk fakturering (NemHandel/Peppol) og kunne eksportere
-						data i SAF-T 2.0 format.
+						Systemet skal kunne eksportere data i SAF-T 2.0 format og opbevare bilag digitalt i 5
+						år.
 					</p>
 				</div>
 			</div>
@@ -251,35 +252,34 @@
 		</section>
 
 		<section>
-			<h2 class="text-2xl font-bold tracking-tight">NemHandel og Peppol: E-fakturering fremover</h2>
+			<h2 class="text-2xl font-bold tracking-tight">
+				E-fakturering og NemHandel: Hvad gælder i Danmark?
+			</h2>
 			<p class="mb-4">
 				<strong>NemHandel</strong> er det danske system for elektronisk fakturering til det
 				offentlige. Siden 2005 har det været obligatorisk for virksomheder at sende e-fakturaer til
-				stat, regioner og kommuner. Men systemet er nu ved at blive moderniseret og integreret i det
-				europæiske <strong>Peppol-netværk</strong>.
-			</p>
-			<p class="mb-4">
-				Fra <strong>1. juli 2026</strong> bliver Peppol standarden for e-fakturering i Danmark. Det betyder
-				konkrete ændringer:
+				stat, regioner og kommuner (B2G). Systemet bliver løbende moderniseret og baseret på det
+				europæiske <strong>Peppol-netværk</strong>, men der er i dag <strong>ikke</strong> krav om e-fakturering
+				mellem private virksomheder (B2B) i Danmark.
 			</p>
 			<ul class="list-disc space-y-2 pl-6">
 				<li>
-					<strong>OIOUBL udfases:</strong> Det gamle danske XML-format ophører med at være understøttet
-					og erstattes af Peppol BIS 4.0.
+					<strong>B2G er obligatorisk:</strong> Hvis du sender fakturaer til offentlige kunder (stat,
+					regioner, kommuner), skal de sendes elektronisk via NemHandel.
 				</li>
 				<li>
-					<strong>Peppol BIS 4.0:</strong> Det nye fælles europæiske format, som alle e-fakturaer til
-					det offentlige skal følge.
+					<strong>B2B er frivilligt:</strong> Fakturaer mellem private virksomheder kan fortsat sendes
+					som PDF eller lignende - der er intet krav om Peppol endnu.
 				</li>
 				<li>
-					<strong>Tvungen e-fakturering udvides:</strong> Flere B2B-transaktioner forventes at blive omfattet
-					i de kommende år, i tråd med EU-direktivet om tvungen digital fakturering.
+					<strong>EU-bevægelser:</strong> EU's ViDA-direktiv kan i fremtiden udvide kravene, men der er
+					ikke vedtaget en dansk B2B-forpligtelse.
 				</li>
 			</ul>
 			<p class="mt-4">
-				For at kunne sende Peppol-fakturaer skal dit faktureringssystem være tilsluttet en Peppol
-				Access Point-udbyder. Det er typisk en funktion, der indgår i moderne cloudbaserede
-				regnskabssystemer.
+				For de fleste selvstændige og freelancere, der fakturerer private virksomheder, er der
+				derfor ingen akut grund til at investere i Peppol-afsendelse. Et værktøj, der laver
+				lovformlige PDF-fakturaer og SAF-T 2.0 eksport, dækker langt de fleste behov.
 			</p>
 		</section>
 

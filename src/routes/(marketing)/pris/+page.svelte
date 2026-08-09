@@ -39,7 +39,7 @@
 		'Nummerering på tværs af enheder'
 	];
 
-	const businessFeatures = ['Peppol e-faktura', '2–5 brugere', 'API-adgang', 'White-label PDF’er'];
+	const businessFeatures = ['2–5 brugere', 'API-adgang', 'White-label PDF’er'];
 
 	const gratisFeatures = [
 		'Ubegrænsede fakturaer',
@@ -54,7 +54,7 @@
 	<title>Priser - Pro og Business | skabelontilfaktura.dk</title>
 	<meta
 		name="description"
-		content="Pro fra 49 DKK/måned. Cloud-lagring, klientdatabase, SAF-T 2.0 eksport og rykkermails. Business med Peppol e-faktura."
+		content="Pro fra 49 DKK/måned. Cloud-lagring, klientdatabase, SAF-T 2.0 eksport og rykkermails. Business med multi-bruger, API-adgang og white-label PDF."
 	/>
 </svelte:head>
 
@@ -132,7 +132,7 @@
 				<span class="text-muted-foreground text-sm">DKK /måned</span>
 			</div>
 			<p class="text-muted-foreground mt-5 max-w-sm text-sm leading-relaxed">
-				Til små teams, der skal sende e-faktura via Peppol og dele adgang.
+				Til små teams, der vil dele adgang og bruge API-integrationer.
 			</p>
 
 			<div class="mt-7 flex flex-wrap gap-x-6 gap-y-2.5 text-sm">

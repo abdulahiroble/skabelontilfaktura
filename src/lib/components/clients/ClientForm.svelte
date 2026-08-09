@@ -7,7 +7,7 @@
 	 * submit label; validation errors coming back from the form action are
 	 * rendered inline.
 	 *
-	 * Fields: name (required), CVR, address, email, EAN/Peppol ID.
+	 * Fields: name (required), CVR, address, email.
 	 */
 	import { Button } from '$lib/components/ui/button';
 
@@ -16,7 +16,6 @@
 		cvr?: string;
 		address?: string;
 		email?: string;
-		peppolId?: string;
 	};
 
 	type Props = {
@@ -62,8 +61,7 @@
 			type: 'email',
 			placeholder: 'faktura@acme.dk',
 			autocomplete: 'email'
-		},
-		{ name: 'peppolId', label: 'EAN / Peppol ID', type: 'text', placeholder: '579000...' }
+		}
 	];
 </script>
 

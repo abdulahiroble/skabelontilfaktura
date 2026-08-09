@@ -258,11 +258,9 @@
 			<div class="border-border rounded-xl border p-5">
 				<h3 class="font-semibold">"Jeg sender fakturaer til udlandet"</h3>
 				<p class="text-muted-foreground mt-2 text-sm">
-					Brug et værktøj, der understøtter Peppol e-faktura og udenlandsk momshåndtering.
-					<a href="/pris/" class="text-primary font-medium hover:underline"
-						>skabelontilfaktura.dk Business</a
-					>
-					inkluderer Peppol, og både Dinero og e-conomic har stærk international understøttelse.
+					Brug et værktøj med god international momshåndtering, fx udenlandsk moms og
+					VIES-validering. Både skabelontilfaktura.dk, Dinero og e-conomic håndterer fakturaer til
+					udlandet, og de store regnskabsprogrammer har desuden stærk international understøttelse.
 				</p>
 			</div>
 		</div>

@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
 	import { Button } from '$lib/components/ui/button';
+	import { authClient } from '$lib/auth/client';
 	import UpgradePrompt from '$lib/components/UpgradePrompt.svelte';
 
 	/**
@@ -15,13 +16,21 @@
 	 */
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
+	// Better Auth Svelte store — read with `$session` (auto-subscribes in the
+	// browser; safe during SSR/prerender because the store starts inert).
+	const session = authClient.useSession();
+
+	async function logout() {
+		await authClient.signOut();
+		window.location.href = '/';
+	}
+
 	type FeatureId =
 		| 'cloud_storage'
 		| 'client_database'
 		| 'saft_export'
 		| 'reminder_emails'
 		| 'cross_device_numbering'
-		| 'peppol_send'
 		| 'multi_user'
 		| 'api_access'
 		| 'white_label';
@@ -65,6 +74,18 @@
 				<a href="/indstillinger/" class="text-muted-foreground hover:text-foreground"
 					>Indstillinger</a
 				>
+				{#if $session.data}
+					<span class="text-muted-foreground hidden max-w-[12rem] truncate text-sm sm:inline"
+						>{$session.data.user.email}</span
+					>
+					<button
+						type="button"
+						class="text-muted-foreground hover:text-foreground text-sm"
+						onclick={logout}
+					>
+						Log ud
+					</button>
+				{/if}
 			</nav>
 		</div>
 	</header>

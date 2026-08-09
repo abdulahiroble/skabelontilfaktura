@@ -30,12 +30,6 @@ export const crossDeviceNumbering = feature({
 	type: 'boolean'
 });
 
-export const peppolSend = feature({
-	id: 'peppol_send',
-	name: 'Peppol send',
-	type: 'boolean'
-});
-
 export const multiUser = feature({
 	id: 'multi_user',
 	name: 'Team seats',
@@ -98,7 +92,6 @@ export const business = plan({
 	price: { amount: 149, interval: 'month' },
 	items: [
 		...proItems,
-		item({ featureId: peppolSend.id }),
 		item({ featureId: multiUser.id, included: 5 }),
 		item({ featureId: apiAccess.id }),
 		item({ featureId: whiteLabel.id })

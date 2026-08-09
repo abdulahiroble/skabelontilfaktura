@@ -20,8 +20,7 @@ function validate(formData: FormData): {
 		name: String(formData.get('name') ?? '').trim(),
 		cvr: String(formData.get('cvr') ?? '').trim(),
 		address: String(formData.get('address') ?? '').trim(),
-		email: String(formData.get('email') ?? '').trim(),
-		peppolId: String(formData.get('peppolId') ?? '').trim()
+		email: String(formData.get('email') ?? '').trim()
 	};
 
 	const errors: Record<string, string> = {};
@@ -64,8 +63,7 @@ export const actions: Actions = {
 				name: values.name,
 				cvr: values.cvr || undefined,
 				address: values.address || undefined,
-				email: values.email || undefined,
-				peppolId: values.peppolId || undefined
+				email: values.email || undefined
 			});
 		} catch (err) {
 			console.error('[kunder/ny] Kunne ikke oprette klient:', err);

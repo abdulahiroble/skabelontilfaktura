@@ -286,7 +286,6 @@ export async function buildSaftXml(
 		push(4, 'Name', c.name);
 		push(4, 'Address', c.address ?? '');
 		if (c.email) push(4, 'Email', c.email);
-		if (c.peppolId) push(4, 'PeppolId', c.peppolId);
 		close(3, 'Customer');
 	}
 	if (clients.length === 0) {

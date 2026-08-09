@@ -17,11 +17,15 @@ that 2025-2026 regulatory and ecosystem changes have exposed. v2.0 corrects:
    OIOUBL 3.0 in January 2026 and committed to a single Peppol-based standard
    (Nemhandel BIS 4 / Peppol BIS 3.0 today, migrating to Peppol PINT by 2029).
    v1.0 referenced "OIOUBL export" which is now a dead end.
-2. **NemHandel auto-enrollment from 1 July 2026.** All entities on registered
-   bookkeeping systems will be enrolled in NemHandel by default and prompted to
-   issue e-invoices unless they opt out. This re-positions our "EAN export"
-   Business-tier feature: real Peppol connectivity is now table stakes, not a
-   nice-to-have.
+2. **NemHandel / Peppol is B2G-only (corrected after research).** Danish
+   e-invoicing is mandatory only for invoices TO the public sector (B2G,
+   since 2005). There is NO general B2B mandate in Denmark (unlike Belgium
+   or Germany). A Business-tier Peppol feature was explored but is NOT
+   included: sending Peppol requires an OpenPeppol-certified Access Point
+   (~€3-4k/yr membership+certification) or a per-invoice provider fee, and
+   our target users (freelancers invoicing private businesses) have no legal
+   need for it. Revisit only if a customer demands it (then via a managed
+   partner like Storecove).
 3. **SAF-T 2.0 export required from 1 January 2027.** Registered bookkeeping
    systems must be able to export SAF-T 2.0 XML. Even though we are a
    "pre-bookkeeping" tool, supporting SAF-T 2.0 export is a strong upsell and
@@ -91,9 +95,11 @@ software (taking affiliate fees along the way).
   NemHandel unless they opt out.
 - Registered systems must auto-check NemHandel when a recipient is selected
   and route via Peppol if the recipient is reachable.
-- **Implication for us**: A genuinely useful Business-tier feature is
-  "Peppol-aware send" (lookup recipient EAS code, offer to deliver via an
-  Access Point partner). We do NOT need to become a registered bogføringssystem.
+- **Decision (2026-08): NOT building Peppol send.** B2B e-invoicing is not
+  mandatory in Denmark, and Access Point membership/certification (~€3-4k/yr)
+  or per-invoice provider fees make it a money-loser for a 149 DKK/mo tier.
+  We remain a PDF + SAF-T export tool. Revisit via a managed partner only if
+  a customer requires it.
 
 ### 2.3 Format transition: OIOUBL -> Peppol (NEW)
 
@@ -228,8 +234,6 @@ til Pro."
 
 | Feature | Target User |
 |---|---|
-| **Peppol send via Access Point partner** (NEW) | Real e-invoicing, not just PDF |
-| EAN/OIOUBL legacy export (deprecated path) | Legacy public-sector vendors |
 | Multi-user (2-5 seats, Better Auth Organization plugin) | Small teams |
 | Recurring/subscription billing templates | Agencies |
 | API access (Better Auth apiKey plugin, rate-limited) | Power users |
@@ -288,7 +292,7 @@ possible, removing the need for a direct Vipps MobilePay merchant contract.
 Products in `autumn.config.ts`:
 - `pro` (49 DKK/month, or 470 DKK/year): cloud storage, client DB, SAF-T
   export, rykker emails, cross-device numbering.
-- `business` (149 DKK/month): Peppol send, multi-seat org, API access,
+- `business` (149 DKK/month): multi-seat org, API access,
   white-label PDFs.
 - `lifetime_pro` (999 DKK one-time): all Pro features forever.
 - `template_pack` (149 DKK one-time): 10 premium designs.
@@ -330,7 +334,7 @@ MobilePay Merchant (revenue share).
 | Analytics | **Plausible** self-hosted (GDPR-friendly, no cookies needed) | to add |
 | Error monitoring | **Sentry** free tier | to add |
 | Cookie consent | **Cookiebot/Usercentrics CMP** + Google Consent Mode v2 | to add |
-| E-invoicing (Business) | Peppol Access Point partner (e.g. Pagero/Tradeshift/Storecove) | later |
+| E-invoicing (Business) | ~~Peppol Access Point partner~~ **CUT (2026-08): not B2B-mandatory, costs €3-4k/yr or per-invoice fees** | later |
 | SAF-T 2.0 export | In-house XML serializer per Erhvervsstyrelsen schema | to add |
 
 ### 6.2 Architecture principles
@@ -360,7 +364,7 @@ Key columns on `invoice`:
 - `status` (draft | sent | paid | overdue | void)
 - `currency`, `subtotal`, `vat_rate`, `vat_amount`, `total`
 - `items` (jsonb array, also denormalized to `invoice_item` for SAF-T)
-- `pdf_r2_key`, `peppol_id` (nullable, Business tier)
+- `pdf_r2_key`
 - `client_id` (FK)
 - `issued_at`, `due_at`, `paid_at`
 
@@ -449,7 +453,6 @@ from PRD v1.0 §10.
 - A/B test pricing.
 
 ### Phase 5: Business tier (Months 7-12)
-- **Peppol send via Access Point partner** (real e-invoicing).
 - Better Auth Organization (multi-seat) + apiKey plugin.
 - Recurring billing templates; white-label PDFs; API access.
 - Reviso/accountant matchmaking.

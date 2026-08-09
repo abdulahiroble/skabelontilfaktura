@@ -1,8 +1,18 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import { authClient } from '$lib/auth/client';
 	import type { Snippet } from 'svelte';
 
 	let { children }: { children: Snippet } = $props();
+
+	// Better Auth Svelte store — read with `$session` (auto-subscribes in the
+	// browser; safe during SSR/prerender because the store starts inert).
+	const session = authClient.useSession();
+
+	async function logout() {
+		await authClient.signOut();
+		window.location.href = '/';
+	}
 
 	const navLinks = [
 		{ href: '/', label: 'Fakturagenerator' },
@@ -31,12 +41,30 @@
 				{/each}
 			</nav>
 			<div class="flex items-center gap-3">
-				<a
-					href="/login/"
-					class="text-muted-foreground hover:text-foreground hidden text-sm font-medium transition-colors sm:inline"
-				>
-					Log ind
-				</a>
+				{#if $session.isPending}
+					<span class="text-muted-foreground text-sm">…</span>
+				{:else if $session.data}
+					<a
+						href="/generator/"
+						class="text-muted-foreground hover:text-foreground hidden text-sm font-medium transition-colors sm:inline"
+					>
+						{$session.data.user.name ?? $session.data.user.email}
+					</a>
+					<button
+						type="button"
+						class="text-muted-foreground hover:text-foreground hidden text-sm font-medium transition-colors sm:inline"
+						onclick={logout}
+					>
+						Log ud
+					</button>
+				{:else}
+					<a
+						href="/login/"
+						class="text-muted-foreground hover:text-foreground hidden text-sm font-medium transition-colors sm:inline"
+					>
+						Log ind
+					</a>
+				{/if}
 				<Button size="sm" href="/generator/">Lav faktura</Button>
 			</div>
 		</div>

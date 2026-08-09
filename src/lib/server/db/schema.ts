@@ -105,7 +105,6 @@ export const client = pgTable('client', {
 	cvr: text('cvr'),
 	address: text('address'),
 	email: text('email'),
-	peppolId: text('peppol_id'),
 	createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()
 });

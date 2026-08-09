@@ -30,7 +30,6 @@ export type FeatureId =
 	| 'saft_export'
 	| 'reminder_emails'
 	| 'cross_device_numbering'
-	| 'peppol_send'
 	| 'multi_user'
 	| 'api_access'
 	| 'white_label';
@@ -65,7 +64,6 @@ const PLAN_FEATURES: Record<Plan, FeatureId[]> = {
 		'saft_export',
 		'reminder_emails',
 		'cross_device_numbering',
-		'peppol_send',
 		'multi_user',
 		'api_access',
 		'white_label'

@@ -47,8 +47,7 @@ export async function createCheckoutSession(
 		await autumn.customers.getOrCreate({
 			customerId: user.id,
 			name: user.name ?? user.email,
-			email: user.email,
-			currency: 'dkk'
+			email: user.email
 		});
 	} catch (err) {
 		console.error('[billing] Kunne ikke oprette Autumn-kunde:', err);
@@ -59,7 +58,6 @@ export async function createCheckoutSession(
 		const response = await autumn.billing.attach({
 			customerId: user.id,
 			planId,
-			currency: 'dkk',
 			redirectMode: 'always',
 			successUrl: `${env.PUBLIC_APP_URL ?? ''}/indstillinger/?checkout=success`
 		});

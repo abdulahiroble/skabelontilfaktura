@@ -7,6 +7,7 @@ import {
 	deleteClient,
 	getBusinessByUserId
 } from '$lib/server/queries';
+import { requireFeature } from '$lib/server/guards';
 
 /**
  * Edit-client route.
@@ -41,10 +42,7 @@ function validate(formData: FormData): {
 }
 
 export const load: PageServerLoad = async (event) => {
-	const user = event.locals.user;
-	if (!user) {
-		throw redirect(302, '/login/');
-	}
+	const { user } = await requireFeature(event, 'client_database');
 
 	const databaseUrl = event.platform?.env?.DATABASE_URL;
 	if (!databaseUrl) {
@@ -56,7 +54,7 @@ export const load: PageServerLoad = async (event) => {
 	try {
 		const business = await getBusinessByUserId(db, user.id);
 		if (!business) {
-			throw error(404, 'Ingen virksomhed fundet for denne bruger');
+			throw redirect(302, '/indstillinger/');
 		}
 
 		const clientRow = await getClientForBusiness(db, event.params.id, business.id);
@@ -76,10 +74,7 @@ export const load: PageServerLoad = async (event) => {
 
 export const actions: Actions = {
 	update: async (event) => {
-		const user = event.locals.user;
-		if (!user) {
-			throw redirect(302, '/login/');
-		}
+		const { user } = await requireFeature(event, 'client_database');
 
 		const databaseUrl = event.platform?.env?.DATABASE_URL;
 		if (!databaseUrl) {
@@ -94,7 +89,7 @@ export const actions: Actions = {
 		const db = getDb(databaseUrl);
 		const business = await getBusinessByUserId(db, user.id);
 		if (!business) {
-			return fail(404, { values, errors: { form: 'Ingen virksomhed fundet for denne bruger' } });
+			throw redirect(302, '/indstillinger/');
 		}
 
 		// Ensure the client belongs to this business before mutating.
@@ -122,10 +117,7 @@ export const actions: Actions = {
 	},
 
 	delete: async (event) => {
-		const user = event.locals.user;
-		if (!user) {
-			throw redirect(302, '/login/');
-		}
+		const { user } = await requireFeature(event, 'client_database');
 
 		const databaseUrl = event.platform?.env?.DATABASE_URL;
 		if (!databaseUrl) {
@@ -135,7 +127,7 @@ export const actions: Actions = {
 		const db = getDb(databaseUrl);
 		const business = await getBusinessByUserId(db, user.id);
 		if (!business) {
-			throw error(404, 'Ingen virksomhed fundet for denne bruger');
+			throw redirect(302, '/indstillinger/');
 		}
 
 		const existing = await getClientForBusiness(db, event.params.id, business.id);

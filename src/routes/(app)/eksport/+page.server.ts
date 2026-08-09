@@ -2,9 +2,10 @@ import { and, eq, gte, inArray, lte } from 'drizzle-orm';
 import { redirect, error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { getDb } from '$lib/server/db/client';
-import { client, invoice, subscription } from '$lib/server/db/schema';
+import { client, invoice } from '$lib/server/db/schema';
 import { getBusinessByUserId } from '$lib/server/queries';
 import { buildSaftXml, buildSaftCsv, type InvoiceRow, type SaftPeriod } from '$lib/server/saft';
+import { getEntitlements, hasFeature } from '$lib/server/entitlements';
 
 /**
  * Export page (Pro-tier): SAF-T 2.0 XML + standardkontoplanen CSV downloads.
@@ -18,26 +19,6 @@ import { buildSaftXml, buildSaftCsv, type InvoiceRow, type SaftPeriod } from '$l
  *
  * All DB access uses a fresh `getDb()` per request.
  */
-
-/** Plans that grant access to the export feature. */
-const PRO_PLANS = new Set(['pro', 'business', 'lifetime_pro']);
-
-/**
- * Return `true` when the user has an active paid plan.
- *
- * `lifetime_pro` is treated as always active (status may be null). Other plans
- * require `status = 'active'`.
- */
-async function hasProAccess(db: ReturnType<typeof getDb>, userId: string): Promise<boolean> {
-	const rows = await db
-		.select({ plan: subscription.plan, status: subscription.status })
-		.from(subscription)
-		.where(eq(subscription.userId, userId));
-
-	return rows.some(
-		(row) => PRO_PLANS.has(row.plan) && (row.plan === 'lifetime_pro' || row.status === 'active')
-	);
-}
 
 /** Format a `Date` as YYYY-MM-DD. */
 function toIsoDate(value: Date): string {
@@ -87,8 +68,8 @@ export const load: PageServerLoad = async (event) => {
 
 	const db = getDb(databaseUrl);
 
-	const isPro = await hasProAccess(db, user.id);
-	if (!isPro) {
+	const entitlements = await getEntitlements(db, user.id);
+	if (!hasFeature(entitlements, 'saft_export')) {
 		throw error(403, 'SAF-T-eksport kræver et Pro-abonnement');
 	}
 
@@ -134,8 +115,8 @@ async function generateExport(
 
 	const db = getDb(databaseUrl);
 
-	const isPro = await hasProAccess(db, user.id);
-	if (!isPro) {
+	const entitlements = await getEntitlements(db, user.id);
+	if (!hasFeature(entitlements, 'saft_export')) {
 		throw error(403, 'SAF-T-eksport kræver et Pro-abonnement');
 	}
 
@@ -148,6 +129,7 @@ async function generateExport(
 	if (from.getTime() > to.getTime()) {
 		return fail(400, { errors: { periode: 'Fra-dato skal være før til-dato.' } });
 	}
+	to.setHours(23, 59, 59, 999);
 
 	const businessRow = await getBusinessByUserId(db, user.id);
 	if (!businessRow) {

@@ -11,6 +11,22 @@ import { createAutumnClient, type Autumn } from './autumn';
 export const CHECKOUT_PLANS = ['pro', 'pro_annual', 'business', 'lifetime_pro'] as const;
 export type CheckoutPlanId = (typeof CHECKOUT_PLANS)[number];
 
+export function isCheckoutPlanId(value: string): value is CheckoutPlanId {
+	return CHECKOUT_PLANS.includes(value as CheckoutPlanId);
+}
+
+function isAutumnLocked(error: unknown): boolean {
+	if (!error || typeof error !== 'object') return false;
+	const candidate = error as {
+		statusCode?: number;
+		status?: number;
+		response?: { status?: number };
+	};
+	return (
+		candidate.statusCode === 429 || candidate.status === 429 || candidate.response?.status === 429
+	);
+}
+
 /**
  * Create a Stripe checkout session for the given plan.
  *
@@ -23,15 +39,16 @@ export type CheckoutPlanId = (typeof CHECKOUT_PLANS)[number];
 export async function createCheckoutSession(
 	env: Env,
 	user: { id: string; name?: string; email: string },
-	planId: string
-): Promise<{ paymentUrl: string } | { error: string }> {
+	planId: CheckoutPlanId
+): Promise<{ paymentUrl: string } | { error: string; status?: number }> {
 	const autumn: Autumn = createAutumnClient(env);
 
 	try {
 		await autumn.customers.getOrCreate({
 			customerId: user.id,
 			name: user.name ?? user.email,
-			email: user.email
+			email: user.email,
+			currency: 'dkk'
 		});
 	} catch (err) {
 		console.error('[billing] Kunne ikke oprette Autumn-kunde:', err);
@@ -42,10 +59,9 @@ export async function createCheckoutSession(
 		const response = await autumn.billing.attach({
 			customerId: user.id,
 			planId,
+			currency: 'dkk',
 			redirectMode: 'always',
-			// Landing page after a successful (sandbox/live) payment. `/eksport/`
-			// is the flagship Pro feature this checkout unlocks.
-			successUrl: `${env.PUBLIC_APP_URL ?? ''}/eksport/?checkout=success`
+			successUrl: `${env.PUBLIC_APP_URL ?? ''}/indstillinger/?checkout=success`
 		});
 		if (!response.paymentUrl) {
 			return { error: 'Ingen betalings-URL returneret' };
@@ -53,6 +69,12 @@ export async function createCheckoutSession(
 		return { paymentUrl: response.paymentUrl };
 	} catch (err) {
 		console.error('[billing] Attach fejlede:', err);
+		if (isAutumnLocked(err)) {
+			return {
+				error: 'En betaling behandles allerede. Vent et øjeblik og prøv igen.',
+				status: 429
+			};
+		}
 		return { error: 'Kunne ikke oprette betalingssession' };
 	}
 }

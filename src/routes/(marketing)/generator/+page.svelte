@@ -27,6 +27,9 @@
 	import InvoiceForm from '$lib/components/invoice/InvoiceForm.svelte';
 	import { createInvoiceStore } from '$lib/invoice/store.svelte';
 	import { buildMeta } from '$lib/seo';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 
 	const meta = buildMeta({
 		title: 'Fakturagenerator - Lav en gratis faktura | skabelontilfaktura.dk',
@@ -45,6 +48,36 @@
 
 	let loading = $state(false);
 	let compressedLoading = $state(false);
+	let cloudLoading = $state(false);
+	let cloudError = $state('');
+	let selectedClientId = $state('');
+	const canSaveToCloud = $derived(data.entitlements?.features.includes('cloud_storage') === true);
+
+	$effect(() => {
+		if (!store.hydrated || !data.business || store.data.seller.name) return;
+		store.data.seller = { ...data.business.seller };
+		store.data.regNr = data.business.regNr ?? '';
+		store.data.kontonr = data.business.kontonr ?? '';
+		store.data.mobilepay = data.business.mobilepay ?? '';
+		store.data.brandColor = data.business.brandColor ?? '#000000';
+	});
+
+	$effect(() => {
+		if (!selectedClientId) return;
+		const client = data.clients.find((entry) => entry.id === selectedClientId);
+		if (!client) return;
+		const addressParts = (client.address ?? '').split(/\r?\n/).map((part) => part.trim());
+		const cityLine = addressParts.slice(1).join(' ');
+		const cityMatch = /^(\d{4})\s+(.+)$/.exec(cityLine);
+		store.data.buyer = {
+			name: client.name,
+			cvr: client.cvr ?? '',
+			email: client.email ?? '',
+			address: addressParts[0] ?? '',
+			postalCode: cityMatch?.[1] ?? '',
+			city: cityMatch?.[2] ?? cityLine
+		};
+	});
 
 	/* ----------------------------------------------------------------------- */
 	/* Live preview                                                            */
@@ -56,6 +89,7 @@
 	let previewLoading = $state(false);
 	/** Pending debounce timer handle (cleared on re-run / teardown). */
 	let previewTimeout: ReturnType<typeof setTimeout> | null = null;
+	let previewGeneration = 0;
 
 	/**
 	 * Regenerate the preview whenever the reactive draft changes. The deep
@@ -67,8 +101,15 @@
 		// Touch the full serialised form so every nested field is observed.
 		const data = store.data;
 		void JSON.stringify(data);
+		const generation = ++previewGeneration;
 
 		if (previewTimeout) clearTimeout(previewTimeout);
+		if (!store.isValid) {
+			if (previewUrl) URL.revokeObjectURL(previewUrl);
+			previewUrl = null;
+			previewLoading = false;
+			return;
+		}
 		previewLoading = true;
 
 		previewTimeout = setTimeout(async () => {
@@ -81,14 +122,16 @@
 				const buffer = new ArrayBuffer(bytes.byteLength);
 				new Uint8Array(buffer).set(bytes);
 				const blob = new Blob([buffer], { type: 'application/pdf' });
+				if (generation !== previewGeneration) return;
 				// Revoke the previous URL before creating a new one to avoid leaks.
 				if (previewUrl) URL.revokeObjectURL(previewUrl);
 				previewUrl = URL.createObjectURL(blob);
 			} catch {
+				if (generation !== previewGeneration) return;
 				if (previewUrl) URL.revokeObjectURL(previewUrl);
 				previewUrl = null;
 			} finally {
-				previewLoading = false;
+				if (generation === previewGeneration) previewLoading = false;
 			}
 		}, 500);
 
@@ -157,6 +200,45 @@
 		// form, action bar and site chrome so only the invoice prints.
 		window.print();
 	}
+
+	async function saveToCloud() {
+		if (!store.isValid || cloudLoading) return;
+		cloudError = '';
+		cloudLoading = true;
+		try {
+			const response = await fetch('/api/invoices', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					invoice: store.data,
+					clientId: selectedClientId || null
+				})
+			});
+			const result = (await response.json()) as {
+				id?: string;
+				error?: string;
+				code?: string;
+			};
+			if (response.status === 401) {
+				window.location.href = '/login/?next=/generator/';
+				return;
+			}
+			if (result.code === 'BUSINESS_PROFILE_REQUIRED') {
+				window.location.href = '/indstillinger/';
+				return;
+			}
+			if (!response.ok || !result.id) {
+				cloudError = result.error ?? 'Fakturaen kunne ikke gemmes. Prøv igen.';
+				return;
+			}
+			store.resetForm();
+			window.location.href = `/faktura/${result.id}/`;
+		} catch {
+			cloudError = 'Fakturaen kunne ikke gemmes. Kontrollér forbindelsen og prøv igen.';
+		} finally {
+			cloudLoading = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -180,11 +262,25 @@
 	<div
 		class="bg-background/95 border-border supports-[backdrop-filter]:bg-background/70 no-print sticky top-14 z-30 -mx-4 mb-10 flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3 backdrop-blur sm:mb-14"
 	>
-		<p class="text-muted-foreground inline-flex items-center gap-2 text-xs sm:text-sm">
-			<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
-			<span class="hidden sm:inline">Din faktura gemmes automatisk i din browser.</span>
-			<span class="sm:hidden">Gemmes automatisk</span>
-		</p>
+		<div class="flex min-w-0 flex-wrap items-center gap-3">
+			<p class="text-muted-foreground inline-flex items-center gap-2 text-xs sm:text-sm">
+				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
+				<span class="hidden sm:inline">Din kladde gemmes automatisk i din browser.</span>
+				<span class="sm:hidden">Kladde gemmes</span>
+			</p>
+			{#if canSaveToCloud && data.clients.length > 0}
+				<select
+					bind:value={selectedClientId}
+					class="border-input bg-background h-8 max-w-48 rounded-md border px-2 text-xs"
+					aria-label="Vælg gemt klient"
+				>
+					<option value="">Vælg gemt klient</option>
+					{#each data.clients as client (client.id)}
+						<option value={client.id}>{client.name}</option>
+					{/each}
+				</select>
+			{/if}
+		</div>
 		<div class="ml-auto flex flex-wrap items-center gap-2">
 			<Button
 				variant="ghost"
@@ -222,8 +318,39 @@
 					Download PDF
 				{/if}
 			</Button>
+			{#if canSaveToCloud}
+				<Button
+					size="sm"
+					onclick={saveToCloud}
+					disabled={!store.isValid || loading || compressedLoading || cloudLoading}
+				>
+					{#if cloudLoading}
+						<LoaderCircle size={15} class="animate-spin" />
+						Gemmer…
+					{:else}
+						Gem i cloud
+					{/if}
+				</Button>
+			{/if}
 		</div>
 	</div>
+
+	{#if cloudError}
+		<div
+			class="bg-destructive/10 text-destructive no-print mb-6 rounded-md p-3 text-sm"
+			role="alert"
+		>
+			{cloudError}
+		</div>
+	{/if}
+
+	{#if canSaveToCloud && !data.business}
+		<div class="border-accent/40 bg-accent/10 no-print mb-6 rounded-lg border p-4 text-sm">
+			<strong>Opret din virksomhedsprofil før første cloud-faktura.</strong>
+			<a href="/indstillinger/" class="text-primary ml-2 font-medium underline">Åbn indstillinger</a
+			>
+		</div>
+	{/if}
 
 	<!-- Two-column layout: editor (left) + live preview (right) -->
 	<div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">

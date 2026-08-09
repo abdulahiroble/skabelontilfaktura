@@ -31,3 +31,4 @@ export function getDb(databaseUrl: string) {
 }
 
 export type Database = ReturnType<typeof getDb>;
+export type DatabaseTransaction = Parameters<Parameters<Database['transaction']>[0]>[0];

@@ -220,10 +220,11 @@ export async function buildSaftXml(
 
 	// Index clients by id for fast invoice lookups.
 	const clientById = new Map(clients.map((c) => [c.id, c]));
+	const finalized = invoices.filter((inv) => EXPORTABLE_STATUSES.has(inv.status));
 
 	// Collect every VAT rate present (invoice + line level) to build the tax table.
 	const allRates: number[] = [];
-	for (const inv of invoices) {
+	for (const inv of finalized) {
 		allRates.push(num(inv.vatRate));
 		for (const line of resolveLines(inv, itemRows)) {
 			allRates.push(line.vatRate);
@@ -233,14 +234,12 @@ export async function buildSaftXml(
 
 	// Aggregate the tax base per rate for the <TaxTableEntry><TaxBase> values.
 	const baseByRate = new Map<number, number>();
-	for (const inv of invoices) {
+	for (const inv of finalized) {
 		for (const line of resolveLines(inv, itemRows)) {
 			const base = line.quantity * line.unitPrice;
 			baseByRate.set(line.vatRate, (baseByRate.get(line.vatRate) ?? 0) + base);
 		}
 	}
-
-	const finalized = invoices.filter((inv) => EXPORTABLE_STATUSES.has(inv.status));
 
 	const lines: string[] = [];
 	const push = (depth: number, tag: string, text?: unknown) => {

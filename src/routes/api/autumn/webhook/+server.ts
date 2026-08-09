@@ -1,5 +1,5 @@
 import { json, error, type RequestHandler } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { getDb } from '$lib/server/db/client';
 import { subscription } from '$lib/server/db/schema';
 import { verifyWebhook, type AutumnWebhookEnvelope } from '$lib/server/payments/webhook';
@@ -68,6 +68,11 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 	// Autumn nests `customer_id` under `data` (confirmed by the captured body:
 	// `{"data":{"customer_id":"...","object":"billing.updated",...}}`).
 	const customerId = payload.data.customer_id;
+	const eventAt = payload.occurred_at
+		? new Date(
+				payload.occurred_at < 10_000_000_000 ? payload.occurred_at * 1000 : payload.occurred_at
+			)
+		: new Date();
 
 	for (const change of payload.data.plan_changes) {
 		const subscriptionSnapshot = change.subscription;
@@ -89,6 +94,12 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 			.where(eq(subscription.autumnCustomerId, customerId))
 			.limit(1);
 		const userId = existing[0]?.userId ?? customerId;
+		const current = await db
+			.select({ autumnEventAt: subscription.autumnEventAt })
+			.from(subscription)
+			.where(and(eq(subscription.userId, userId), eq(subscription.plan, planId)))
+			.limit(1);
+		if (current[0]?.autumnEventAt && current[0].autumnEventAt >= eventAt) continue;
 
 		const status =
 			change.action === 'activated'
@@ -104,43 +115,19 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 				autumnCustomerId: customerId,
 				plan: planId,
 				status,
-				currentPeriodEnd
-			})
-			.onConflictDoNothing(); // fallback for any unique constraint; upsert below covers updates
-	}
-
-	// Upsert pass: apply the latest snapshot for every changed plan.
-	for (const change of payload.data.plan_changes) {
-		const subscriptionSnapshot = change.subscription;
-		const purchaseSnapshot = change.purchase;
-		const planId = subscriptionSnapshot?.plan_id ?? purchaseSnapshot?.plan_id;
-		if (!planId) continue;
-
-		const currentPeriodEnd = subscriptionSnapshot?.current_period_end
-			? new Date(subscriptionSnapshot.current_period_end)
-			: null;
-		const existing = await db
-			.select({ userId: subscription.userId })
-			.from(subscription)
-			.where(eq(subscription.autumnCustomerId, customerId))
-			.limit(1);
-		const userId = existing[0]?.userId ?? customerId;
-		const status =
-			change.action === 'activated'
-				? 'active'
-				: change.action === 'expired'
-					? 'expired'
-					: (subscriptionSnapshot?.status ?? purchaseSnapshot?.status ?? 'active');
-
-		await db
-			.update(subscription)
-			.set({
-				plan: planId,
-				status,
 				currentPeriodEnd,
-				updatedAt: new Date()
+				autumnEventAt: eventAt
 			})
-			.where(eq(subscription.userId, userId));
+			.onConflictDoUpdate({
+				target: [subscription.userId, subscription.plan],
+				set: {
+					autumnCustomerId: customerId,
+					status,
+					currentPeriodEnd,
+					autumnEventAt: eventAt,
+					updatedAt: new Date()
+				}
+			});
 	}
 
 	return json({ received: true });

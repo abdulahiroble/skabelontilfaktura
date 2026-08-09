@@ -11,6 +11,14 @@ export type VatMode =
 
 export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'void';
 
+export const INVOICE_STATUS_OPTIONS: Array<{ value: InvoiceStatus; label: string }> = [
+	{ value: 'draft', label: 'Kladde' },
+	{ value: 'sent', label: 'Sendt' },
+	{ value: 'paid', label: 'Betalt' },
+	{ value: 'overdue', label: 'Forfalden' },
+	{ value: 'void', label: 'Annulleret' }
+];
+
 export type Currency = 'DKK' | 'EUR' | 'USD';
 
 export type InvoiceLanguage = 'da' | 'en';

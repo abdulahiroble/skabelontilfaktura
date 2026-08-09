@@ -20,6 +20,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = null;
 
 	const env = event.platform?.env;
+	if (event.url.pathname === '/api/autumn/webhook') {
+		return resolve(event);
+	}
 	if (!env?.DATABASE_URL) {
 		return resolve(event);
 	}

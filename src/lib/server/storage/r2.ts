@@ -42,7 +42,8 @@ export function generateInvoiceKey(
 	format: string = 'pdf'
 ): string {
 	const year = new Date().getFullYear();
-	return `invoices/${businessId}/${year}/${invoiceNumber}.${format}`;
+	const safeNumber = invoiceNumber.replace(/[^a-zA-Z0-9._-]+/g, '-');
+	return `invoices/${businessId}/${year}/${safeNumber}.${format}`;
 }
 
 export function generateLogoKey(businessId: string, ext: string = 'png'): string {

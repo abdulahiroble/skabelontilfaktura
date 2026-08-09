@@ -105,7 +105,7 @@ export async function sendReminderIfDue(
 	}
 
 	// 3. Without a client email there is nowhere to send.
-	const to = row.client?.email;
+	const to = row.client?.email ?? row.invoice.buyerEmail;
 	if (!to) {
 		return false;
 	}
@@ -113,7 +113,7 @@ export async function sendReminderIfDue(
 	// 4. Render + send + log.
 	const { subject, html, text } = reminderTemplate(template, {
 		invoiceNumber: row.invoice.invoiceNumber,
-		clientName: row.client?.name ?? '',
+		clientName: row.client?.name ?? row.invoice.buyerName ?? '',
 		amount: `${row.invoice.total ?? '0'} ${row.invoice.currency}`,
 		dueDate: formatDate(row.invoice.dueAt),
 		businessName: row.business.name,

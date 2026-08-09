@@ -1,5 +1,5 @@
 import { redirect, error } from '@sveltejs/kit';
-import type { ServerLoadEvent } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
 import { getDb } from '$lib/server/db/client';
 import {
 	getEntitlements,
@@ -35,7 +35,7 @@ export type AuthUser = { id: string; email: string; name?: string };
  * Resolve the per-request Drizzle client, or throw a 500 when the binding is
  * missing. Guard helpers depend on a DB to verify entitlements.
  */
-function requireDb(event: ServerLoadEvent) {
+function requireDb(event: RequestEvent) {
 	const databaseUrl = event.platform?.env?.DATABASE_URL;
 	if (!databaseUrl) {
 		throw error(500, 'Database ikke konfigureret');
@@ -47,7 +47,7 @@ function requireDb(event: ServerLoadEvent) {
  * Require an authenticated user; otherwise redirect to the login page.
  * Returns the signed-in user.
  */
-export async function requireAuth(event: ServerLoadEvent): Promise<AuthUser> {
+export async function requireAuth(event: RequestEvent): Promise<AuthUser> {
 	const user = event.locals.user;
 	if (!user) {
 		throw redirect(302, '/login/');
@@ -61,7 +61,7 @@ export async function requireAuth(event: ServerLoadEvent): Promise<AuthUser> {
  * resolved entitlement context.
  */
 export async function requirePro(
-	event: ServerLoadEvent
+	event: RequestEvent
 ): Promise<{ user: AuthUser; ctx: EntitlementContext }> {
 	const user = await requireAuth(event);
 	const db = requireDb(event);
@@ -77,7 +77,7 @@ export async function requirePro(
  * otherwise redirect to the pricing page. Returns the user and context.
  */
 export async function requireFeature(
-	event: ServerLoadEvent,
+	event: RequestEvent,
 	featureId: FeatureId
 ): Promise<{ user: AuthUser; ctx: EntitlementContext }> {
 	const { user, ctx } = await requirePro(event);

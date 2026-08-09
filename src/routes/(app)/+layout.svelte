@@ -40,6 +40,8 @@
 	const features = $derived(new Set<FeatureId>(data.entitlements?.features ?? []));
 	const isProOrHigher = $derived(data.entitlements?.plan !== 'free' && !!data.entitlements);
 	const canExport = $derived(features.has('saft_export'));
+	const canStoreInvoices = $derived(features.has('cloud_storage'));
+	const canManageClients = $derived(features.has('client_database'));
 
 	/** Upgrade CTA for Pro users: POST the checkout endpoint with the plan. */
 	async function checkoutBusiness() {
@@ -66,8 +68,13 @@
 		<div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
 			<a href="/" class="font-semibold">skabelontilfaktura.dk</a>
 			<nav class="flex items-center gap-4 text-sm">
-				<a href="/faktura/" class="text-muted-foreground hover:text-foreground">Fakturaer</a>
-				<a href="/kunder/" class="text-muted-foreground hover:text-foreground">Klienter</a>
+				<a href="/generator/" class="text-muted-foreground hover:text-foreground">Ny faktura</a>
+				{#if canStoreInvoices}
+					<a href="/faktura/" class="text-muted-foreground hover:text-foreground">Fakturaer</a>
+				{/if}
+				{#if canManageClients}
+					<a href="/kunder/" class="text-muted-foreground hover:text-foreground">Klienter</a>
+				{/if}
 				{#if canExport}
 					<a href="/eksport/" class="text-muted-foreground hover:text-foreground">Eksport</a>
 				{/if}

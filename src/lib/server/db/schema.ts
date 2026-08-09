@@ -1,9 +1,11 @@
 import {
 	boolean,
+	index,
 	jsonb,
 	integer,
 	numeric,
 	pgTable,
+	primaryKey,
 	text,
 	timestamp,
 	uuid,
@@ -83,7 +85,8 @@ export const business = pgTable('business', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	userId: text('user_id')
 		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' }),
+		.references(() => user.id, { onDelete: 'cascade' })
+		.unique(),
 	name: text('name').notNull(),
 	cvr: text('cvr'),
 	address: text('address'),
@@ -127,6 +130,9 @@ export const invoice = pgTable(
 		vatAmount: numeric('vat_amount', { precision: 12, scale: 2 }).default('0'),
 		total: numeric('total', { precision: 12, scale: 2 }).default('0'),
 		items: jsonb('items'),
+		data: jsonb('data'),
+		buyerName: text('buyer_name'),
+		buyerEmail: text('buyer_email'),
 		pdfR2Key: text('pdf_r2_key'),
 		issuedAt: timestamp('issued_at', { mode: 'date' }),
 		dueAt: timestamp('due_at', { mode: 'date' }),
@@ -139,42 +145,70 @@ export const invoice = pgTable(
 			table.businessId,
 			table.series,
 			table.invoiceNumber
-		)
+		),
+		index('invoice_business_created_idx').on(table.businessId, table.createdAt),
+		index('invoice_status_due_idx').on(table.status, table.dueAt),
+		index('invoice_business_issued_status_idx').on(table.businessId, table.issuedAt, table.status)
 	]
 );
 
-export const invoiceItem = pgTable('invoice_item', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	invoiceId: uuid('invoice_id')
-		.notNull()
-		.references(() => invoice.id, { onDelete: 'cascade' }),
-	description: text('description').notNull(),
-	quantity: numeric('quantity', { precision: 10, scale: 3 }).notNull().default('1'),
-	unitPrice: numeric('unit_price', { precision: 12, scale: 2 }).notNull(),
-	vatRate: numeric('vat_rate', { precision: 5, scale: 4 }).default('0.25'),
-	sortOrder: integer('sort_order').default(0)
-});
+export const invoiceCounter = pgTable(
+	'invoice_counter',
+	{
+		businessId: uuid('business_id')
+			.notNull()
+			.references(() => business.id, { onDelete: 'cascade' }),
+		series: text('series').notNull(),
+		nextValue: integer('next_value').notNull().default(1)
+	},
+	(table) => [primaryKey({ columns: [table.businessId, table.series] })]
+);
 
-export const reminderLog = pgTable('reminder_log', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	invoiceId: uuid('invoice_id')
-		.notNull()
-		.references(() => invoice.id, { onDelete: 'cascade' }),
-	sentAt: timestamp('sent_at', { mode: 'date' }).defaultNow().notNull(),
-	template: text('template').default('first')
-});
+export const invoiceItem = pgTable(
+	'invoice_item',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		invoiceId: uuid('invoice_id')
+			.notNull()
+			.references(() => invoice.id, { onDelete: 'cascade' }),
+		description: text('description').notNull(),
+		quantity: numeric('quantity', { precision: 10, scale: 3 }).notNull().default('1'),
+		unitPrice: numeric('unit_price', { precision: 12, scale: 2 }).notNull(),
+		vatRate: numeric('vat_rate', { precision: 5, scale: 4 }).default('0.25'),
+		sortOrder: integer('sort_order').default(0)
+	},
+	(table) => [index('invoice_item_invoice_idx').on(table.invoiceId)]
+);
 
-export const subscription = pgTable('subscription', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => user.id, { onDelete: 'cascade' }),
-	autumnCustomerId: text('autumn_customer_id'),
-	// free | pro | business | lifetime_pro
-	plan: text('plan').notNull(),
-	// active | canceled | past_due
-	status: text('status'),
-	currentPeriodEnd: timestamp('current_period_end', { mode: 'date' }),
-	createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
-	updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()
-});
+export const reminderLog = pgTable(
+	'reminder_log',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		invoiceId: uuid('invoice_id')
+			.notNull()
+			.references(() => invoice.id, { onDelete: 'cascade' }),
+		sentAt: timestamp('sent_at', { mode: 'date' }).defaultNow().notNull(),
+		template: text('template').default('first')
+	},
+	(table) => [unique('reminder_invoice_template_unq').on(table.invoiceId, table.template)]
+);
+
+export const subscription = pgTable(
+	'subscription',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		autumnCustomerId: text('autumn_customer_id'),
+		// free | pro | business | lifetime_pro
+		plan: text('plan').notNull(),
+		// active | canceled | past_due
+		status: text('status'),
+		currentPeriodEnd: timestamp('current_period_end', { mode: 'date' }),
+		autumnEventAt: timestamp('autumn_event_at', { mode: 'date' }),
+		createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+		updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()
+	},
+	(table) => [unique('subscription_user_plan_unq').on(table.userId, table.plan)]
+);

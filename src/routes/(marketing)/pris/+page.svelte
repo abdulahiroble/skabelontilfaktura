@@ -2,6 +2,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import AffiliateCta from '$lib/components/AffiliateCta.svelte';
 
+	let purchasingPlan = $state<string | null>(null);
+
 	/**
 	 * Purchase handler for the pricing buttons.
 	 *
@@ -12,21 +14,31 @@
 	 * ind" nav link to `/login/`).
 	 */
 	async function purchase(planId: string) {
-		const response = await fetch('/api/billing/checkout', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ planId })
-		});
-		if (response.status === 401) {
-			window.location.href = '/login/';
-			return;
+		if (purchasingPlan) return;
+		purchasingPlan = planId;
+		try {
+			const response = await fetch('/api/billing/checkout', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ planId })
+			});
+			if (response.status === 401) {
+				window.location.href = `/login/?next=${encodeURIComponent('/pris/')}`;
+				return;
+			}
+			if (!response.ok) {
+				alert(
+					response.status === 429
+						? 'En betaling behandles allerede. Vent et øjeblik og prøv igen.'
+						: 'Kunne ikke oprette betalingssession. Prøv igen.'
+				);
+				return;
+			}
+			const data = (await response.json()) as { paymentUrl: string };
+			window.location.href = data.paymentUrl;
+		} finally {
+			purchasingPlan = null;
 		}
-		if (!response.ok) {
-			alert('Kunne ikke oprette betalingssession. Prøv igen.');
-			return;
-		}
-		const data = (await response.json()) as { paymentUrl: string };
-		window.location.href = data.paymentUrl;
 	}
 
 	// Editorial pricing data — feature copy kept in Danish, rendered inline
@@ -116,7 +128,21 @@
 			</div>
 
 			<div class="mt-9 flex flex-wrap items-center gap-4">
-				<Button size="lg" class="px-7" onclick={() => purchase('pro')}>Opgrader til Pro</Button>
+				<Button
+					size="lg"
+					class="px-7"
+					onclick={() => purchase('pro')}
+					disabled={purchasingPlan !== null}
+				>
+					{purchasingPlan === 'pro' ? 'Åbner betaling…' : 'Opgrader til Pro'}
+				</Button>
+				<Button
+					variant="outline"
+					onclick={() => purchase('pro_annual')}
+					disabled={purchasingPlan !== null}
+				>
+					{purchasingPlan === 'pro_annual' ? 'Åbner betaling…' : '470 DKK / år'}
+				</Button>
 				<span class="text-muted-foreground text-xs">Inkluderer alt fra Gratis</span>
 			</div>
 		</div>
@@ -145,7 +171,13 @@
 			</div>
 
 			<div class="mt-9">
-				<Button variant="outline" onclick={() => purchase('business')}>Vælg Business</Button>
+				<Button
+					variant="outline"
+					onclick={() => purchase('business')}
+					disabled={purchasingPlan !== null}
+				>
+					{purchasingPlan === 'business' ? 'Åbner betaling…' : 'Vælg Business'}
+				</Button>
 			</div>
 		</div>
 	</div>
@@ -168,8 +200,13 @@
 					>
 					<span class="text-muted-foreground text-sm">én gang</span>
 				</div>
-				<Button variant="outline" onclick={() => purchase('lifetime_pro')}>Vælg livstids-Pro</Button
+				<Button
+					variant="outline"
+					onclick={() => purchase('lifetime_pro')}
+					disabled={purchasingPlan !== null}
 				>
+					{purchasingPlan === 'lifetime_pro' ? 'Åbner betaling…' : 'Vælg livstids-Pro'}
+				</Button>
 			</div>
 		</div>
 	</div>

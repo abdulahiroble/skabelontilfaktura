@@ -1,7 +1,7 @@
-import { and, eq } from 'drizzle-orm';
-import { invoice } from '$lib/server/db/schema';
+import { sql } from 'drizzle-orm';
+import { invoiceCounter } from '$lib/server/db/schema';
 import { padSeriesNumber } from '$lib/invoice/numbering';
-import type { Database } from '$lib/server/db/client';
+import type { Database, DatabaseTransaction } from '$lib/server/db/client';
 
 /**
  * Server-side sequential invoice numbering.
@@ -22,38 +22,25 @@ import type { Database } from '$lib/server/db/client';
  * `'2026-0001'`.
  */
 
-/** Parse the trailing numeric portion of an invoice number (e.g. '2026-0042' -> 42). */
-function parseSuffix(invoiceNumber: string): number {
-	// Match the last run of digits so future prefixes (e.g. 'PRO-2026-0042')
-	// still parse correctly.
-	const match = invoiceNumber.match(/(\d+)\s*$/);
-	return match ? parseInt(match[1], 10) : 0;
-}
-
 /**
  * Allocate the next invoice number for `series` within `businessId`.
  *
- * Returns a formatted string; does NOT insert anything. The caller is expected
- * to create the invoice row with this number immediately.
+ * Uses an atomic Postgres upsert so concurrent devices cannot receive the same
+ * sequence value. Call this from the same transaction that inserts the invoice.
  */
 export async function generateNextInvoiceNumber(
-	db: Database,
+	db: Database | DatabaseTransaction,
 	businessId: string,
 	series: string
 ): Promise<string> {
-	return db.transaction(async (tx) => {
-		const rows = await tx
-			.select({ invoiceNumber: invoice.invoiceNumber })
-			.from(invoice)
-			.where(and(eq(invoice.businessId, businessId), eq(invoice.series, series)));
+	const [counter] = await db
+		.insert(invoiceCounter)
+		.values({ businessId, series, nextValue: 1 })
+		.onConflictDoUpdate({
+			target: [invoiceCounter.businessId, invoiceCounter.series],
+			set: { nextValue: sql`${invoiceCounter.nextValue} + 1` }
+		})
+		.returning({ value: invoiceCounter.nextValue });
 
-		let maxPosition = 0;
-		for (const row of rows) {
-			const position = parseSuffix(row.invoiceNumber);
-			if (position > maxPosition) maxPosition = position;
-		}
-
-		const next = maxPosition + 1;
-		return `${series}-${padSeriesNumber(next)}`;
-	});
+	return `${series}-${padSeriesNumber(counter.value)}`;
 }

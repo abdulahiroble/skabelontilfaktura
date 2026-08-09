@@ -12,13 +12,16 @@
 
 	const errors = $derived((form?.errors ?? {}) as Record<string, string>);
 
-	// Seed the date inputs once from the server-provided default range. Captured
-	// into local consts first so the `$state` initializer does not reference the
-	// reactive `data` prop directly (which only holds the initial value anyway).
-	const initialFrom = data.defaultRange.from;
-	const initialTo = data.defaultRange.to;
-	let from = $state(initialFrom);
-	let to = $state(initialTo);
+	let from = $state('');
+	let to = $state('');
+	let initialized = $state(false);
+
+	$effect(() => {
+		if (initialized) return;
+		from = data.defaultRange.from;
+		to = data.defaultRange.to;
+		initialized = true;
+	});
 
 	/**
 	 * Whenever a successful action result arrives, materialize it as a download.

@@ -2,6 +2,7 @@ import type { PageServerLoad } from './$types';
 import { redirect, error } from '@sveltejs/kit';
 import { getDb } from '$lib/server/db/client';
 import { getClients, getBusinessByUserId } from '$lib/server/queries';
+import { requireFeature } from '$lib/server/guards';
 
 /**
  * Load the authenticated user's clients.
@@ -11,10 +12,7 @@ import { getClients, getBusinessByUserId } from '$lib/server/queries';
  * - Fresh `getDb()` per request (porsager-on-Workers rule).
  */
 export const load: PageServerLoad = async (event) => {
-	const user = event.locals.user;
-	if (!user) {
-		throw redirect(302, '/login/');
-	}
+	const { user } = await requireFeature(event, 'client_database');
 
 	const databaseUrl = event.platform?.env?.DATABASE_URL;
 	if (!databaseUrl) {
@@ -26,8 +24,7 @@ export const load: PageServerLoad = async (event) => {
 	try {
 		const business = await getBusinessByUserId(db, user.id);
 		if (!business) {
-			// No business row means Pro onboarding hasn't created one yet.
-			throw error(404, 'Ingen virksomhed fundet for denne bruger');
+			throw redirect(302, '/indstillinger/');
 		}
 
 		const clients = await getClients(db, business.id);

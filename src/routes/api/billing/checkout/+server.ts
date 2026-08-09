@@ -1,6 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { createCheckoutSession } from '$lib/server/payments/checkout';
+import { createCheckoutSession, isCheckoutPlanId } from '$lib/server/payments/checkout';
 
 /**
  * POST /api/billing/checkout
@@ -47,13 +47,13 @@ export const POST: RequestHandler = async ({ request, platform, locals }) => {
 	}
 
 	const planId = body.planId;
-	if (typeof planId !== 'string' || planId.length === 0) {
-		throw error(400, 'planId er påkrævet');
+	if (typeof planId !== 'string' || !isCheckoutPlanId(planId)) {
+		throw error(400, 'Ugyldig betalingsplan');
 	}
 
 	const result = await createCheckoutSession(env, user, planId);
 	if ('error' in result) {
-		throw error(502, result.error);
+		throw error(result.status ?? 502, result.error);
 	}
 
 	return json({ paymentUrl: result.paymentUrl });

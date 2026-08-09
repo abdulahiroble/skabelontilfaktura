@@ -18,7 +18,7 @@ import { subscription } from '$lib/server/db/schema';
  */
 
 /** Plans supported by the product, mirroring `autumn.config.ts`. */
-export type Plan = 'free' | 'pro' | 'business' | 'lifetime_pro';
+export type Plan = 'free' | 'pro' | 'pro_annual' | 'business' | 'lifetime_pro';
 
 /**
  * Feature identifiers gated per plan. These match the `feature.id` values in
@@ -58,6 +58,13 @@ const PLAN_FEATURES: Record<Plan, FeatureId[]> = {
 		'reminder_emails',
 		'cross_device_numbering'
 	],
+	pro_annual: [
+		'cloud_storage',
+		'client_database',
+		'saft_export',
+		'reminder_emails',
+		'cross_device_numbering'
+	],
 	business: [
 		'cloud_storage',
 		'client_database',
@@ -91,6 +98,7 @@ const FREE_CONTEXT: EntitlementContext = {
 const PLAN_RANK: Record<Plan, number> = {
 	free: 0,
 	pro: 2,
+	pro_annual: 2,
 	lifetime_pro: 2,
 	business: 3
 };
@@ -180,7 +188,7 @@ function isPlanActive(
 	currentPeriodEnd: Date | null,
 	now: number
 ): boolean {
-	if (plan === 'lifetime_pro') return true;
+	if (plan === 'lifetime_pro') return status === 'active';
 	if (status !== 'active') return false;
 	if (currentPeriodEnd && currentPeriodEnd.getTime() < now) return false;
 	return true;

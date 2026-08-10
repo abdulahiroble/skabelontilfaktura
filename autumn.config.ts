@@ -14,7 +14,7 @@ export const clientDatabase = feature({
 
 export const saftExport = feature({
 	id: 'saft_export',
-	name: 'SAF-T export',
+	name: 'CSV accounting export',
 	type: 'boolean'
 });
 

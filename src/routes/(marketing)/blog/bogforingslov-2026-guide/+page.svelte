@@ -278,20 +278,22 @@
 			</ul>
 			<p class="mt-4">
 				For de fleste selvstændige og freelancere, der fakturerer private virksomheder, er der
-				derfor ingen akut grund til at investere i Peppol-afsendelse. Et værktøj, der laver
-				lovformlige PDF-fakturaer og SAF-T 2.0 eksport, dækker langt de fleste behov.
+				derfor ingen akut grund til at investere i Peppol-afsendelse. En fakturagenerator kan dække
+				selve faktureringen, mens bogføringspligtige virksomheder fortsat skal vælge en løsning, der
+				opfylder deres samlede bogføringskrav.
 			</p>
 		</section>
 
 		<section>
 			<h2 class="text-2xl font-bold tracking-tight">Hvordan hjælper skabelontilfaktura.dk?</h2>
 			<p class="mb-4">
-				Hos skabelontilfaktura.dk har vi opdateret vores <strong>Pro-abonnement</strong>, så du er
-				helt dækket ind i forhold til bogføringsloven 2026. Vores Pro-tier inkluderer:
+				Skabelontilfaktura.dk hjælper med fakturering og administration, men er ikke et registreret
+				bogføringssystem. Vores <strong>Pro-abonnement</strong> inkluderer:
 			</p>
 			<ul class="list-disc space-y-2 pl-6">
 				<li>
-					<strong>SAF-T 2.0 eksport</strong> - Hent hele dit regnskab som gyldig XML med ét klik.
+					<strong>CSV-eksport</strong> - hent fakturaposteringer til videre behandling hos revisor eller
+					i dit regnskabssystem.
 				</li>
 				<li>
 					<strong>Cloud-arkiv</strong> af fakturaer og PDF-filer på tværs af enheder.
@@ -307,8 +309,8 @@
 				</li>
 			</ul>
 			<p class="mt-4">
-				Til kun <strong>49 DKK om måneden</strong> får du et fuldt lovformligt system, der fjerner bekymringen
-				om compliance, så du kan koncentrere dig om at drive din virksomhed.
+				Til <strong>49 DKK om måneden</strong> får du et enkelt værktøj til at gemme og administrere fakturaer.
+				Brug et registreret bogføringssystem eller en revisor til de krav, der ligger ud over faktureringen.
 			</p>
 		</section>
 
@@ -325,9 +327,9 @@
 		</section>
 
 		<section class="border-border bg-muted/30 rounded-xl border p-8 text-center">
-			<h2 class="text-2xl font-bold">Klar til at overholde bogføringsloven?</h2>
+			<h2 class="text-2xl font-bold">Vil du have bedre styr på fakturaerne?</h2>
 			<p class="text-muted-foreground mt-2">
-				Opgrader til Pro og få SAF-T 2.0 eksport, cloud-arkiv og rykkermails. Fra kun 49 DKK/måned.
+				Opgrader til Pro og få cloud-arkiv, klientdatabase, CSV-eksport og rykkerflow.
 			</p>
 			<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
 				<Button size="lg" href="/pris/">Se Pro-prisen</Button>

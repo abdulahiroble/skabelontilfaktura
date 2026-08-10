@@ -4,17 +4,15 @@ import type { PageServerLoad, Actions } from './$types';
 import { getDb } from '$lib/server/db/client';
 import { client, invoice } from '$lib/server/db/schema';
 import { getBusinessByUserId } from '$lib/server/queries';
-import { buildSaftXml, buildSaftCsv, type InvoiceRow, type SaftPeriod } from '$lib/server/saft';
+import { buildSaftCsv, type InvoiceRow } from '$lib/server/saft';
 import { getEntitlements, hasFeature } from '$lib/server/entitlements';
 
 /**
- * Export page (Pro-tier): SAF-T 2.0 XML + standardkontoplanen CSV downloads.
+ * Export page (Pro-tier): standardkontoplanen CSV downloads.
  *
  * - `load`: authenticates the user, verifies an active Pro subscription, loads
  *   the business, and provides a sensible default date range (current calendar
  *   year).
- * - `saft_xml` action: builds the SAF-T 2.0 XML for the chosen period and
- *   returns it as action data; the client triggers a Blob download.
  * - `csv` action: builds the standardkontoplanen CSV likewise.
  *
  * All DB access uses a fresh `getDb()` per request.
@@ -70,7 +68,7 @@ export const load: PageServerLoad = async (event) => {
 
 	const entitlements = await getEntitlements(db, user.id);
 	if (!hasFeature(entitlements, 'saft_export')) {
-		throw error(403, 'SAF-T-eksport kræver et Pro-abonnement');
+		throw error(403, 'CSV-eksport kræver et Pro-abonnement');
 	}
 
 	const businessRow = await getBusinessByUserId(db, user.id);
@@ -85,24 +83,16 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-	saft_xml: async (event) => {
-		return generateExport(event, 'xml');
-	},
 	csv: async (event) => {
-		return generateExport(event, 'csv');
+		return generateExport(event);
 	}
 };
 
 /**
- * Shared handler for both export actions.
- *
- * Validates auth + Pro + period, generates the requested format, and returns
+ * Validate auth + Pro + period, generate CSV, and return
  * `{ ok, content, filename, mime }` for the client to download as a Blob.
  */
-async function generateExport(
-	event: Parameters<NonNullable<Actions['saft_xml']>>[0],
-	format: 'xml' | 'csv'
-) {
+async function generateExport(event: Parameters<NonNullable<Actions['csv']>>[0]) {
 	const user = event.locals.user;
 	if (!user) {
 		throw redirect(302, '/login/');
@@ -117,7 +107,7 @@ async function generateExport(
 
 	const entitlements = await getEntitlements(db, user.id);
 	if (!hasFeature(entitlements, 'saft_export')) {
-		throw error(403, 'SAF-T-eksport kræver et Pro-abonnement');
+		throw error(403, 'CSV-eksport kræver et Pro-abonnement');
 	}
 
 	const formData = await event.request.formData();
@@ -136,22 +126,12 @@ async function generateExport(
 		throw error(404, 'Ingen virksomhed fundet for denne bruger');
 	}
 
-	const period: SaftPeriod = { from, to };
+	const period = { from, to };
 	const slug = slugify(businessRow.name);
 	const fromStr = toIsoDate(from);
 	const toStr = toIsoDate(to);
 
 	try {
-		if (format === 'xml') {
-			const content = await buildSaftXml(db, businessRow.id, period);
-			return {
-				ok: true as const,
-				content,
-				filename: `saft-${slug}-${fromStr}-${toStr}.xml`,
-				mime: 'application/xml'
-			};
-		}
-
 		const invoiceRows = await fetchInvoiceRows(db, businessRow.id, period);
 		const content = buildSaftCsv(invoiceRows);
 		return {
@@ -161,7 +141,7 @@ async function generateExport(
 			mime: 'text/csv'
 		};
 	} catch (err) {
-		console.error(`[eksport ${format}] Kunne ikke generere eksport:`, err);
+		console.error('[eksport csv] Kunne ikke generere eksport:', err);
 		return fail(500, { errors: { form: 'Kunne ikke generere eksporten. Prøv igen.' } });
 	}
 }
@@ -170,7 +150,7 @@ async function generateExport(
 async function fetchInvoiceRows(
 	db: ReturnType<typeof getDb>,
 	businessId: string,
-	period: SaftPeriod
+	period: { from: Date; to: Date }
 ): Promise<InvoiceRow[]> {
 	const invoices = await db
 		.select()

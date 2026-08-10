@@ -158,9 +158,9 @@
 				class="border-border bg-card hover:border-primary/40 rounded-xl border p-5 transition-colors"
 			>
 				<Download size={20} class="text-primary" />
-				<h3 class="mt-4 font-semibold">SAF-T og CSV</h3>
+				<h3 class="mt-4 font-semibold">CSV-eksport</h3>
 				<p class="text-muted-foreground mt-1 text-sm">
-					Eksporter sendte og betalte fakturaer for den valgte periode.
+					Eksporter fakturaposteringer til revisor eller regnskabssystem.
 				</p>
 			</a>
 			<a

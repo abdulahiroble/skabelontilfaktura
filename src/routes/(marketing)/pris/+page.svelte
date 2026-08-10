@@ -42,7 +42,7 @@
 		'Klientdatabase med autofyld',
 		'Automatisk fakturanummerering',
 		'Betalingsstatus og rykkerflow',
-		'Regnskabseksport (CSV og SAF-T)'
+		'Regnskabseksport som CSV'
 	];
 
 	const gratisFeatures = [
@@ -170,7 +170,7 @@
 				<div>
 					<p class="font-semibold">Eksport</p>
 					<p class="text-muted-foreground mt-1">
-						Hent SAF-T XML eller CSV for en valgt regnskabsperiode.
+						Hent bogføringsdata som CSV for en valgt regnskabsperiode.
 					</p>
 				</div>
 				<div>

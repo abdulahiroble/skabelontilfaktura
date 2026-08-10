@@ -242,7 +242,8 @@
 					<a href="/pris/" class="text-primary font-medium hover:underline"
 						>skabelontilfaktura.dk Pro</a
 					>
-					med cloud-lagring og SAF-T 2.0 eksport, eller et fuldt system som Dinero eller e-conomic.
+					med cloud-arkiv, klientdatabase og CSV-eksport, eller et registreret bogføringssystem som Dinero
+					eller e-conomic.
 				</p>
 			</div>
 

@@ -217,7 +217,7 @@
 					<strong>Cloud-arkiv</strong> (Pro) - samler fakturaer og PDF-filer på tværs af enheder.
 				</li>
 				<li>
-					<strong>SAF-T 2.0 eksport</strong> (Pro) - klar til bogføringsloven 2026.
+					<strong>CSV-eksport</strong> (Pro) - hent fakturaposteringer til revisor eller regnskabssystem.
 				</li>
 			</ul>
 			<p class="mt-4">

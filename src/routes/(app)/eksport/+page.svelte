@@ -1,11 +1,11 @@
 <script lang="ts">
 	/**
-	 * Export page (Pro-tier). Date range picker + two download buttons that POST
-	 * to the `saft_xml` / `csv` form actions. When an action returns file
-	 * content, a `$effect` builds a Blob and triggers a browser download.
+	 * Export page (Pro-tier). Date range picker + CSV download action. When the
+	 * action returns file content, a `$effect` builds a Blob and triggers a
+	 * browser download.
 	 */
 	import { Button } from '$lib/components/ui/button';
-	import { Download, FileSpreadsheet, FileCode } from '@lucide/svelte';
+	import { Download, FileSpreadsheet } from '@lucide/svelte';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -51,7 +51,7 @@
 	<header class="mb-6">
 		<h1 class="text-2xl font-bold">Eksport</h1>
 		<p class="text-muted-foreground text-sm">
-			Eksporter dine fakturadata til din revisor eller til Skat. Vælg en periode og format herunder.
+			Eksporter dine fakturaposteringer til din revisor eller dit regnskabssystem.
 		</p>
 	</header>
 
@@ -92,38 +92,7 @@
 		</div>
 	</section>
 
-	<section class="grid gap-4 sm:grid-cols-2">
-		<!-- SAF-T 2.0 XML -->
-		<form
-			method="POST"
-			action="?/saft_xml"
-			class="border-border flex flex-col gap-4 rounded-lg border p-5"
-		>
-			<input type="hidden" name="from" value={from} />
-			<input type="hidden" name="to" value={to} />
-
-			<div class="flex items-center gap-3">
-				<FileCode size={20} />
-				<div>
-					<h2 class="text-sm font-semibold">SAF-T 2.0 XML</h2>
-					<p class="text-muted-foreground text-xs">
-						Danmarks officielle revisionsfil til Skat og revisor.
-					</p>
-				</div>
-			</div>
-
-			<p class="text-muted-foreground text-sm">
-				Indeholder virksomhedsoplysninger, kunder, momstabel og alle fakturaer i perioden som
-				standardiseret XML.
-			</p>
-
-			<Button type="submit" class="mt-auto w-full">
-				<Download size={16} />
-				Download SAF-T XML
-			</Button>
-		</form>
-
-		<!-- Standardkontoplanen CSV -->
+	<section class="max-w-xl">
 		<form
 			method="POST"
 			action="?/csv"
@@ -143,10 +112,11 @@
 			</div>
 
 			<p class="text-muted-foreground text-sm">
-				Kontonummer, dato, bilag, tekst, debet og kredit — kortlagt på 1000 (salg) og 1400 (moms).
+				Indeholder kontonummer, dato, bilag, tekst, debet og kredit for fakturaerne i den valgte
+				periode.
 			</p>
 
-			<Button type="submit" variant="outline" class="mt-auto w-full">
+			<Button type="submit" class="mt-auto w-full">
 				<Download size={16} />
 				Download CSV
 			</Button>

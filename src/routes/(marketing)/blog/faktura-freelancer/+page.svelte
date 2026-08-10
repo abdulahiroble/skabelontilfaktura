@@ -1,10 +1,19 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
-	import { buildMeta, breadcrumbSchema, type BreadcrumbItem } from '$lib/seo';
+	import {
+		ARTICLE_AUTHOR,
+		ARTICLE_DATES,
+		blogPostingSchema,
+		buildMeta,
+		breadcrumbSchema,
+		type BreadcrumbItem
+	} from '$lib/seo';
+
+	const articleDates = ARTICLE_DATES.freelancer;
 
 	const meta = buildMeta({
-		title: 'Faktura for freelancere: Den komplette guide (2026)',
+		title: 'Faktura for freelancere (2026)',
 		description:
 			'Alt hvad freelancere skal vide om fakturering i Danmark: CVR, moms, F-skattenummer, betalingsbetingelser og skat.',
 		canonical: '/blog/faktura-freelancer/',
@@ -21,7 +30,15 @@
 	];
 
 	const breadcrumb = breadcrumbSchema(breadcrumbs);
-	const jsonLd = [breadcrumb];
+	const article = blogPostingSchema({
+		headline: 'Faktura for freelancere: Den komplette guide (2026)',
+		description: meta.description,
+		url: meta.canonical,
+		datePublished: articleDates.published,
+		dateModified: articleDates.modified,
+		authorName: ARTICLE_AUTHOR
+	});
+	const jsonLd = [article, breadcrumb];
 
 	// Avoid emitting a literal `<script` token in source so the Svelte/prettier
 	// parsers don't mistake the JSON-LD string for a real inline script block.
@@ -56,7 +73,10 @@
 	title="Faktura for freelancere: Den komplette guide (2026)"
 	subtitle="Alt hvad freelancere skal vide om fakturering i Danmark: CVR, moms, F-skattenummer, betalingsbetingelser og skat."
 	category="Freelancere"
-	date="Opdateret juli 2026"
+	datePublished={articleDates.published}
+	dateModified={articleDates.modified}
+	dateLabel={articleDates.modifiedLabel}
+	author={ARTICLE_AUTHOR}
 	readingTime="9 min læsning"
 >
 	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">

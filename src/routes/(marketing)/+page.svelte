@@ -3,7 +3,7 @@
 	import { buildMeta, softwareApplicationSchema, organizationSchema } from '$lib/seo';
 
 	const meta = buildMeta({
-		title: 'Skabelon til faktura - Lav en faktura på 60 sekunder',
+		title: 'Gratis fakturaskabelon på 60 sekunder',
 		description:
 			'Lav en gratis og lovlig dansk faktura på 60 sekunder. CVR-opslag, automatisk moms, MobilePay og PDF-download. Ingen tilmelding nødvendig.',
 		canonical: '/',

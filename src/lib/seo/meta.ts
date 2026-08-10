@@ -7,7 +7,7 @@
  */
 
 /** Site-wide brand suffix appended to page titles. */
-export const SITE_NAME = 'skabelontilfaktura.dk' as const;
+export const SITE_NAME = 'Skabelon til faktura' as const;
 
 /** Canonical base URL (no trailing slash). */
 export const SITE_URL = 'https://skabelontilfaktura.dk' as const;

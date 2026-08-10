@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { buildMeta } from '$lib/seo';
+	import { ARTICLE_DATES, buildMeta } from '$lib/seo';
 
 	const meta = buildMeta({
 		title: 'Guides og artikler om fakturering',
@@ -14,7 +14,8 @@
 		title: string;
 		excerpt: string;
 		category: string;
-		date: string;
+		dateModified: string;
+		dateLabel: string;
 		readingTime: string;
 	}
 
@@ -25,7 +26,8 @@
 			excerpt:
 				'Alt om overgangen til digital bogføring, SAF-T 2.0 og NemHandel - forklaret simpelt uden juridisk volapyk.',
 			category: 'Lovgivning',
-			date: 'Opdateret juli 2026',
+			dateModified: ARTICLE_DATES.bookkeepingLaw.modified,
+			dateLabel: ARTICLE_DATES.bookkeepingLaw.modifiedLabel,
 			readingTime: '10 min læsning'
 		},
 		{
@@ -34,7 +36,8 @@
 			excerpt:
 				'Regler for fakturering uden CVR-nummer, grænsen på 50.000 DKK og hvornår du skal registrere dig.',
 			category: 'Privatpersoner',
-			date: 'Opdateret juli 2026',
+			dateModified: ARTICLE_DATES.withoutCvr.modified,
+			dateLabel: ARTICLE_DATES.withoutCvr.modifiedLabel,
 			readingTime: '6 min læsning'
 		},
 		{
@@ -43,7 +46,8 @@
 			excerpt:
 				'Trin-for-trin guide til at bygge en fakturaskabelon i Word - og et nemmere online alternativ.',
 			category: 'Skabeloner',
-			date: 'Opdateret juli 2026',
+			dateModified: ARTICLE_DATES.word.modified,
+			dateLabel: ARTICLE_DATES.word.modifiedLabel,
 			readingTime: '6 min læsning'
 		},
 		{
@@ -52,7 +56,8 @@
 			excerpt:
 				'Alt hvad freelancere skal vide: CVR, moms, F-skattenummer, betalingsbetingelser og selvangivelse.',
 			category: 'Freelancere',
-			date: 'Opdateret juli 2026',
+			dateModified: ARTICLE_DATES.freelancer.modified,
+			dateLabel: ARTICLE_DATES.freelancer.modifiedLabel,
 			readingTime: '9 min læsning'
 		},
 		{
@@ -61,7 +66,8 @@
 			excerpt:
 				'Svar på de mest almindelige spørgsmål om fakturaskabeloner: obligatoriske felter, moms, CVR og opbevaring.',
 			category: 'FAQ',
-			date: 'Opdateret juli 2026',
+			dateModified: ARTICLE_DATES.faq.modified,
+			dateLabel: ARTICLE_DATES.faq.modifiedLabel,
 			readingTime: '7 min læsning'
 		},
 		{
@@ -70,7 +76,8 @@
 			excerpt:
 				'Sammenligning af gratis og betalte fakturaskabeloner - funktioner, priser og hvilken der passer til dig.',
 			category: 'Sammenligning',
-			date: 'Opdateret juli 2026',
+			dateModified: ARTICLE_DATES.comparison.modified,
+			dateLabel: ARTICLE_DATES.comparison.modifiedLabel,
 			readingTime: '8 min læsning'
 		}
 	];
@@ -123,7 +130,7 @@
 					{article.excerpt}
 				</p>
 				<div class="text-muted-foreground/80 mt-5 flex items-center gap-2 text-xs">
-					<time>{article.date}</time>
+					<time datetime={article.dateModified}>{article.dateLabel}</time>
 				</div>
 			</a>
 		{/each}

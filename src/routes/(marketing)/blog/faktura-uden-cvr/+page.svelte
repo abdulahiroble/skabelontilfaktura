@@ -2,6 +2,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
 	import {
+		ARTICLE_AUTHOR,
+		ARTICLE_DATES,
+		blogPostingSchema,
 		buildMeta,
 		faqPageSchema,
 		howToSchema,
@@ -11,8 +14,10 @@
 		type BreadcrumbItem
 	} from '$lib/seo';
 
+	const articleDates = ARTICLE_DATES.withoutCvr;
+
 	const meta = buildMeta({
-		title: 'Faktura uden CVR: Sådan fakturerer du som privatperson (2026)',
+		title: 'Faktura uden CVR som privatperson',
 		description:
 			'Lær hvordan du sender faktura uden CVR-nummer i Danmark. Regler for under 50.000 DKK, CPR første 6 cifre, og hvornår du skal registrere dig.',
 		canonical: '/blog/faktura-uden-cvr/',
@@ -78,7 +83,15 @@
 	});
 	const faq = faqPageSchema(faqQuestions);
 	const breadcrumb = breadcrumbSchema(breadcrumbs);
-	const jsonLd = [howTo, faq, breadcrumb];
+	const article = blogPostingSchema({
+		headline: 'Faktura uden CVR: Sådan fakturerer du som privatperson (2026)',
+		description: meta.description,
+		url: meta.canonical,
+		datePublished: articleDates.published,
+		dateModified: articleDates.modified,
+		authorName: ARTICLE_AUTHOR
+	});
+	const jsonLd = [article, howTo, faq, breadcrumb];
 
 	// Avoid emitting a literal `<script` token in source so the Svelte/prettier
 	// parsers don't mistake the JSON-LD string for a real inline script block.
@@ -113,7 +126,10 @@
 	title="Faktura uden CVR: Sådan fakturerer du som privatperson (2026)"
 	subtitle="Skal du sende en faktura uden at have et CVR-nummer? Her er reglerne, trin-for-trin og hvornår du skal registrere dig."
 	category="Privatpersoner"
-	date="Opdateret juli 2026"
+	datePublished={articleDates.published}
+	dateModified={articleDates.modified}
+	dateLabel={articleDates.modifiedLabel}
+	author={ARTICLE_AUTHOR}
 	readingTime="6 min læsning"
 >
 	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">

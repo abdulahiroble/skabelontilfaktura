@@ -2,6 +2,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
 	import {
+		ARTICLE_AUTHOR,
+		ARTICLE_DATES,
+		blogPostingSchema,
 		buildMeta,
 		howToSchema,
 		breadcrumbSchema,
@@ -9,8 +12,10 @@
 		type BreadcrumbItem
 	} from '$lib/seo';
 
+	const articleDates = ARTICLE_DATES.word;
+
 	const meta = buildMeta({
-		title: 'Faktura skabelon Word: Sådan laver du en i Microsoft Word (2026)',
+		title: 'Faktura skabelon til Word (2026)',
 		description:
 			'Trin-for-trin guide til at lave en fakturaskabelon i Word. Eller brug vores gratis online generator - nemmere og mere professionelt.',
 		canonical: '/blog/faktura-skabelon-word/',
@@ -59,7 +64,15 @@
 			'Trin-for-trin guide til at oprette en professionel fakturaskabelon i Microsoft Word.'
 	});
 	const breadcrumb = breadcrumbSchema(breadcrumbs);
-	const jsonLd = [howTo, breadcrumb];
+	const article = blogPostingSchema({
+		headline: 'Faktura skabelon Word: Sådan laver du en i Microsoft Word (2026)',
+		description: meta.description,
+		url: meta.canonical,
+		datePublished: articleDates.published,
+		dateModified: articleDates.modified,
+		authorName: ARTICLE_AUTHOR
+	});
+	const jsonLd = [article, howTo, breadcrumb];
 
 	// Avoid emitting a literal `<script` token in source so the Svelte/prettier
 	// parsers don't mistake the JSON-LD string for a real inline script block.
@@ -94,7 +107,10 @@
 	title="Faktura skabelon Word: Sådan laver du en i Microsoft Word (2026)"
 	subtitle="Trin-for-trin guide til at bygge din egen fakturaskabelon i Word - eller brug en nemmere og mere professionel online generator."
 	category="Skabeloner"
-	date="Opdateret juli 2026"
+	datePublished={articleDates.published}
+	dateModified={articleDates.modified}
+	dateLabel={articleDates.modifiedLabel}
+	author={ARTICLE_AUTHOR}
 	readingTime="6 min læsning"
 >
 	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">

@@ -9,6 +9,7 @@
  */
 
 const SCHEMA_CONTEXT = 'https://schema.org' as const;
+const SITE_URL = 'https://skabelontilfaktura.dk' as const;
 
 export interface FaqQuestion {
 	question: string;
@@ -196,5 +197,48 @@ export function organizationSchema(opts: OrganizationOptions): {
 		url: opts.url,
 		...(opts.logo ? { logo: opts.logo } : {}),
 		...(opts.description ? { description: opts.description } : {})
+	};
+}
+
+export interface BlogPostingOptions {
+	headline: string;
+	description: string;
+	url: string;
+	datePublished: string;
+	dateModified: string;
+	authorName: string;
+}
+
+/**
+ * Build a BlogPosting schema.org object for an editorial guide.
+ *
+ * The author is represented as the site's editorial organization because the
+ * current guides are maintained collectively rather than by a named person.
+ */
+export function blogPostingSchema(opts: BlogPostingOptions) {
+	return {
+		'@context': SCHEMA_CONTEXT,
+		'@type': 'BlogPosting',
+		'@id': `${opts.url}#article`,
+		headline: opts.headline,
+		description: opts.description,
+		url: opts.url,
+		mainEntityOfPage: {
+			'@type': 'WebPage',
+			'@id': opts.url
+		},
+		inLanguage: 'da-DK',
+		datePublished: opts.datePublished,
+		dateModified: opts.dateModified,
+		author: {
+			'@type': 'Organization',
+			name: opts.authorName,
+			url: SITE_URL
+		},
+		publisher: {
+			'@type': 'Organization',
+			name: 'skabelontilfaktura.dk',
+			url: SITE_URL
+		}
 	};
 }

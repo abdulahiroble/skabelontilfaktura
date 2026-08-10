@@ -1,7 +1,16 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
-	import { buildMeta, breadcrumbSchema, softwareApplicationSchema } from '$lib/seo';
+	import {
+		ARTICLE_AUTHOR,
+		ARTICLE_DATES,
+		blogPostingSchema,
+		buildMeta,
+		breadcrumbSchema,
+		softwareApplicationSchema
+	} from '$lib/seo';
+
+	const articleDates = ARTICLE_DATES.comparison;
 
 	const tools = [
 		{
@@ -88,15 +97,24 @@
 	});
 
 	const meta = buildMeta({
-		title: 'De 5 bedste faktura skabeloner i Danmark (2026) - gratis og betalte',
+		title: 'Bedste faktura skabeloner i 2026',
 		description:
 			'Sammenlign de bedste danske fakturaskabeloner: skabelontilfaktura.dk, Dinero, Billy, e-conomic og hurtigfaktura. Priser, funktioner og anbefalinger.',
 		canonical: '/blog/faktura-skabelon-sammenligning/',
 		ogType: 'article'
 	});
 
+	const article = blogPostingSchema({
+		headline: 'De 5 bedste faktura skabeloner i Danmark (2026)',
+		description: meta.description,
+		url: meta.canonical,
+		datePublished: articleDates.published,
+		dateModified: articleDates.modified,
+		authorName: ARTICLE_AUTHOR
+	});
+
 	const lt = String.fromCharCode(60);
-	const jsonLdScript = `${lt}script type="application/ld+json">${JSON.stringify([breadcrumbs, softwareApplication])}${lt}/script>`;
+	const jsonLdScript = `${lt}script type="application/ld+json">${JSON.stringify([article, breadcrumbs, softwareApplication])}${lt}/script>`;
 </script>
 
 <svelte:head>
@@ -127,7 +145,10 @@
 	title="De 5 bedste faktura skabeloner i Danmark (2026)"
 	subtitle="Gratis og betalte løsninger sammenlignet"
 	category="Sammenligning"
-	date="Opdateret juli 2026"
+	datePublished={articleDates.published}
+	dateModified={articleDates.modified}
+	dateLabel={articleDates.modifiedLabel}
+	author={ARTICLE_AUTHOR}
 	readingTime="8 min læsning"
 >
 	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">

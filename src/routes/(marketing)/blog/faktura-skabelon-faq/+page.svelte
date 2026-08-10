@@ -1,7 +1,16 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
-	import { buildMeta, faqPageSchema, breadcrumbSchema } from '$lib/seo';
+	import {
+		ARTICLE_AUTHOR,
+		ARTICLE_DATES,
+		blogPostingSchema,
+		buildMeta,
+		faqPageSchema,
+		breadcrumbSchema
+	} from '$lib/seo';
+
+	const articleDates = ARTICLE_DATES.faq;
 
 	const faqQuestions = [
 		{
@@ -58,14 +67,23 @@
 	]);
 
 	const meta = buildMeta({
-		title: 'Faktura skabelon FAQ - alt du skal vide (2026)',
+		title: 'Faktura skabelon FAQ (2026)',
 		description:
 			'Få svar på alle spørgsmål om fakturaskabeloner i Danmark: Hvad skal en faktura indeholde? Kan man sende faktura uden CVR? Hvordan beregner man moms?',
 		canonical: '/blog/faktura-skabelon-faq/',
 		ogType: 'article'
 	});
 
-	const jsonLd = [faqSchema, breadcrumbs];
+	const article = blogPostingSchema({
+		headline: 'Faktura skabelon FAQ - alt du skal vide (2026)',
+		description: meta.description,
+		url: meta.canonical,
+		datePublished: articleDates.published,
+		dateModified: articleDates.modified,
+		authorName: ARTICLE_AUTHOR
+	});
+
+	const jsonLd = [article, faqSchema, breadcrumbs];
 	// Avoid emitting a literal `<script` token in source so the Svelte/prettier
 	// parsers don't mistake the JSON-LD string for a real inline script block.
 	// Content is built from trusted schema.org objects (no user input).
@@ -100,7 +118,10 @@
 <ArticleLayout
 	title="Faktura skabelon FAQ - alt du skal vide (2026)"
 	category="FAQ"
-	date="Opdateret juli 2026"
+	datePublished={articleDates.published}
+	dateModified={articleDates.modified}
+	dateLabel={articleDates.modifiedLabel}
+	author={ARTICLE_AUTHOR}
 	readingTime="7 min læsning"
 >
 	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">

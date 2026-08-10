@@ -31,7 +31,7 @@
 	let { data }: { data: PageData } = $props();
 
 	const meta = buildMeta({
-		title: 'Fakturagenerator - Lav en gratis faktura',
+		title: 'Lav en gratis faktura online',
 		description:
 			'Lav en gratis og lovlig dansk faktura på 60 sekunder. CVR-felter, automatisk momsberegning, MobilePay og PDF-download. Ingen tilmelding nødvendig.',
 		canonical: '/generator/',

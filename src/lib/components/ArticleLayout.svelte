@@ -6,7 +6,10 @@
 		title: string;
 		subtitle?: string;
 		category?: string;
-		date?: string;
+		datePublished?: string;
+		dateModified?: string;
+		dateLabel?: string;
+		author?: string;
 		readingTime?: string;
 		ctaText?: string;
 		ctaHref?: string;
@@ -17,7 +20,10 @@
 		title,
 		subtitle,
 		category,
-		date,
+		datePublished,
+		dateModified,
+		dateLabel,
+		author,
 		readingTime,
 		ctaText = 'Start gratis faktura',
 		ctaHref = '/generator/',
@@ -34,10 +40,14 @@
 		{#if subtitle}
 			<p class="text-muted-foreground mt-4 text-lg leading-relaxed">{subtitle}</p>
 		{/if}
-		{#if date || readingTime}
-			<div class="text-muted-foreground mt-5 flex items-center gap-3 text-sm">
-				{#if date}<time>{date}</time>{/if}
-				{#if date && readingTime}<span aria-hidden="true">·</span>{/if}
+		{#if dateLabel || author || readingTime}
+			<div class="text-muted-foreground mt-5 flex flex-wrap items-center gap-3 text-sm">
+				{#if author}<span>Af {author}</span>{/if}
+				{#if author && dateLabel}<span aria-hidden="true">·</span>{/if}
+				{#if dateLabel}
+					<time datetime={dateModified ?? datePublished}>{dateLabel}</time>
+				{/if}
+				{#if (author || dateLabel) && readingTime}<span aria-hidden="true">·</span>{/if}
 				{#if readingTime}<span>{readingTime}</span>{/if}
 			</div>
 		{/if}

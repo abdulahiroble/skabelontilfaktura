@@ -2,6 +2,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import ArticleLayout from '$lib/components/ArticleLayout.svelte';
 	import {
+		ARTICLE_AUTHOR,
+		ARTICLE_DATES,
+		blogPostingSchema,
 		buildMeta,
 		faqPageSchema,
 		breadcrumbSchema,
@@ -9,8 +12,10 @@
 		type BreadcrumbItem
 	} from '$lib/seo';
 
+	const articleDates = ARTICLE_DATES.bookkeepingLaw;
+
 	const meta = buildMeta({
-		title: 'Ny bogføringslov 2026: Komplet guide for selvstændige',
+		title: 'Bogføringsloven 2026 for selvstændige',
 		description:
 			'Alt om den nye bogføringslov fra 2026: Hvem berøres? Hvad kræves der? SAF-T 2.0, NemHandel og digitale bogføringssystemer forklaret simpelt.',
 		canonical: '/blog/bogforingslov-2026-guide/',
@@ -51,7 +56,15 @@
 
 	const faq = faqPageSchema(faqQuestions);
 	const breadcrumb = breadcrumbSchema(breadcrumbs);
-	const jsonLd = [faq, breadcrumb];
+	const article = blogPostingSchema({
+		headline: 'Ny bogføringslov 2026: Komplet guide for selvstændige',
+		description: meta.description,
+		url: meta.canonical,
+		datePublished: articleDates.published,
+		dateModified: articleDates.modified,
+		authorName: ARTICLE_AUTHOR
+	});
+	const jsonLd = [article, faq, breadcrumb];
 
 	// Avoid emitting a literal `<script` token in source so the Svelte/prettier
 	// parsers don't mistake the JSON-LD string for a real inline script block.
@@ -86,7 +99,10 @@
 	title="Ny bogføringslov 2026: Komplet guide for selvstændige"
 	subtitle="Alt om overgangen til digital bogføring, SAF-T 2.0 og NemHandel - forklaret simpelt uden juridisk volapyk."
 	category="Lovgivning"
-	date="Opdateret juli 2026"
+	datePublished={articleDates.published}
+	dateModified={articleDates.modified}
+	dateLabel={articleDates.modifiedLabel}
+	author={ARTICLE_AUTHOR}
 	readingTime="10 min læsning"
 >
 	<nav class="not-prose text-muted-foreground mb-10 text-sm" aria-label="Brødkrummer">

@@ -1,17 +1,13 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { authClient } from '$lib/auth/client';
 	import type { Snippet } from 'svelte';
 	import type { LayoutData } from './$types';
 
 	let { children, data }: { children: Snippet; data: LayoutData } = $props();
 
-	// Better Auth Svelte store — read with `$session` (auto-subscribes in the
-	// browser; safe during SSR/prerender because the store starts inert).
-	const session = authClient.useSession();
-
 	async function logout() {
-		await authClient.signOut();
+		const { signOut } = await import('$lib/auth/client');
+		await signOut();
 		window.location.href = '/';
 	}
 
@@ -65,9 +61,7 @@
 				{/if}
 			</nav>
 			<div class="flex items-center gap-3">
-				{#if $session.isPending}
-					<span class="text-muted-foreground text-sm">…</span>
-				{:else if $session.data}
+				{#if data.user}
 					<a
 						href="/konto/"
 						class="text-muted-foreground hover:text-foreground hidden text-sm font-medium transition-colors sm:inline"

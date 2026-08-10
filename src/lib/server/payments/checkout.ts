@@ -7,11 +7,10 @@
  */
 import { createAutumnClient, getAutumnSecret, type Autumn } from './autumn';
 
-const AUTUMN_API_BASE = 'https://api.useautumn.com/v1';
 const CHECKOUT_TIMEOUT_MS = 15_000;
 
 /** Plans currently sold by the product, mirroring `autumn.config.ts` ids. */
-export const CHECKOUT_PLANS = ['pro', 'pro_annual', 'lifetime_pro'] as const;
+export const CHECKOUT_PLANS = ['pro', 'pro_annual'] as const;
 export type CheckoutPlanId = (typeof CHECKOUT_PLANS)[number];
 
 export function isCheckoutPlanId(value: string): value is CheckoutPlanId {
@@ -102,45 +101,6 @@ function getAppUrl(env: Env): string {
 	}
 }
 
-async function createOneOffCheckout(
-	env: Env,
-	customerId: string,
-	planId: 'lifetime_pro'
-): Promise<string> {
-	const controller = new AbortController();
-	const timeout = setTimeout(() => controller.abort(), CHECKOUT_TIMEOUT_MS);
-	try {
-		const response = await fetch(`${AUTUMN_API_BASE}/checkout`, {
-			method: 'POST',
-			signal: controller.signal,
-			headers: {
-				Authorization: `Bearer ${getAutumnSecret(env)}`,
-				'Content-Type': 'application/json',
-				'x-api-version': '2.3.0'
-			},
-			body: JSON.stringify({
-				customer_id: customerId,
-				product_id: planId,
-				success_url: new URL('/konto/?checkout=success', getAppUrl(env)).toString()
-			})
-		});
-		const payload = (await response.json().catch(() => null)) as {
-			url?: string;
-			message?: string;
-			code?: string;
-		} | null;
-		if (!response.ok) {
-			const error = new Error(payload?.message ?? `Autumn checkout failed (${response.status})`);
-			Object.assign(error, { statusCode: response.status, code: payload?.code });
-			throw error;
-		}
-		if (!payload?.url) throw new Error('Autumn returned no one-off checkout URL');
-		return payload.url;
-	} finally {
-		clearTimeout(timeout);
-	}
-}
-
 /**
  * Create a Stripe checkout session for the given plan.
  *
@@ -182,10 +142,6 @@ export async function createCheckoutSession(
 	}
 
 	try {
-		if (planId === 'lifetime_pro') {
-			return { paymentUrl: await createOneOffCheckout(env, user.id, planId) };
-		}
-
 		const response = await autumn.billing.attach(
 			{
 				customerId: user.id,

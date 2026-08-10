@@ -21,7 +21,7 @@ import { createCheckoutSession, isCheckoutPlanId } from '$lib/server/payments/ch
  * `subscription` row that drives entitlements.
  *
  * Request body: `{ planId: string }` — one of the plan ids in
- * `autumn.config.ts` (`pro`, `pro_annual`, `lifetime_pro`). Other catalog
+ * `autumn.config.ts` (`pro`, `pro_annual`). Other catalog
  * products are intentionally not exposed until their workflows exist.
  *
  * Note: the user's DB row is not required here — Autumn's customer ID is the

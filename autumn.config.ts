@@ -81,7 +81,7 @@ export const proAnnual = plan({
 	id: 'pro_annual',
 	name: 'Pro annual',
 	group: 'subscription',
-	price: { amount: 470, interval: 'year' },
+	price: { amount: 490, interval: 'year' },
 	items: proItems
 });
 
@@ -98,6 +98,7 @@ export const business = plan({
 	]
 });
 
+/** Retained for existing customers, but no longer exposed in checkout. */
 export const lifetimePro = plan({
 	id: 'lifetime_pro',
 	name: 'Lifetime Pro',

@@ -39,10 +39,10 @@
 	// with accent dots rather than as card bullet lists.
 	const proFeatures = [
 		'Cloud-arkiv og fakturahistorik',
-		'Klientdatabase',
-		'SAF-T 2.0 eksport',
-		'Rykkerflow og e-mails',
-		'Nummerering på tværs af enheder'
+		'Klientdatabase med autofyld',
+		'Automatisk fakturanummerering',
+		'Betalingsstatus og rykkerflow',
+		'Regnskabseksport (CSV og SAF-T)'
 	];
 
 	const gratisFeatures = [
@@ -58,7 +58,7 @@
 	<title>Priser - Gratis og Pro | skabelontilfaktura.dk</title>
 	<meta
 		name="description"
-		content="Pro fra 49 DKK/måned. Cloud-arkiv, fakturahistorik, klientdatabase, SAF-T 2.0 eksport og rykkermails."
+		content="Lav fakturaer gratis. Pro koster 49 DKK/måned og giver cloud-arkiv, klientdatabase, automatisk nummerering, rykkerflow og regnskabseksport."
 	/>
 </svelte:head>
 
@@ -66,8 +66,8 @@
 <section class="mx-auto max-w-6xl px-6 pt-20 pb-12 lg:pt-28">
 	<p class="text-primary mb-5 text-sm font-medium tracking-wide">Enkelt og gennemsigtigt</p>
 	<h1 class="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">Priser</h1>
-	<p class="text-muted-foreground mt-6 max-w-md text-lg leading-relaxed">
-		Begynd gratis. Betal kun, når du har brug for mere. Ingen skjulte gebyrer, ingen binding.
+	<p class="text-muted-foreground mt-6 max-w-xl text-lg leading-relaxed">
+		Lav fakturaer gratis. Opgrader, når du vil gemme dem og holde styr på betalingerne.
 	</p>
 </section>
 
@@ -76,9 +76,9 @@
 	<div class="border-border border-b pb-6">
 		<p class="text-muted-foreground text-sm leading-relaxed">
 			<span class="text-foreground font-medium" style="font-family: var(--font-display)"
-				>Ellers gratis — som altid.</span
+				>Gratis til den hurtige faktura.</span
 			>
-			Ubegrænsede fakturaer, PDF uden vandmærke, CVR-opslag og automatisk moms.
+			Lav og download ubegrænsede fakturaer uden konto eller kreditkort.
 		</p>
 		<div class="text-muted-foreground mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs">
 			{#each gratisFeatures as feature (feature)}
@@ -116,8 +116,8 @@
 				<span class="text-muted-foreground text-lg">DKK /måned</span>
 			</div>
 			<p class="text-muted-foreground mt-5 max-w-md text-base leading-relaxed">
-				For selvstændige, der vil have mere. Cloud-sikkerhedskopi, klientdatabase og
-				regnskabseksport — alt i ét.
+				For selvstændige, der vil have styr på kunder, fakturaer og betalinger uden at skifte til et
+				fuldt regnskabsprogram.
 			</p>
 
 			<!-- Inline feature list with accent dots -->
@@ -137,23 +137,23 @@
 					onclick={() => purchase('pro')}
 					disabled={purchasingPlan !== null}
 				>
-					{purchasingPlan === 'pro' ? 'Åbner betaling…' : 'Opgrader til Pro'}
+					{purchasingPlan === 'pro' ? 'Åbner betaling…' : 'Start Pro'}
 				</Button>
 				<Button
 					variant="outline"
 					onclick={() => purchase('pro_annual')}
 					disabled={purchasingPlan !== null}
 				>
-					{purchasingPlan === 'pro_annual' ? 'Åbner betaling…' : '470 DKK / år'}
+					{purchasingPlan === 'pro_annual' ? 'Åbner betaling…' : '490 DKK / år'}
 				</Button>
-				<span class="text-muted-foreground text-xs">Inkluderer alt fra Gratis</span>
+				<span class="text-muted-foreground text-xs">To måneder gratis med årsbetaling</span>
 			</div>
 		</div>
 
 		<!-- Product tour: make every paid feature discoverable before purchase. -->
 		<div class="border-border lg:border-l lg:pl-16">
 			<p class="text-muted-foreground text-sm font-medium tracking-wide">Sådan bruges Pro</p>
-			<h2 class="mt-3 text-3xl leading-tight">Alle værktøjer samlet under Min konto</h2>
+			<h2 class="mt-3 text-3xl leading-tight">Få styr på hele fakturaforløbet</h2>
 			<div class="mt-6 space-y-5 text-sm">
 				<div>
 					<p class="font-semibold">Fakturaer</p>
@@ -180,35 +180,6 @@
 						rykkertrin.
 					</p>
 				</div>
-			</div>
-		</div>
-	</div>
-</section>
-
-<!-- Lifetime Pro callout: separate, calm -->
-<section class="border-border bg-secondary/30 border-y">
-	<div class="mx-auto max-w-6xl px-6 py-12">
-		<div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-			<div>
-				<h2 class="text-2xl leading-tight">Livstids-Pro</h2>
-				<p class="text-muted-foreground mt-2 max-w-md text-sm leading-relaxed">
-					Betal én gang, brug for evigt. Alt fra Pro — uden månedlig regning.
-				</p>
-			</div>
-			<div class="flex items-center gap-5">
-				<div class="flex items-baseline gap-2">
-					<span class="text-3xl font-semibold" style="font-family: var(--font-display)"
-						>999 DKK</span
-					>
-					<span class="text-muted-foreground text-sm">én gang</span>
-				</div>
-				<Button
-					variant="outline"
-					onclick={() => purchase('lifetime_pro')}
-					disabled={purchasingPlan !== null}
-				>
-					{purchasingPlan === 'lifetime_pro' ? 'Åbner betaling…' : 'Vælg livstids-Pro'}
-				</Button>
 			</div>
 		</div>
 	</div>

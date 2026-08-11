@@ -79,6 +79,7 @@
 
 <svelte:head>
 	<title>{mode === 'login' ? 'Log ind' : 'Opret bruger'} | skabelontilfaktura.dk</title>
+	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
 <div class="mx-auto w-full max-w-sm px-4 py-16">

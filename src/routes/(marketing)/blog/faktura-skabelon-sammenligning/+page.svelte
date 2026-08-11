@@ -21,7 +21,7 @@
 			cvrLookup: '✓',
 			autoVat: '✓',
 			pdf: '✓',
-			compliance: '✓',
+			regSystem: 'Nej',
 			highlight: true,
 			note: 'Nemmeste valg for selvstændige og freelancere.'
 		},
@@ -33,7 +33,7 @@
 			cvrLookup: '✓',
 			autoVat: '✓',
 			pdf: '✓',
-			compliance: '✓',
+			regSystem: 'Ja',
 			highlight: false,
 			note: 'Fuld bogføring og regnskab til små virksomheder.'
 		},
@@ -45,7 +45,7 @@
 			cvrLookup: '✓',
 			autoVat: '✓',
 			pdf: '✓',
-			compliance: '✓',
+			regSystem: 'Ja',
 			highlight: false,
 			note: 'Brugervenligt regnskabsprogram til selvstændige.'
 		},
@@ -57,7 +57,7 @@
 			cvrLookup: '✓',
 			autoVat: '✓',
 			pdf: '✓',
-			compliance: '✓',
+			regSystem: 'Ja',
 			highlight: false,
 			note: 'Professionelt økonomisystem til voksende virksomheder.'
 		},
@@ -69,7 +69,7 @@
 			cvrLookup: '—',
 			autoVat: '✓',
 			pdf: '✓',
-			compliance: 'Delvist',
+			regSystem: 'Nej',
 			highlight: false,
 			note: 'Hurtig løsning til enkelte fakturaer.'
 		}
@@ -87,7 +87,7 @@
 	const softwareApplication = softwareApplicationSchema({
 		name: 'skabelontilfaktura.dk',
 		description:
-			'Gratis dansk fakturaskabelon med automatisk moms, CVR-opslag, PDF-download og overholdelse af Bogføringsloven 2026.',
+			'Gratis dansk fakturaskabelon med automatisk moms, CVR-opslag og PDF-download. Ikke et registreret bogføringssystem.',
 		applicationCategory: 'BusinessApplication',
 		operatingSystem: 'Web',
 		offers: {
@@ -160,12 +160,13 @@
 	</nav>
 
 	<p class="lead">
-		En god <strong>faktura skabelon</strong> er afgørende for at få betaling til tiden og samtidig overholde
-		dansk lovgivning. Med de nye krav om digital bogføring fra januar 2026 bliver valget af faktureringsværktøj
-		endnu vigtigere - især hvis din årlige omsætning overstiger 300.000 DKK. Når du vælger en skabelon
-		til faktura, bør du især kigge efter tre ting: om den automatisk beregner moms, om den slår CVR-numre
-		op, og om den kan levere en PDF, der lever op til Bogføringsloven. Herunder sammenligner vi de fem
-		mest populære danske fakturaskabeloner, så du kan vælge den løsning, der passer bedst til din virksomhed.
+		En god <strong>faktura skabelon</strong> er afgørende for at få betaling til tiden og samtidig udfærdige
+		en korrekt faktura med de lovpligtige felter. Med kravene om digital bogføring fra januar 2026 bliver
+		valget af faktureringsværktøj endnu vigtigere - især hvis din årlige omsætning overstiger 300.000
+		DKK. Når du vælger en skabelon til faktura, bør du især kigge efter tre ting: om den automatisk beregner
+		moms, om den slår CVR-numre op, og om den kan levere en PDF med de obligatoriske fakturafelter. Herunder
+		sammenligner vi fem populære danske fakturaskabeloner, så du kan vælge den løsning, der passer bedst
+		til din virksomhed.
 	</p>
 
 	<!-- Comparison table -->
@@ -179,7 +180,7 @@
 					<th class="py-3 pr-4 font-semibold">CVR-opslag</th>
 					<th class="py-3 pr-4 font-semibold">Auto-moms</th>
 					<th class="py-3 pr-4 font-semibold">PDF-download</th>
-					<th class="py-3 font-semibold">Bogføringslov 2026</th>
+					<th class="py-3 font-semibold">Reg. system</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -197,7 +198,7 @@
 						<td class="py-3 pr-4">{tool.cvrLookup}</td>
 						<td class="py-3 pr-4">{tool.autoVat}</td>
 						<td class="py-3 pr-4">{tool.pdf}</td>
-						<td class="py-3">{tool.compliance}</td>
+						<td class="py-3">{tool.regSystem}</td>
 					</tr>
 				{/each}
 			</tbody>

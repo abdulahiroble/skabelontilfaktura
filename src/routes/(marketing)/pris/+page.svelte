@@ -2,6 +2,15 @@
 	import { Button } from '$lib/components/ui/button';
 	import AffiliateCta from '$lib/components/AffiliateCta.svelte';
 	import { startCheckout } from '$lib/billing/checkout-client';
+	import { buildMeta } from '$lib/seo';
+
+	const meta = buildMeta({
+		title: 'Priser - gratis og Pro',
+		description:
+			'Lav fakturaer gratis. Pro koster 49 DKK/måned og giver cloud-arkiv, klientdatabase, automatisk nummerering, rykkerflow og regnskabseksport.',
+		canonical: '/pris/',
+		ogType: 'website'
+	});
 
 	let purchasingPlan = $state<string | null>(null);
 	let checkoutError = $state('');
@@ -55,11 +64,21 @@
 </script>
 
 <svelte:head>
-	<title>Priser - Gratis og Pro | skabelontilfaktura.dk</title>
-	<meta
-		name="description"
-		content="Lav fakturaer gratis. Pro koster 49 DKK/måned og giver cloud-arkiv, klientdatabase, automatisk nummerering, rykkerflow og regnskabseksport."
-	/>
+	<title>{meta.title}</title>
+	<meta name="description" content={meta.description} />
+	<link rel="canonical" href={meta.canonical} />
+	<meta name="robots" content={meta.robots} />
+
+	<meta property="og:type" content={meta.ogType} />
+	<meta property="og:title" content={meta.title} />
+	<meta property="og:description" content={meta.description} />
+	<meta property="og:url" content={meta.canonical} />
+	<meta property="og:site_name" content="skabelontilfaktura.dk" />
+	<meta property="og:locale" content="da_DK" />
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={meta.title} />
+	<meta name="twitter:description" content={meta.description} />
 </svelte:head>
 
 <!-- Hero: left-aligned, editorial -->

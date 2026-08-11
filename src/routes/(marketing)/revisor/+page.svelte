@@ -7,8 +7,9 @@
 		title: 'Find en revisor - gratis formidling',
 		description:
 			'Bliv sat i kontakt med kvalificerede revisorer i dit område. Udfyld formularen og vi vender tilbage med 3 relevante tilbud. Gratis og uforpligtende.',
-		canonical: '/revisor',
-		ogType: 'website'
+		canonical: '/revisor/',
+		ogType: 'website',
+		noindex: true
 	});
 
 	interface RevisorForm {

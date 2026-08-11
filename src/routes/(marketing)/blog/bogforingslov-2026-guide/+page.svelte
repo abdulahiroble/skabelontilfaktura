@@ -31,17 +31,17 @@
 		{
 			question: 'Hvad er SAF-T 2.0 og hvornår gælder det?',
 			answer:
-				'SAF-T (Standard Audit File for Tax) er en international XML-standard, som Erhvervsstyrelsen bruger til at udtrække regnskabsdata. Fra 1. januar 2027 skal alle, der er omfattet af bogføringsloven, kunne eksportere deres regnskab som SAF-T 2.0 XML-fil til SKAT og revisor.'
+				'SAF-T (Standard Audit File for Tax) er en international XML-standard, som Erhvervsstyrelsen bruger til at udtrække regnskabsdata. Fra 1. januar 2027 skal udbydere af registrerede bogføringssystemer understøtte SAF-T 2.0. Hvis du bruger et registreret system, sørger udbyderen for understøttelsen. Læs mere på erhvervsstyrelsen.dk/saf-t-version-2-og-rettelser-til-standardkontoplanen.'
 		},
 		{
 			question: 'Hvad sker der hvis jeg ikke overholder bogføringsloven?',
 			answer:
-				'Manglende overholdelse kan medføre bøder fra Erhvervsstyrelsen, og i alvorlige tilfælde kan virksomheden blive tvangsopløst. Derudover risikerer du at få afvist dine fradrag hos SKAT, hvilket kan medføre ekstra skat plus renter.'
+				'Manglende overholdelse kan medføre bøder fra Erhvervsstyrelsen, og i alvorlige eller gentagne tilfælde kan der ske yderligere sanktioner. Det er derfor vigtigt at sikre, at din bogføring lever op til kravene. Kontakt en revisor eller Erhvervsstyrelsen, hvis du er i tvivl om dine forpligtelser.'
 		},
 		{
 			question: 'Skal jeg stadig opbevare bilag i 5 år?',
 			answer:
-				'Ja, bogføringsloven kræver fortsat opbevaring af bilag i 5 år efter regnskabsårets udløb. Fra 2026 skal opbevaringen ske digitalt og i et format, der kan læses af offentlige myndigheder. Papirbilag er ikke længere nok alene.'
+				'Ja, bogføringsloven kræver fortsat opbevaring af bilag i 5 år efter regnskabsårets udløb. Virksomheder, der er omfattet af kravet om digitalt bogføringssystem, skal bogføre og opbevare bilag digitalt i systemet. Papirbilag skal scannes eller indtastes i det digitale system.'
 		}
 	];
 
@@ -166,10 +166,10 @@
 					</p>
 				</li>
 				<li>
-					<h3 class="font-semibold">1. januar 2027 - SAF-T 2.0 eksport påkrævet</h3>
+					<h3 class="font-semibold">1. januar 2027 - SAF-T 2.0 i registrerede systemer</h3>
 					<p class="text-muted-foreground text-sm">
-						Alle, der er omfattet af bogføringsloven, skal kunne eksportere deres fulde regnskab som
-						en SAF-T 2.0 XML-fil på forlangende af SKAT eller revisor.
+						Udbydere af registrerede digitale bogføringssystemer skal understøtte SAF-T 2.0-eksport.
+						Hvis du bruger et registreret system, sørger udbyderen for dette.
 					</p>
 				</li>
 			</ol>
@@ -252,13 +252,15 @@
 				elektronisk at udtrække regnskabsdata.
 			</p>
 			<p class="mb-4">
-				Fra <strong>1. januar 2027</strong> skal alle bogføringspligtige virksomheder kunne eksportere
-				hele deres regnskab som en SAF-T 2.0 XML-fil. Det betyder i praksis:
+				Fra <strong>1. januar 2027</strong> skal udbydere af registrerede digitale bogføringssystemer
+				understøtte SAF-T 2.0-eksport. Det betyder i praksis:
 			</p>
 			<ul class="list-disc space-y-2 pl-6">
+				<li>
+					Hvis du bruger et registreret system, sørger udbyderen for SAF-T 2.0-understøttelse.
+				</li>
 				<li>SKAT kan anmode om filen ved en eventuel kontrol.</li>
 				<li>Din revisor kan bruge filen som grundlag for årsregnskabet.</li>
-				<li>Du slipper for at sende papirbilag eller PDF-udskrifter frem og tilbage.</li>
 			</ul>
 			<p class="mt-4">
 				For at være klar skal dit bogføringssystem understøtte SAF-T 2.0 eksport. Det gør de fleste

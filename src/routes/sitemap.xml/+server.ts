@@ -60,14 +60,7 @@ const routes: SitemapEntry[] = [
 		lastmod: ARTICLE_DATES.freelancer.modified,
 		priority: '0.8',
 		changefreq: 'monthly'
-	},
-	{
-		path: '/privatlivspolitik/',
-		lastmod: '2026-07-23',
-		priority: '0.3',
-		changefreq: 'yearly'
-	},
-	{ path: '/cookiepolitik/', lastmod: '2026-07-23', priority: '0.3', changefreq: 'yearly' }
+	}
 ];
 
 function escapeXml(value: string): string {

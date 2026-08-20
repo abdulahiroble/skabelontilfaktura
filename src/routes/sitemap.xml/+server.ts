@@ -1,5 +1,6 @@
 import type { RequestHandler } from './$types';
 import { ARTICLE_DATES, SITE_URL } from '$lib/seo';
+import { BRANCH_SLUGS } from '$lib/branches';
 
 // Emit as a prerendered static file so crawlers always get a fast response
 // without a Worker invocation.
@@ -21,10 +22,17 @@ interface SitemapEntry {
 }
 
 const routes: SitemapEntry[] = [
-	{ path: '/', lastmod: '2026-08-10', priority: '1.0', changefreq: 'weekly' },
+	{ path: '/', lastmod: '2026-08-20', priority: '1.0', changefreq: 'weekly' },
 	{ path: '/generator/', lastmod: '2026-08-10', priority: '0.9', changefreq: 'monthly' },
 	{ path: '/pris/', lastmod: '2026-08-10', priority: '0.8', changefreq: 'monthly' },
-	{ path: '/blog/', lastmod: '2026-08-10', priority: '0.7', changefreq: 'weekly' },
+	{ path: '/skabeloner/', lastmod: '2026-08-20', priority: '0.9', changefreq: 'weekly' },
+	{ path: '/blog/', lastmod: '2026-08-20', priority: '0.7', changefreq: 'weekly' },
+	{
+		path: '/blog/krav-til-faktura/',
+		lastmod: ARTICLE_DATES.requirements.modified,
+		priority: '0.9',
+		changefreq: 'monthly'
+	},
 	{
 		path: '/blog/faktura-skabelon-faq/',
 		lastmod: ARTICLE_DATES.faq.modified,
@@ -56,11 +64,36 @@ const routes: SitemapEntry[] = [
 		changefreq: 'monthly'
 	},
 	{
+		path: '/blog/faktura-skabelon-excel/',
+		lastmod: ARTICLE_DATES.excel.modified,
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/faktura-skabelon-pdf/',
+		lastmod: ARTICLE_DATES.pdfTemplate.modified,
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/faktura-skabelon-google-docs/',
+		lastmod: ARTICLE_DATES.googleDocs.modified,
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
+	{
 		path: '/blog/faktura-freelancer/',
 		lastmod: ARTICLE_DATES.freelancer.modified,
 		priority: '0.8',
 		changefreq: 'monthly'
-	}
+	},
+	// Branch-specific template pages, one entry per erhverv.
+	...BRANCH_SLUGS.map<SitemapEntry>((slug) => ({
+		path: `/skabeloner/${slug}/`,
+		lastmod: '2026-08-20',
+		priority: '0.6',
+		changefreq: 'monthly'
+	}))
 ];
 
 function escapeXml(value: string): string {

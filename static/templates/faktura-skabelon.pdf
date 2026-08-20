@@ -1,0 +1,77 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Length 2178 >>
+stream
+BT /F2 22 Tf 57 790 Td (FAKTURA) Tj ET
+BT /F1 10 Tf 400 790 Td (Fakturanummer: 0001) Tj ET
+BT /F1 10 Tf 400 776 Td (Fakturadato: DD.MM.\305\305\305\305) Tj ET
+BT /F1 10 Tf 400 762 Td (Forfaldsdato: +30 dage) Tj ET
+0.6 G 0.8 w 57 750 m 538 750 l S
+BT /F2 11 Tf 57 722 Td (S\306LGER \(udsteder\)) Tj ET
+BT /F2 11 Tf 300 722 Td (K\330BER \(modtager\)) Tj ET
+BT /F1 10 Tf 0.35 g 57 704 Td (Virksomhedsnavn) Tj ET
+BT /F1 10 Tf 0.35 g 300 704 Td (Virksomhedsnavn) Tj ET
+BT /F1 10 Tf 0.35 g 57 690 Td (Adresse) Tj ET
+BT /F1 10 Tf 0.35 g 300 690 Td (Adresse) Tj ET
+BT /F1 10 Tf 0.35 g 57 676 Td (Postnr. og by) Tj ET
+BT /F1 10 Tf 0.35 g 300 676 Td (Postnr. og by) Tj ET
+BT /F1 10 Tf 0.35 g 57 662 Td (CVR-nummer) Tj ET
+BT /F1 10 Tf 0.35 g 300 662 Td (CVR-nummer) Tj ET
+BT /F2 10 Tf 57 600 Td (Beskrivelse) Tj ET
+BT /F2 10 Tf 320 600 Td (Antal) Tj ET
+BT /F2 10 Tf 370 600 Td (Enhed) Tj ET
+BT /F2 10 Tf 415 600 Td (Pris \(kr.\)) Tj ET
+BT /F2 10 Tf 475 600 Td (Bel\370b \(kr.\)) Tj ET
+0.6 G 0.8 w 57 592 m 538 592 l S
+BT /F1 10 Tf 0.25 g 57 574 Td (Arbejde - beskrivelse) Tj ET
+BT /F1 10 Tf 0.25 g 320 574 Td (1) Tj ET
+BT /F1 10 Tf 0.25 g 370 574 Td (tim) Tj ET
+BT /F1 10 Tf 0.25 g 415 574 Td (0,00) Tj ET
+BT /F1 10 Tf 0.25 g 475 574 Td (0,00) Tj ET
+BT /F1 10 Tf 0.25 g 57 556 Td (Materialer - beskrivelse) Tj ET
+BT /F1 10 Tf 0.25 g 320 556 Td (1) Tj ET
+BT /F1 10 Tf 0.25 g 370 556 Td (stk) Tj ET
+BT /F1 10 Tf 0.25 g 415 556 Td (0,00) Tj ET
+BT /F1 10 Tf 0.25 g 475 556 Td (0,00) Tj ET
+BT /F1 10 Tf 340 520 Td (Subtotal ekskl. moms \(kr.\)) Tj ET
+BT /F1 10 Tf 475 520 Td (0,00) Tj ET
+BT /F1 10 Tf 340 504 Td (Moms 25% \(kr.\)) Tj ET
+BT /F1 10 Tf 475 504 Td (0,00) Tj ET
+BT /F2 10 Tf 340 488 Td (Total inkl. moms \(kr.\)) Tj ET
+BT /F2 10 Tf 475 488 Td (0,00) Tj ET
+0.6 G 0.8 w 340 480 m 538 480 l S
+BT /F2 11 Tf 57 452 Td (BETALINGSOPLYSNINGER) Tj ET
+BT /F1 10 Tf 0.35 g 57 436 Td (Regnummer: 0000    Kontonummer: 0000000000    MobilePay: 00 00 00 00) Tj ET
+BT /F1 10 Tf 0.35 g 57 420 Td (Betaling senest 30 dage efter fakturadato.) Tj ET
+BT /F1 8 Tf 0.45 g 57 60 Td (Momsfritaget? S\346t moms til 0 kr. og skriv "Moms \(0% - momsfritaget\)". Fakturanumre skal v\346re fortl\370bende.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000348 00000 n 
+0000000450 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+2680
+%%EOF

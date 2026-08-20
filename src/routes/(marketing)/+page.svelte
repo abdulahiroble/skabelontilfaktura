@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { buildMeta, softwareApplicationSchema, organizationSchema } from '$lib/seo';
+	import { BRANCHES } from '$lib/branches';
+
+	const branchCount = BRANCHES.length;
 
 	const meta = buildMeta({
 		title: 'Gratis fakturaskabelon på 60 sekunder',
@@ -159,6 +162,53 @@
 	</div>
 </section>
 
+<!-- Free template downloads -->
+<section class="mx-auto max-w-6xl px-6 py-16">
+	<div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+		<div class="flex flex-col justify-center">
+			<h2 class="text-3xl leading-tight font-semibold tracking-tight">
+				Hent en gratis <span class="text-primary italic">fakturaskabelon</span>
+			</h2>
+			<p class="text-muted-foreground mt-4 max-w-md leading-relaxed">
+				Foretrækker du selv at udfylde? Download vores skabelon i Word, Excel eller PDF - med alle
+				lovpligtige felter: fakturanummer, CVR, moms m.m. Ingen tilmelding.
+			</p>
+			<p class="text-muted-foreground mt-3 text-sm">
+				Excel-versionen beregner moms og total automatisk med formler.
+			</p>
+		</div>
+		<div class="grid content-center gap-3 sm:grid-cols-3">
+			<a
+				href="/templates/faktura-skabelon.docx"
+				download
+				class="border-border bg-card hover:border-accent group flex flex-col rounded-lg border p-5 transition-colors"
+			>
+				<span class="text-2xl font-semibold">Word</span>
+				<span class="text-muted-foreground mt-1 text-xs">.docx - redigerbar</span>
+				<span class="text-primary mt-3 text-sm font-medium">Download &rarr;</span>
+			</a>
+			<a
+				href="/templates/faktura-skabelon.xlsx"
+				download
+				class="border-border bg-card hover:border-accent group flex flex-col rounded-lg border p-5 transition-colors"
+			>
+				<span class="text-2xl font-semibold">Excel</span>
+				<span class="text-muted-foreground mt-1 text-xs">.xlsx - med momsformler</span>
+				<span class="text-primary mt-3 text-sm font-medium">Download &rarr;</span>
+			</a>
+			<a
+				href="/templates/faktura-skabelon.pdf"
+				download
+				class="border-border bg-card hover:border-accent group flex flex-col rounded-lg border p-5 transition-colors"
+			>
+				<span class="text-2xl font-semibold">PDF</span>
+				<span class="text-muted-foreground mt-1 text-xs">.pdf - printklar</span>
+				<span class="text-primary mt-3 text-sm font-medium">Download &rarr;</span>
+			</a>
+		</div>
+	</div>
+</section>
+
 <!-- Feature: editorial alternating layout -->
 <section class="mx-auto max-w-6xl px-6 py-20">
 	<div class="grid gap-12 lg:grid-cols-3 lg:gap-8">
@@ -184,6 +234,127 @@
 			<p class="text-muted-foreground mt-4 text-sm leading-relaxed">
 				Professionelt udseende PDF uden vandmærke. Klar til at sende til din kunde på sekunder.
 			</p>
+		</div>
+	</div>
+</section>
+
+<!-- Internal links: templates by trade + guides -->
+<section class="border-border bg-secondary/40 border-y">
+	<div class="mx-auto max-w-6xl px-6 py-16">
+		<div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+			<div>
+				<h2 class="text-xl font-semibold tracking-tight">Skabelon til dit erhverv</h2>
+				<p class="text-muted-foreground mt-2 text-sm leading-relaxed">
+					Fakturaskabelon med typiske poster og priser for dit fag - fra elektriker og tømrer til
+					fotograf og DJ.
+				</p>
+				<ul class="mt-4 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+					<li>
+						<a
+							href="/skabeloner/elektriker/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Elektriker</a
+						>
+					</li>
+					<li>
+						<a
+							href="/skabeloner/toemrer/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Tømrer</a
+						>
+					</li>
+					<li>
+						<a
+							href="/skabeloner/maler/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Maler</a
+						>
+					</li>
+					<li>
+						<a
+							href="/skabeloner/vvs/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>VVS</a
+						>
+					</li>
+					<li>
+						<a
+							href="/skabeloner/fotograf/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Fotograf</a
+						>
+					</li>
+					<li>
+						<a
+							href="/skabeloner/it-konsulent/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>IT-konsulent</a
+						>
+					</li>
+				</ul>
+				<a
+					href="/skabeloner/"
+					class="text-primary decoration-accent mt-4 inline-block text-sm font-medium underline decoration-2 underline-offset-4"
+				>
+					Se alle {branchCount} erhverv &rarr;
+				</a>
+			</div>
+			<div>
+				<h2 class="text-xl font-semibold tracking-tight">Guides om fakturering</h2>
+				<p class="text-muted-foreground mt-2 text-sm leading-relaxed">
+					Alt om reglerne, formaterne og hverdagen med fakturaer - skrevet på dansk.
+				</p>
+				<ul class="mt-4 space-y-1.5 text-sm">
+					<li>
+						<a
+							href="/blog/krav-til-faktura/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Hvad skal en faktura indeholde? (lovkrav)</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/faktura-skabelon-excel/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Faktura skabelon til Excel</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/faktura-skabelon-word/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Faktura skabelon til Word</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/faktura-skabelon-pdf/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Faktura skabelon som PDF</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/faktura-uden-cvr/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Faktura uden CVR-nummer</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/faktura-skabelon-faq/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Ofte stillede spørgsmål</a
+						>
+					</li>
+				</ul>
+				<a
+					href="/blog/"
+					class="text-primary decoration-accent mt-4 inline-block text-sm font-medium underline decoration-2 underline-offset-4"
+				>
+					Se alle guides &rarr;
+				</a>
+			</div>
 		</div>
 	</div>
 </section>

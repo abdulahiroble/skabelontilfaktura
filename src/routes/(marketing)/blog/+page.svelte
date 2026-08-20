@@ -21,6 +21,16 @@
 
 	const articles: Article[] = [
 		{
+			slug: 'krav-til-faktura',
+			title: 'Krav til faktura: Hvad skal en faktura indeholde? (2026)',
+			excerpt:
+				'Alle lovkrav til danske fakturaer: de 11 obligatoriske felter, momsregler, EAN-fakturering og opbevaringskrav.',
+			category: 'Lovgivning',
+			dateModified: ARTICLE_DATES.requirements.modified,
+			dateLabel: ARTICLE_DATES.requirements.modifiedLabel,
+			readingTime: '8 min læsning'
+		},
+		{
 			slug: 'bogforingslov-2026-guide',
 			title: 'Ny bogføringslov 2026: Komplet guide for selvstændige',
 			excerpt:
@@ -41,6 +51,16 @@
 			readingTime: '6 min læsning'
 		},
 		{
+			slug: 'faktura-skabelon-excel',
+			title: 'Faktura skabelon Excel: Gratis download og guide (2026)',
+			excerpt:
+				'Download vores gratis Excel-skabelon med momsformler - eller byg din egen trin for trin.',
+			category: 'Skabeloner',
+			dateModified: ARTICLE_DATES.excel.modified,
+			dateLabel: ARTICLE_DATES.excel.modifiedLabel,
+			readingTime: '5 min læsning'
+		},
+		{
 			slug: 'faktura-skabelon-word',
 			title: 'Faktura skabelon Word: Sådan laver du en i Microsoft Word (2026)',
 			excerpt:
@@ -49,6 +69,26 @@
 			dateModified: ARTICLE_DATES.word.modified,
 			dateLabel: ARTICLE_DATES.word.modifiedLabel,
 			readingTime: '6 min læsning'
+		},
+		{
+			slug: 'faktura-skabelon-pdf',
+			title: 'Faktura skabelon PDF: Gratis download (2026)',
+			excerpt:
+				'Printklar PDF-skabelon med alle lovpligtige felter - klar til udfyldelse og afsendelse.',
+			category: 'Skabeloner',
+			dateModified: ARTICLE_DATES.pdfTemplate.modified,
+			dateLabel: ARTICLE_DATES.pdfTemplate.modifiedLabel,
+			readingTime: '4 min læsning'
+		},
+		{
+			slug: 'faktura-skabelon-google-docs',
+			title: 'Faktura skabelon Google Docs: Gratis guide (2026)',
+			excerpt:
+				'Sådan bygger du en fakturaskabelon i Google Docs - og hvad Docs ikke kan klare selv.',
+			category: 'Skabeloner',
+			dateModified: ARTICLE_DATES.googleDocs.modified,
+			dateLabel: ARTICLE_DATES.googleDocs.modifiedLabel,
+			readingTime: '5 min læsning'
 		},
 		{
 			slug: 'faktura-freelancer',

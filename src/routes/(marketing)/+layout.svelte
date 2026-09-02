@@ -134,6 +134,11 @@
 						class="text-muted-foreground hover:text-foreground block text-sm transition-colors"
 						>Priser</a
 					>
+					<a
+						href="/revisor/"
+						class="text-muted-foreground hover:text-foreground block text-sm transition-colors"
+						>Find en revisor</a
+					>
 				</div>
 				<div class="space-y-2.5">
 					<p class="text-muted-foreground text-xs font-semibold tracking-wider uppercase">Viden</p>

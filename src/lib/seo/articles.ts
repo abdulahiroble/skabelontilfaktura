@@ -50,5 +50,25 @@ export const ARTICLE_DATES = {
 		published: '2026-08-20',
 		modified: '2026-08-20',
 		modifiedLabel: 'Opdateret 20. august 2026'
+	},
+	example: {
+		published: '2026-09-02',
+		modified: '2026-09-02',
+		modifiedLabel: 'Opdateret 2. september 2026'
+	},
+	proforma: {
+		published: '2026-09-02',
+		modified: '2026-09-02',
+		modifiedLabel: 'Opdateret 2. september 2026'
+	},
+	creditNote: {
+		published: '2026-09-02',
+		modified: '2026-09-02',
+		modifiedLabel: 'Opdateret 2. september 2026'
+	},
+	receipt: {
+		published: '2026-09-02',
+		modified: '2026-09-02',
+		modifiedLabel: 'Opdateret 2. september 2026'
 	}
 } as const;

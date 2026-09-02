@@ -25,18 +25,48 @@
 	import { Button } from '$lib/components/ui/button';
 	import InvoiceForm from '$lib/components/invoice/InvoiceForm.svelte';
 	import { createInvoiceStore } from '$lib/invoice/store.svelte';
-	import { buildMeta } from '$lib/seo';
+	import { buildMeta, howToSchema } from '$lib/seo';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
 	const meta = buildMeta({
-		title: 'Lav en gratis faktura online',
+		title: 'Lav en gratis faktura online – nemt fakturaprogram',
 		description:
-			'Lav en gratis og lovlig dansk faktura på 60 sekunder. CVR-felter, automatisk momsberegning, MobilePay og PDF-download. Ingen tilmelding nødvendig.',
+			'Lav en gratis faktura online med vores nemme fakturaprogram. Automatisk momsberegning, CVR-opslag og PDF-download — ingen tilmelding, ingen vandmærke.',
 		canonical: '/generator/',
-		ogType: 'website'
+		ogType: 'website',
+		jsonLd: howToSchema(
+			[
+				{
+					name: 'Udfyld sælger og modtager',
+					text: 'Indtast dit firmanavn og CVR-nummer — oplysningerne slås automatisk op i CVR-registret — og udfyld kundens navn og adresse.'
+				},
+				{
+					name: 'Tilføj fakturalinjer',
+					text: 'Beskriv dit arbejde eller dine varer med antal, enhed og stykpris. Momsen (25% eller momsfri) beregnes automatisk.'
+				},
+				{
+					name: 'Tjek det live preview',
+					text: 'Se fakturaen opdateres i forhåndsvisningen i realtid, mens du skriver.'
+				},
+				{
+					name: 'Download og send',
+					text: 'Download fakturaen som PDF uden vandmærke, eller udskriv den direkte, og send den til kunden.'
+				}
+			],
+			{
+				name: 'Sådan laver du en faktura online',
+				description: 'Lav en gratis dansk faktura online på 60 sekunder med skabelontilfaktura.dk.'
+			}
+		)
 	});
+
+	// Avoid emitting a literal `<script` token in source so the Svelte/prettier
+	// parsers don't mistake the JSON-LD string for a real inline script block.
+	// Content is built from trusted schema.org objects (no user input).
+	const lt = String.fromCharCode(60);
+	const jsonLdScript = `${lt}script type="application/ld+json">${JSON.stringify(meta.jsonLd)}${lt}/script>`;
 
 	/**
 	 * Shared store. Auto-hydrates from localStorage on creation and is passed
@@ -277,6 +307,8 @@
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={meta.title} />
 	<meta name="twitter:description" content={meta.description} />
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- content is built from trusted schema.org objects, no user input -->
+	{@html jsonLdScript}
 </svelte:head>
 
 <div class="mx-auto max-w-7xl px-4 py-10 sm:py-14">

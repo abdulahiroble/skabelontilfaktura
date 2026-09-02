@@ -87,6 +87,30 @@ const routes: SitemapEntry[] = [
 		priority: '0.8',
 		changefreq: 'monthly'
 	},
+	{
+		path: '/blog/eksempel-paa-faktura/',
+		lastmod: ARTICLE_DATES.example.modified,
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/proforma-faktura/',
+		lastmod: ARTICLE_DATES.proforma.modified,
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/kreditnota/',
+		lastmod: ARTICLE_DATES.creditNote.modified,
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
+	{
+		path: '/blog/kvittering-skabelon/',
+		lastmod: ARTICLE_DATES.receipt.modified,
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
 	// Branch-specific template pages, one entry per erhverv.
 	...BRANCH_SLUGS.map<SitemapEntry>((slug) => ({
 		path: `/skabeloner/${slug}/`,

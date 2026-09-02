@@ -1,10 +1,35 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { buildMeta, breadcrumbSchema } from '$lib/seo';
+	import { buildMeta, breadcrumbSchema, faqPageSchema } from '$lib/seo';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 	const branch = $derived(data.branch);
+
+	// Small generic FAQ derived from the trade's own data, so answers stay
+	// consistent with the on-page content (typical line items, rates, moms).
+	const faq = $derived(
+		branch
+			? faqPageSchema([
+					{
+						question: `Er faktura skabelonen gratis til ${branch.tradePlural}?`,
+						answer: `Ja. Du kan hente en gratis faktura skabelon til ${branch.tradePlural} i Word, Excel og PDF — eller lave fakturaen online i vores generator uden tilmelding og uden vandmærke.`
+					},
+					{
+						question: `Hvilke poster skal på en faktura fra ${branch.trade}?`,
+						answer: `${branch.lineItems
+							.map((item) => item.description.charAt(0).toLowerCase() + item.description.slice(1))
+							.join(', ')}. ${branch.rateNote}`
+					},
+					{
+						question: `Hvor meget moms skal der på en ${branch.trade}-faktura?`,
+						answer:
+							branch.momsNote ??
+							'I Danmark er standardmomssatsen 25%, som lægges oveni alle poster ekskl. moms. Generatoren beregner momsen automatisk — og kan markere fakturaen som momsfritaget, hvis dit erhverv er omfattet af en fritagelse.'
+					}
+				])
+			: null
+	);
 
 	const meta = $derived(
 		branch
@@ -12,7 +37,21 @@
 					title: `Faktura skabelon til ${branch.tradePlural}`,
 					description: branch.description,
 					canonical: `/skabeloner/${branch.slug}/`,
-					ogType: 'website'
+					ogType: 'website',
+					jsonLd: [
+						breadcrumbSchema([
+							{ name: 'Forside', url: 'https://skabelontilfaktura.dk/' },
+							{
+								name: 'Skabeloner efter erhverv',
+								url: 'https://skabelontilfaktura.dk/skabeloner/'
+							},
+							{
+								name: `Faktura skabelon ${branch.trade}`,
+								url: `https://skabelontilfaktura.dk/skabeloner/${branch.slug}/`
+							}
+						]),
+						faq
+					]
 				})
 			: buildMeta({
 					title: 'Faktura skabelon',
@@ -22,23 +61,10 @@
 				})
 	);
 
-	const breadcrumb = $derived(
-		branch
-			? breadcrumbSchema([
-					{ name: 'Forside', url: 'https://skabelontilfaktura.dk/' },
-					{ name: 'Skabeloner efter erhverv', url: 'https://skabelontilfaktura.dk/skabeloner/' },
-					{
-						name: `Faktura skabelon ${branch.trade}`,
-						url: `https://skabelontilfaktura.dk/skabeloner/${branch.slug}/`
-					}
-				])
-			: null
-	);
-
 	const lt = String.fromCharCode(60);
 	const jsonLdScript = $derived(
-		breadcrumb
-			? `${lt}script type="application/ld+json">${JSON.stringify([breadcrumb])}${lt}/script>`
+		meta.jsonLd
+			? `${lt}script type="application/ld+json">${JSON.stringify(meta.jsonLd)}${lt}/script>`
 			: ''
 	);
 

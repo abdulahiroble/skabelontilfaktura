@@ -8,7 +8,7 @@
 	const meta = buildMeta({
 		title: 'Gratis fakturaskabelon på 60 sekunder',
 		description:
-			'Lav en gratis og lovlig dansk faktura på 60 sekunder. CVR-opslag, automatisk moms, MobilePay og PDF-download. Ingen tilmelding nødvendig.',
+			'Lav en gratis faktura på 60 sekunder med Danmarks nemmeste fakturaskabelon. Hent også en faktura skabelon til Word, Excel og PDF — automatisk moms.',
 		canonical: '/',
 		ogType: 'website'
 	});
@@ -65,12 +65,13 @@
 	<div class="flex flex-col justify-center">
 		<p class="text-primary mb-5 text-sm font-medium tracking-wide">Gratis og lovlig faktura</p>
 		<h1 class="text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-			Lav en faktura
+			Gratis fakturaskabelon
 			<span class="text-muted-foreground italic">på 60 sekunder</span>
 		</h1>
 		<p class="text-muted-foreground mt-6 max-w-md text-lg leading-relaxed">
-			Danmarks nemmeste fakturaskabelon. Automatisk moms, CVR-opslag og PDF-download. Ingen
-			tilmelding, ingen vandmærke.
+			Danmarks nemmeste fakturaskabelon — brug den direkte online, eller hent en faktura skabelon
+			til Word og Excel. Automatisk moms, CVR-opslag og PDF-download. Ingen tilmelding, ingen
+			vandmærke.
 		</p>
 		<div class="mt-8 flex flex-wrap items-center gap-4">
 			<Button size="lg" href="/generator/" class="px-7">Lav min faktura</Button>
@@ -291,6 +292,20 @@
 							>IT-konsulent</a
 						>
 					</li>
+					<li>
+						<a
+							href="/skabeloner/bogholder/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Bogholder</a
+						>
+					</li>
+					<li>
+						<a
+							href="/skabeloner/rengoering/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Rengøring</a
+						>
+					</li>
 				</ul>
 				<a
 					href="/skabeloner/"
@@ -310,6 +325,27 @@
 							href="/blog/krav-til-faktura/"
 							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
 							>Hvad skal en faktura indeholde? (lovkrav)</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/eksempel-paa-faktura/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Eksempel på faktura – sådan ser en korrekt faktura ud</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/proforma-faktura/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Proformafaktura – hvad er det, og hvornår bruges den?</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/bogforingslov-2026-guide/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Ny bogføringslov 2026 - guide for selvstændige</a
 						>
 					</li>
 					<li>
@@ -335,9 +371,44 @@
 					</li>
 					<li>
 						<a
+							href="/blog/faktura-skabelon-google-docs/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Faktura skabelon til Google Docs</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/faktura-freelancer/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Faktura for freelancere</a
+						>
+					</li>
+					<li>
+						<a
 							href="/blog/faktura-uden-cvr/"
 							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
 							>Faktura uden CVR-nummer</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/faktura-skabelon-sammenligning/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>De 5 bedste faktura skabeloner i Danmark</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/kreditnota/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Kreditnota – sådan opretter du en korrekt kreditnota</a
+						>
+					</li>
+					<li>
+						<a
+							href="/blog/kvittering-skabelon/"
+							class="hover:text-primary decoration-border hover:decoration-accent underline underline-offset-4"
+							>Kvitteringsskabelon – gratis skabelon til kvitteringer</a
 						>
 					</li>
 					<li>

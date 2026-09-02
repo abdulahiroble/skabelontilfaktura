@@ -119,6 +119,46 @@
 			dateModified: ARTICLE_DATES.comparison.modified,
 			dateLabel: ARTICLE_DATES.comparison.modifiedLabel,
 			readingTime: '8 min læsning'
+		},
+		{
+			slug: 'eksempel-paa-faktura',
+			title: 'Eksempel på faktura: sådan ser en korrekt faktura ud (2026)',
+			excerpt:
+				'Et konkret eksempel på faktura, hvor alle lovpligtige felter er markeret og forklaret - plus de typiske fejl, du skal undgå.',
+			category: 'Eksempler',
+			dateModified: ARTICLE_DATES.example.modified,
+			dateLabel: ARTICLE_DATES.example.modifiedLabel,
+			readingTime: '8 min læsning'
+		},
+		{
+			slug: 'proforma-faktura',
+			title: 'Proformafaktura: hvad er det, og hvornår bruger man den? (2026)',
+			excerpt:
+				'Forskellen på proformafaktura, almindelig faktura og tilbud - og hvordan proformaen behandles i din bogføring.',
+			category: 'Fakturatyper',
+			dateModified: ARTICLE_DATES.proforma.modified,
+			dateLabel: ARTICLE_DATES.proforma.modifiedLabel,
+			readingTime: '6 min læsning'
+		},
+		{
+			slug: 'kreditnota',
+			title: 'Kreditnota: sådan opretter du en korrekt kreditnota (2026)',
+			excerpt:
+				'Hvornår kreditnotaen skal sendes, hvilke felter den kræver, og hvordan den retter din bogføring og momsindberetning.',
+			category: 'Bogføring',
+			dateModified: ARTICLE_DATES.creditNote.modified,
+			dateLabel: ARTICLE_DATES.creditNote.modifiedLabel,
+			readingTime: '6 min læsning'
+		},
+		{
+			slug: 'kvittering-skabelon',
+			title: 'Kvitteringsskabelon – gratis og nem skabelon til kvitteringer (2026)',
+			excerpt:
+				'Forskellen på kvittering og faktura, hvad kvitteringen skal indeholde - og et eksempel, du kan kopiere.',
+			category: 'Skabeloner',
+			dateModified: ARTICLE_DATES.receipt.modified,
+			dateLabel: ARTICLE_DATES.receipt.modifiedLabel,
+			readingTime: '5 min læsning'
 		}
 	];
 </script>

@@ -6,11 +6,22 @@
 	let { data }: PageProps = $props();
 	const branch = $derived(data.branch);
 
-	// Small generic FAQ derived from the trade's own data, so answers stay
-	// consistent with the on-page content (typical line items, rates, moms).
-	const faq = $derived(
+	// Single source of truth for the FAQ: the same pairs feed the visible
+	// section on the page and the FAQPage JSON-LD schema, so they stay in sync.
+	interface FaqItem {
+		question: string;
+		answer: string;
+		/** Optional on-page link rendered after the answer (schema keeps the plain text). */
+		linkHref?: string;
+		linkLabel?: string;
+	}
+
+	// Generic FAQ derived from the trade's own data, so answers stay consistent
+	// with the on-page content (typical line items, rates, moms). Trade-specific
+	// pairs (faqExtra) are appended last when the branch has them.
+	const faqItems: FaqItem[] = $derived(
 		branch
-			? faqPageSchema([
+			? [
 					{
 						question: `Er faktura skabelonen gratis til ${branch.tradePlural}?`,
 						answer: `Ja. Du kan hente en gratis faktura skabelon til ${branch.tradePlural} i Word, Excel og PDF — eller lave fakturaen online i vores generator uden tilmelding og uden vandmærke.`
@@ -26,10 +37,25 @@
 						answer:
 							branch.momsNote ??
 							'I Danmark er standardmomssatsen 25%, som lægges oveni alle poster ekskl. moms. Generatoren beregner momsen automatisk — og kan markere fakturaen som momsfritaget, hvis dit erhverv er omfattet af en fritagelse.'
-					}
-				])
-			: null
+					},
+					{
+						question: 'Hvordan sender jeg fakturaen til min kunde?',
+						answer:
+							'Download fakturaen som PDF og send den til kunden via e-mail — eller lav fakturaen direkte online i generatoren, hvor du også kan hente den som PDF.'
+					},
+					{
+						question: 'Kan jeg bruge skabelonen, hvis jeg ikke har et CVR-nummer?',
+						answer:
+							'Ja, med visse forbehold. Som privatperson eller under opstart kan du fakturere i begrænset omfang, men der er flere regler, du skal kende — blandt andet om momsregistrering ved en omsætning over 50.000 kr. om året.',
+						linkHref: '/blog/faktura-uden-cvr/',
+						linkLabel: 'Læs vores guide: Faktura uden CVR-nummer'
+					},
+					...(branch.faqExtra ?? [])
+				]
+			: []
 	);
+
+	const faq = $derived(branch ? faqPageSchema(faqItems) : null);
 
 	const meta = $derived(
 		branch
@@ -210,6 +236,17 @@
 					<li>PDF-download klar til at sende til kunden</li>
 				</ul>
 			</section>
+
+			<section>
+				<h2>Ofte stillede spørgsmål om fakturaer til {branch.tradePlural}</h2>
+				{#each faqItems as item (item.question)}
+					<h3>{item.question}</h3>
+					<p>{item.answer}</p>
+					{#if item.linkHref && item.linkLabel}
+						<p><a href={item.linkHref}>{item.linkLabel}</a></p>
+					{/if}
+				{/each}
+			</section>
 		</div>
 
 		<section class="border-border bg-muted/30 mt-12 rounded-xl border p-8 text-center">
@@ -221,6 +258,30 @@
 				<Button size="lg" href="/generator/">Lav faktura gratis</Button>
 				<Button size="lg" variant="outline" href="/skabeloner/">Se alle erhverv</Button>
 			</div>
+		</section>
+
+		<section class="border-border mt-12 border-t pt-8">
+			<h2 class="text-2xl font-bold">Kom i gang</h2>
+			<p class="text-muted-foreground mt-2">
+				Skal du snart sende din første faktura som {branch.trade}? Start med disse sider:
+			</p>
+			<ul class="text-muted-foreground mt-4 space-y-2 text-sm">
+				<li>
+					<a class="text-foreground hover:text-accent font-medium" href="/generator/"
+						>Lav faktura online gratis</a
+					> — med automatisk moms, CVR-opslag og PDF-download.
+				</li>
+				<li>
+					<a class="text-foreground hover:text-accent font-medium" href="/blog/krav-til-faktura/"
+						>Krav til faktura</a
+					> — alle de felter, din faktura skal indeholde.
+				</li>
+				<li>
+					<a class="text-foreground hover:text-accent font-medium" href="/blog/faktura-uden-cvr/"
+						>Faktura uden CVR-nummer</a
+					> — hvis du fakturerer, før virksomheden er registreret.
+				</li>
+			</ul>
 		</section>
 	</article>
 {/if}

@@ -166,6 +166,13 @@
 		{/each}
 	</div>
 
+	<p class="text-muted-foreground mt-12 leading-relaxed">
+		Det var de mest stillede spørgsmål om fakturaskabeloner. Næste skridt er at afsende din første
+		faktura: <a class="text-primary font-medium hover:underline" href="/generator/"
+			>lav din faktura online gratis</a
+		> i vores generator, og se hvordan alle felterne ovenfor ser ud i praksis.
+	</p>
+
 	<!-- Decision CTA -->
 	<div class="not-prose border-border bg-muted/30 mt-16 rounded-xl border p-6">
 		<h2 class="text-2xl font-semibold">Klar til at sende din første faktura?</h2>

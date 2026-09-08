@@ -25,41 +25,93 @@
 	import { Button } from '$lib/components/ui/button';
 	import InvoiceForm from '$lib/components/invoice/InvoiceForm.svelte';
 	import { createInvoiceStore } from '$lib/invoice/store.svelte';
-	import { buildMeta, howToSchema } from '$lib/seo';
+	import { buildMeta, faqPageSchema, howToSchema } from '$lib/seo';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
+	interface FaqItem {
+		question: string;
+		answer: string;
+		/** Optional "read more" link rendered below the visible answer. */
+		link?: string;
+		linkLabel?: string;
+	}
+
+	/**
+	 * FAQ rendered below the generator and emitted as FAQPage structured data
+	 * alongside the HowTo schema. Links point to the matching blog guides.
+	 */
+	const faq: FaqItem[] = [
+		{
+			question: 'Kan jeg selv lave en faktura?',
+			answer:
+				'Ja, det må du gerne. En faktura skal blandt andet indeholde fakturadato, et unikt fakturanummer, dit firmanavn, adresse og CVR-nummer, kundens navn og adresse samt en beskrivelse af varerne eller ydelsen med antal og pris — og til sidst momsgrundlag, momssats og momsbeløb. Generatoren her udfylder alle felterne for dig, og CVR-opslaget henter automatisk virksomhedens oplysninger, mens du skriver.',
+			link: '/blog/krav-til-faktura/',
+			linkLabel: 'Se den fulde liste over krav til en faktura'
+		},
+		{
+			question: 'Hvilket program kan jeg bruge til at lave fakturaer?',
+			answer:
+				'Det afhænger af, hvor mange fakturaer du sender. Skal du hurtigt have lavet en enkelt faktura, er en online generator som denne det hurtigste valg — udfyld felterne og download PDF’en med det samme. Sender du kun få fakturaer om måneden, kan en skabelon til Excel eller Word også gøre jobbet, mens virksomheder med mange kunder typisk vælger et bogholderisystem.',
+			link: '/blog/faktura-skabelon-excel/',
+			linkLabel: 'Sammenlign faktura skabeloner til Excel og Word'
+		},
+		{
+			question: 'Hvordan laver jeg en faktura til en privatperson?',
+			answer:
+				'Det er helt i orden at sende en faktura til en privatperson. I stedet for virksomhedens CVR-nummer opgiver du blot kundens navn og adresse. Skal du selv sende en faktura uden CVR-nummer, kan du enten opgive dine korrekte personlige oplysninger på fakturaen eller bruge en fakturatjeneste, der står som afsender. Husk, at der stadig beregnes 25% moms, hvis dit salg er momspligtigt.',
+			link: '/blog/faktura-uden-cvr/',
+			linkLabel: 'Læs om at lave en faktura uden CVR'
+		},
+		{
+			question: 'Er der forskel på regning og faktura?',
+			answer:
+				'Nej, i praksis er det to ord for det samme dokument: et krav om betaling for leverede varer eller udført arbejde. Uanset hvilket ord der står på dokumentet, skal det opfylde de samme formkrav, så det kan bruges i begge parters bogholderi.',
+			link: '/blog/krav-til-faktura/',
+			linkLabel: 'Se hvilke oplysninger dokumentet skal indeholde'
+		},
+		{
+			question: 'Er fakturaen fra generatoren gratis?',
+			answer:
+				'Ja. Du kan lave og downloade fakturaer gratis — uden tilmelding og uden vandmærke på PDF’en. Din kladde gemmes automatisk i din browser, så du kan vende tilbage og rette i fakturaen senere.'
+		}
+	];
+
 	const meta = buildMeta({
-		title: 'Lav en gratis faktura online – nemt fakturaprogram',
+		title: 'Lav faktura online gratis – hurtig faktura på 60 sekunder',
 		description:
-			'Lav en gratis faktura online med vores nemme fakturaprogram. Automatisk momsberegning, CVR-opslag og PDF-download — ingen tilmelding, ingen vandmærke.',
+			'Lav en faktura online gratis uden tilmelding. Hurtig faktura med automatisk momsberegning, CVR-opslag og PDF-download — brug vores faktura skabelon direkte i browseren.',
 		canonical: '/generator/',
 		ogType: 'website',
-		jsonLd: howToSchema(
-			[
+		jsonLd: [
+			howToSchema(
+				[
+					{
+						name: 'Udfyld sælger og modtager',
+						text: 'Indtast dit firmanavn og CVR-nummer — oplysningerne slås automatisk op i CVR-registret — og udfyld kundens navn og adresse.'
+					},
+					{
+						name: 'Tilføj fakturalinjer',
+						text: 'Beskriv dit arbejde eller dine varer med antal, enhed og stykpris. Momsen (25% eller momsfri) beregnes automatisk.'
+					},
+					{
+						name: 'Tjek det live preview',
+						text: 'Se fakturaen opdateres i forhåndsvisningen i realtid, mens du skriver.'
+					},
+					{
+						name: 'Download og send',
+						text: 'Download fakturaen som PDF uden vandmærke, eller udskriv den direkte, og send den til kunden.'
+					}
+				],
 				{
-					name: 'Udfyld sælger og modtager',
-					text: 'Indtast dit firmanavn og CVR-nummer — oplysningerne slås automatisk op i CVR-registret — og udfyld kundens navn og adresse.'
-				},
-				{
-					name: 'Tilføj fakturalinjer',
-					text: 'Beskriv dit arbejde eller dine varer med antal, enhed og stykpris. Momsen (25% eller momsfri) beregnes automatisk.'
-				},
-				{
-					name: 'Tjek det live preview',
-					text: 'Se fakturaen opdateres i forhåndsvisningen i realtid, mens du skriver.'
-				},
-				{
-					name: 'Download og send',
-					text: 'Download fakturaen som PDF uden vandmærke, eller udskriv den direkte, og send den til kunden.'
+					name: 'Sådan laver du en faktura online',
+					description:
+						'Lav en gratis dansk faktura online på 60 sekunder med skabelontilfaktura.dk.'
 				}
-			],
-			{
-				name: 'Sådan laver du en faktura online',
-				description: 'Lav en gratis dansk faktura online på 60 sekunder med skabelontilfaktura.dk.'
-			}
-		)
+			),
+			faqPageSchema(faq)
+		]
 	});
 
 	// Avoid emitting a literal `<script` token in source so the Svelte/prettier
@@ -473,5 +525,59 @@
 				{/if}
 			</div>
 		</aside>
+	</div>
+
+	<!-- FAQ and related guides: SEO content below the invoice app -->
+	<div class="mx-auto mt-16 max-w-3xl sm:mt-20">
+		<section>
+			<h2 class="text-2xl font-bold tracking-tight">
+				Ofte stillede spørgsmål om at lave en faktura
+			</h2>
+			<div class="mt-6 space-y-6">
+				{#each faq as item (item.question)}
+					<div>
+						<h3 class="text-lg font-semibold">{item.question}</h3>
+						<p class="text-muted-foreground mt-2 leading-relaxed">{item.answer}</p>
+						{#if item.link}
+							<p class="mt-2">
+								<a
+									href={item.link}
+									class="text-primary text-sm font-medium no-underline hover:underline"
+								>
+									{item.linkLabel}
+								</a>
+							</p>
+						{/if}
+					</div>
+				{/each}
+			</div>
+		</section>
+
+		<section class="border-border bg-muted/30 mt-12 rounded-xl border p-6">
+			<h2 class="text-lg font-semibold tracking-tight">Relaterede guider</h2>
+			<ul class="text-muted-foreground mt-3 list-disc space-y-2 pl-5 text-sm">
+				<li>
+					<a
+						href="/blog/faktura-skabelon-faq/"
+						class="text-primary font-medium no-underline hover:underline"
+					>
+						Faktura skabelon – ofte stillede spørgsmål
+					</a>
+				</li>
+				<li>
+					<a
+						href="/blog/krav-til-faktura/"
+						class="text-primary font-medium no-underline hover:underline"
+					>
+						Krav til en faktura
+					</a>
+				</li>
+				<li>
+					<a href="/skabeloner/" class="text-primary font-medium no-underline hover:underline">
+						Faktura skabeloner til erhverv
+					</a>
+				</li>
+			</ul>
+		</section>
 	</div>
 </div>

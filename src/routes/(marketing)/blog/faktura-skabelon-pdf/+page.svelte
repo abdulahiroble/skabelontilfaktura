@@ -151,6 +151,15 @@
 			</p>
 		</section>
 
+		<section>
+			<p>
+				Vil du slippe for at regne moms og numre i hånden? <a href="/generator/"
+					>Lav faktura online gratis</a
+				> i vores generator og download den færdige faktura som PDF - samme pæne format, uden det manuelle
+				arbejde.
+			</p>
+		</section>
+
 		<section class="border-border bg-muted/30 rounded-xl border p-8 text-center">
 			<h2 class="text-2xl font-bold">Lad PDF-en regne for dig</h2>
 			<p class="text-muted-foreground mt-2">

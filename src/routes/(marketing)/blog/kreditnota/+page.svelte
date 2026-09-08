@@ -258,6 +258,15 @@
 		</section>
 
 		<section>
+			<p>
+				Fejl opstår oftest, når fakturaerne skrives i hånden. <a href="/generator/"
+					>Lav dine fakturaer online gratis</a
+				>, og brug generatoren til kreditnotaer med reference til originalen, når noget alligevel
+				skal rettes.
+			</p>
+		</section>
+
+		<section>
 			<h2 class="text-2xl font-bold tracking-tight">Ofte stillede spørgsmål</h2>
 			<div class="space-y-6">
 				{#each faq as item (item.question)}

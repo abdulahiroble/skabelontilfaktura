@@ -289,6 +289,15 @@
 		</div>
 	</section>
 
+	<!-- Internal links -->
+	<p class="not-prose text-muted-foreground mt-12">
+		Vil du hellere prøve end at læse? <a
+			href="/generator/"
+			class="text-primary font-medium hover:underline">Lav faktura online gratis</a
+		> og sæt resultatet op imod de betalte alternativer - de fleste bliver i generatoren, når de først
+		har prøvet den.
+	</p>
+
 	<!-- CTA -->
 	<div class="not-prose bg-primary text-primary-foreground mt-16 rounded-xl p-8 text-center">
 		<h2 class="text-2xl font-semibold">Start gratis i dag</h2>

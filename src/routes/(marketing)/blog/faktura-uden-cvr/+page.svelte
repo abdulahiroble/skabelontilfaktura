@@ -258,6 +258,13 @@
 		</section>
 
 		<section>
+			<p>
+				Skal du sende din første faktura i dag? <a href="/generator/">Lav faktura online gratis</a> i
+				vores generator - den er lavet til private og små sælgere og kræver hverken CVR-nummer eller tilmelding.
+			</p>
+		</section>
+
+		<section>
 			<h2 class="text-2xl font-bold tracking-tight">Ofte stillede spørgsmål</h2>
 			<div class="space-y-6">
 				{#each faqQuestions as item (item.question)}

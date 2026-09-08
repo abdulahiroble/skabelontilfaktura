@@ -111,6 +111,12 @@ const routes: SitemapEntry[] = [
 		priority: '0.8',
 		changefreq: 'monthly'
 	},
+	{
+		path: '/blog/elektronisk-faktura/',
+		lastmod: ARTICLE_DATES.electronicInvoice.modified,
+		priority: '0.8',
+		changefreq: 'monthly'
+	},
 	// Branch-specific template pages, one entry per erhverv.
 	...BRANCH_SLUGS.map<SitemapEntry>((slug) => ({
 		path: `/skabeloner/${slug}/`,

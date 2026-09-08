@@ -242,6 +242,19 @@
 			</p>
 		</section>
 
+		<section>
+			<p class="mb-4">
+				Uanset om du bliver i Word eller skifter til onlineværktøjet, betaler det sig at have
+				skabelonen klar, før den første kunde venter. Det hurtigste er at
+				<a href="/generator/">lave fakturaen online gratis</a> - men vil du blive ved kontorprogrammerne,
+				følger du bare trinene ovenfor.
+			</p>
+			<p>
+				Skal skabelonen derimod matche netop dit fag, finder du
+				<a href="/skabeloner/">skabeloner efter erhverv</a> med de felter, din branche typisk bruger.
+			</p>
+		</section>
+
 		<section class="border-border bg-muted/30 rounded-xl border p-8 text-center">
 			<h2 class="text-2xl font-bold">Prøv den nemme vej</h2>
 			<p class="text-muted-foreground mt-2">

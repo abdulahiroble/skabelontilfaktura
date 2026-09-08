@@ -255,6 +255,14 @@
 		</section>
 
 		<section>
+			<p>
+				Skal proformaen hurtigt på papir? I generatoren kan du <a href="/generator/"
+					>lave fakturaer online gratis</a
+				> - både proforma-versionen med tydelig markering og den rigtige faktura, når leverancen er gennemført.
+			</p>
+		</section>
+
+		<section>
 			<h2 class="text-2xl font-bold tracking-tight">Ofte stillede spørgsmål</h2>
 			<div class="space-y-6">
 				{#each faq as item (item.question)}

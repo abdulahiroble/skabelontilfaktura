@@ -262,6 +262,22 @@
 			</ul>
 		</section>
 
+		<section>
+			<h2 class="text-2xl font-bold tracking-tight">Skabeloner til netop dit fag</h2>
+			<p class="mb-4">
+				Fakturaens lovpligtige felter er de samme på tværs af brancher, men linjerne, timepriserne
+				og betalingsbetingelserne afhænger af, hvad du leverer. Vi har samlet skabeloner til de mest
+				almindelige freelancefag:
+				<a href="/skabeloner/it-konsulent/">faktura skabelon til IT-konsulenter</a>,
+				<a href="/skabeloner/bogholder/">faktura skabelon til bogholdere</a> og
+				<a href="/skabeloner/grafisk-designer/">faktura skabelon til grafiske designere</a>.
+			</p>
+			<p>
+				Skal det bare gå stærkt, kan du <a href="/generator/">lave din faktura online gratis</a> i vores
+				generator - CVR-opslag, moms og nummerering klares automatisk.
+			</p>
+		</section>
+
 		<section class="border-border bg-muted/30 rounded-xl border p-8 text-center">
 			<h2 class="text-2xl font-bold">Klar til at fakturere som freelancer?</h2>
 			<p class="text-muted-foreground mt-2">

@@ -185,6 +185,14 @@
 			</p>
 		</section>
 
+		<section>
+			<p>
+				Uanset hvilket program du vælger, afgør indholdet, om dokumentet holder som faktura. Den
+				sikreste genvej er at <a href="/generator/">lave fakturaen online gratis</a> - og bruge Docs-tiden
+				på kundearbejdet i stedet.
+			</p>
+		</section>
+
 		<section class="border-border bg-muted/30 rounded-xl border p-8 text-center">
 			<h2 class="text-2xl font-bold">Ét sted, alle funktioner</h2>
 			<p class="text-muted-foreground mt-2">

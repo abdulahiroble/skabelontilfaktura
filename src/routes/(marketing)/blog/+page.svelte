@@ -159,6 +159,16 @@
 			dateModified: ARTICLE_DATES.receipt.modified,
 			dateLabel: ARTICLE_DATES.receipt.modifiedLabel,
 			readingTime: '5 min læsning'
+		},
+		{
+			slug: 'elektronisk-faktura',
+			title: 'Elektronisk faktura: hvad er det, og hvordan sender du en e-faktura?',
+			excerpt:
+				'Forskellen på en PDF og en ægte e-faktura, formaterne OIOUBL og PEPPOL, og hvordan du sender elektronisk via NemHandel.',
+			category: 'Bogføring',
+			dateModified: ARTICLE_DATES.electronicInvoice.modified,
+			dateLabel: ARTICLE_DATES.electronicInvoice.modifiedLabel,
+			readingTime: '7 min læsning'
 		}
 	];
 </script>

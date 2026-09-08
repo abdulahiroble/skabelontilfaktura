@@ -260,6 +260,14 @@
 		</section>
 
 		<section>
+			<p>
+				Skal handlen derimod faktureres, skal der en rigtig faktura til:
+				<a href="/generator/">lav faktura online gratis</a> i generatoren, og brug kvitteringen dér, hvor
+				den er nok.
+			</p>
+		</section>
+
+		<section>
 			<h2 class="text-2xl font-bold tracking-tight">Ofte stillede spørgsmål</h2>
 			<div class="space-y-6">
 				{#each faq as item (item.question)}

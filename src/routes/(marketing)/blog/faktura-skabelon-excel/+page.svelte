@@ -216,6 +216,14 @@
 			</p>
 		</section>
 
+		<section>
+			<p>
+				Vil du videre til kunden i stedet for til regnearket? <a href="/generator/"
+					>Lav faktura online gratis</a
+				> i vores generator, så tager den sig af formler, CVR-opslag og fakturanumre for dig.
+			</p>
+		</section>
+
 		<section class="border-border bg-muted/30 rounded-xl border p-8 text-center">
 			<h2 class="text-2xl font-bold">Spring Excel-filen over</h2>
 			<p class="text-muted-foreground mt-2">

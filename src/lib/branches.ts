@@ -27,6 +27,8 @@ export interface Branch {
 	tips: string[];
 	/** Optional trade-specific moms nuance. */
 	momsNote?: string;
+	/** Optional trade-specific FAQ pair, appended after the generic ones on the branch page. */
+	faqExtra?: { question: string; answer: string }[];
 }
 
 export const BRANCHES: Branch[] = [
@@ -66,6 +68,13 @@ export const BRANCHES: Branch[] = [
 			'Adskil arbejde og materialer på hver sin linje — det gør det lettere for kunden at gennemskøre tilbuddet.',
 			'Skriv FE-godkendt udstyr ind i beskrivelsen, når du monterer komponenter.',
 			'Fakturer kørsel som en separat linje, hvis den ikke er indeholdt i timeprisen.'
+		],
+		faqExtra: [
+			{
+				question: 'Skal der FE-godkendelse på fakturaen?',
+				answer:
+					'Nej — FE-godkendelsen knytter sig til din virksomhed, ikke til den enkelte faktura. Er du FE-godkendt, kan dine kunder dog søge om momsrefusion for visse arbejder i egen bolig, så det kan betale sig at nævne ordningen i dit tilbud.'
+			}
 		]
 	},
 	{
@@ -99,6 +108,13 @@ export const BRANCHES: Branch[] = [
 			'Læg materialer på fakturaen med en klar materiellinje — ikke gemt i timeprisen.',
 			'Ved fastprisaftaler skal aftalen gå frem af fakturabeskrivelsen, så der ikke er tvivl.',
 			'Husk at fakturadato og leveringsdato kan falde forskelligt, hvis arbejdet strakte sig over flere dage.'
+		],
+		faqExtra: [
+			{
+				question: 'Kan jeg tage depositum, før arbejdet starter?',
+				answer:
+					'Ja, depositum er almindeligt på større tømreropgaver. Send det som en faktura med en tydelig linje — fx "Depositum carport, 50%" — og træk beløbet fra på slutregningen, så kunden kan se, hvad der allerede er betalt.'
+			}
 		]
 	},
 	{
@@ -127,6 +143,13 @@ export const BRANCHES: Branch[] = [
 			'Skriv antal strøg og malingstype i beskrivelsen — det dokumenterer, hvad prisen dækker.',
 			'Maling og afdækning bør fremgå som egne linjer, så kunden kan se materialeforbruget.',
 			'Tag billeder af arealet før og efter; det gør eventuelle diskussioner om omfanget meget lettere.'
+		],
+		faqExtra: [
+			{
+				question: 'Hvordan regner jeg prisen pr. m² ud?',
+				answer:
+					'Mål væg- og loftarealerne, og gang med din pris pr. m² afhængigt af antal strøg og undergrund. Skriv antal strøg i beskrivelsen, og læg grunding og afdækning på egne linjer, så kunden kan følge beregningen.'
+			}
 		]
 	},
 	{
@@ -165,6 +188,13 @@ export const BRANCHES: Branch[] = [
 			'Ved serviceopkald er det god skik at skrive ankomsttidsrummet på fakturaen.',
 			'Materialelinjer skal specificeres — kunder spørger ofte til prisen på fittings og batterier.',
 			'Husk at nævne eventuel garanti på arbejdet direkte på fakturaen.'
+		],
+		faqExtra: [
+			{
+				question: 'Må jeg fakturere et mindstebeløb for serviceopgaver?',
+				answer:
+					'Ja, mindstebeløb for udrykning og mindre serviceopgaver er udbredt i VVS-branchen. Skriv på fakturaen, hvad beløbet dækker — fx "mindstebeløb inkl. første time" — så kunden ikke skal gætte.'
+			}
 		]
 	},
 	{
@@ -254,6 +284,13 @@ export const BRANCHES: Branch[] = [
 			'Planter og jord bør specificeres i antal/kubikmeter — ikke som én samlet poste.',
 			'Maskintimer (minigraver, tromle) bør have egen linje med timeantal.',
 			'Giv vækstgaranti en egen linje eller fodnote, hvis I har aftalt det.'
+		],
+		faqExtra: [
+			{
+				question: 'Hvordan håndterer jeg vækstgaranti på fakturaen?',
+				answer:
+					'Vækstgaranti er en aftale mellem dig og kunden — fx om udskiftning af planter i første sæson. Aftal omfanget på forhånd, og nævn garantien som fodnote eller egen linje på fakturaen, så der ikke opstår tvivl senere.'
+			}
 		]
 	},
 	{
@@ -282,6 +319,13 @@ export const BRANCHES: Branch[] = [
 			'Ved abonnementer skal perioden (fx "januar 2026") fremgå af fakturabeskrivelsen.',
 			'Adskil fastpris-besøg fra timeregnskab, så kunden kan se, hvad der er aftalt.',
 			'Vinduespudsning bør faktureres pr. vindue eller pr. række — aftal hvad, og skriv det på fakturaen.'
+		],
+		faqExtra: [
+			{
+				question: 'Skal der moms på rengøringsydelser?',
+				answer:
+					'Ja, almindelig rengøring er som udgangspunkt momspligtig med 25%. Generatoren beregner momsen for dig, når du laver fakturaen online — så du kan se momsbeløbet, inden du sender.'
+			}
 		]
 	},
 	{

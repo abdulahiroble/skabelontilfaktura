@@ -379,6 +379,16 @@
 		</section>
 
 		<section>
+			<p>
+				Eksemplet her er med vilje generisk - dine kunder møder dig dog i et konkret fag. Vælg et
+				udgangspunkt, der passer til din branche, blandt vores
+				<a href="/skabeloner/">skabeloner efter erhverv</a>, eller
+				<a href="/generator/">lav din faktura online gratis</a> med nøjagtig de samme felter som i eksemplet
+				ovenfor.
+			</p>
+		</section>
+
+		<section>
 			<h2 class="text-2xl font-bold tracking-tight">Ofte stillede spørgsmål</h2>
 			<div class="space-y-6">
 				{#each faq as item (item.question)}

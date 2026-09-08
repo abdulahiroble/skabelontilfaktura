@@ -333,6 +333,14 @@
 		</section>
 
 		<section>
+			<p>
+				Bogføringspligten handler om, hvad der skal ske, efter fakturaen er sendt. Fakturaen selv
+				har du klar på få sekunder, hvis du <a href="/generator/">laver den online gratis</a> i vores
+				generator - med moms, CVR-opslag og fortløbende numre indbygget.
+			</p>
+		</section>
+
+		<section>
 			<h2 class="text-2xl font-bold tracking-tight">Ofte stillede spørgsmål</h2>
 			<div class="space-y-6">
 				{#each faqQuestions as item (item.question)}

@@ -51,6 +51,11 @@
 			question: 'Hvor længe skal jeg opbevare fakturaer?',
 			answer:
 				'Fakturaer og andet regnskabsmateriale skal opbevares i 5 år efter udgangen af det regnskabsår, de tilhører, ifølge bogføringsloven. Fra bogføringsloven 2026 stilles der desuden krav om digitalt format (SAF-T 2.0 og NemHandel).'
+		},
+		{
+			question: 'Er der forskel på regning og faktura?',
+			answer:
+				'I praksis er det i bund og grund det samme dokument: "regning" er det dagligdanske ord, de fleste danskere bruger, mens "faktura" er den bogføringsmæssige betegnelse. Skal dokumentet fungere som en reel faktura, skal det dog opfylde momslovens krav til indhold og reglerne i bogføringsloven. Læs mere i vores guide til bogføringsloven 2026.'
 		}
 	];
 
@@ -270,6 +275,14 @@
 				NemHandel-integration. Det betyder i praksis, at papirfakturaer og løse Excel-ark bliver
 				stadig dårligere opbevaring. Læs mere i vores
 				<a href="/blog/bogforingslov-2026-guide/">komplette guide til bogføringsloven 2026</a>.
+			</p>
+		</section>
+
+		<section>
+			<p>
+				Når du kender kravene, er resten rutine: <a href="/generator/">lav faktura online gratis</a> i
+				vores generator, så udfyldes alle obligatoriske felter automatisk, momsen beregnes for dig, og
+				fakturanumrene forbliver fortløbende.
 			</p>
 		</section>
 

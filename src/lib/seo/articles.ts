@@ -70,5 +70,10 @@ export const ARTICLE_DATES = {
 		published: '2026-09-02',
 		modified: '2026-09-02',
 		modifiedLabel: 'Opdateret 2. september 2026'
+	},
+	electronicInvoice: {
+		published: '2026-09-08',
+		modified: '2026-09-08',
+		modifiedLabel: 'Opdateret 8. september 2026'
 	}
 } as const;

@@ -41,6 +41,7 @@ export interface CvrLookup {
  */
 export function createCvrLookup(): CvrLookup {
 	let loading = $state(false);
+	let requestId = 0;
 	let result = $state<CvrLookupResult | null>(null);
 	let error = $state<string | null>(null);
 
@@ -52,6 +53,8 @@ export function createCvrLookup(): CvrLookup {
 			return null;
 		}
 
+		const currentRequest = ++requestId;
+		result = null;
 		loading = true;
 		error = null;
 
@@ -62,8 +65,11 @@ export function createCvrLookup(): CvrLookup {
 				body: JSON.stringify({ cvr })
 			});
 
+			if (currentRequest !== requestId) return null;
+
 			if (!response.ok) {
 				const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+				if (currentRequest !== requestId) return null;
 				// 404 → not found; 429 → rate limited; 400 → bad input; 5xx → upstream.
 				error =
 					payload?.error ??
@@ -75,19 +81,23 @@ export function createCvrLookup(): CvrLookup {
 			}
 
 			const data = (await response.json()) as CvrLookupResult;
+			if (currentRequest !== requestId) return null;
 			result = data;
 			return data;
 		} catch {
+			if (currentRequest !== requestId) return null;
 			// Network failure — encourage manual entry.
 			error = 'Netværksfejl. Indtast virksomheden manuelt.';
 			result = null;
 			return null;
 		} finally {
-			loading = false;
+			if (currentRequest === requestId) loading = false;
 		}
 	}
 
 	function reset(): void {
+		requestId++;
+		loading = false;
 		result = null;
 		error = null;
 	}

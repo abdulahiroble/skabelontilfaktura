@@ -41,10 +41,10 @@ interface ViesApiResponse {
 const VIES_REST_BASE = 'https://ec.europa.eu/taxation_customs/vies/rest-api/ms';
 
 /** Request timeout (ms). VIES can be slow; allow a generous window. */
-const REQUEST_TIMEOUT_MS = 12000;
+const REQUEST_TIMEOUT_MS = 25000;
 
 /** Supported EU country codes (2-letter ISO). Used to guard input. */
-const EU_COUNTRY_CODES = new Set([
+export const EU_COUNTRY_CODES = new Set([
 	'AT',
 	'BE',
 	'BG',
@@ -72,7 +72,6 @@ const EU_COUNTRY_CODES = new Set([
 	'SI',
 	'ES',
 	'SE',
-	'GB',
 	'XI'
 ]);
 
@@ -103,7 +102,8 @@ export function normalizeVatNumber(vatNumber: string, countryCode: string): stri
  */
 export async function validateVies(
 	countryCode: string,
-	vatNumber: string
+	vatNumber: string,
+	fetchFn: typeof fetch = fetch
 ): Promise<ViesResult | null> {
 	const country = countryCode.trim().toUpperCase();
 
@@ -113,7 +113,7 @@ export async function validateVies(
 	}
 
 	const number = normalizeVatNumber(vatNumber, country);
-	if (!number) {
+	if (!/^[A-Z0-9]{2,20}$/.test(number)) {
 		return null;
 	}
 
@@ -123,7 +123,7 @@ export async function validateVies(
 	const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
 	try {
-		const response = await fetch(url, {
+		const response = await fetchFn(url, {
 			signal: controller.signal,
 			method: 'GET',
 			headers: {
@@ -138,7 +138,13 @@ export async function validateVies(
 		const data = (await response.json()) as ViesApiResponse;
 
 		// VIES sometimes reports failure via `actionSucceed` while still 200 OK.
-		if (data.actionSucceed === false) {
+		if (
+			!data ||
+			typeof data !== 'object' ||
+			data.actionSucceed === false ||
+			typeof data.isValid !== 'boolean' ||
+			(data.userError != null && !['VALID', 'INVALID'].includes(data.userError))
+		) {
 			return null;
 		}
 
@@ -147,7 +153,7 @@ export async function validateVies(
 		// VIES masks name/address with "---" when it does not disclose them; treat
 		// that sentinel as "not available".
 		const cleanField = (value?: string): string | undefined =>
-			value && value.trim() !== '---' ? value.trim() || undefined : undefined;
+			typeof value === 'string' && value.trim() !== '---' ? value.trim() || undefined : undefined;
 
 		return {
 			valid,

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ArrowRight, FileText, Search, Download, Pencil } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { buildMeta, softwareApplicationSchema, organizationSchema } from '$lib/seo';
 	import { BRANCHES } from '$lib/branches';
@@ -58,113 +59,78 @@
 	{@html jsonLdScript}
 </svelte:head>
 
-<!-- Hero: asymmetric, left-aligned, with invoice mockup -->
-<section
-	class="mx-auto grid max-w-6xl gap-12 px-6 pt-20 pb-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-8 lg:pt-28"
->
-	<div class="flex flex-col justify-center">
-		<p class="text-primary mb-5 text-sm font-medium tracking-wide">Gratis og lovlig faktura</p>
-		<h1 class="text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-			Gratis fakturaskabelon
-			<span class="text-muted-foreground italic">på 60 sekunder</span>
-		</h1>
-		<p class="text-muted-foreground mt-6 max-w-md text-lg leading-relaxed">
-			Danmarks nemmeste fakturaskabelon — brug den direkte online, eller hent en faktura skabelon
-			til Word og Excel. Automatisk moms, CVR-opslag og PDF-download. Ingen tilmelding, ingen
-			vandmærke.
-		</p>
-		<div class="mt-8 flex flex-wrap items-center gap-4">
-			<Button size="lg" href="/generator/" class="px-7">Lav min faktura</Button>
-			<a
-				href="/pris/"
-				class="text-muted-foreground decoration-accent hover:text-foreground text-sm font-medium underline decoration-2 underline-offset-4 transition-colors"
+<section class="home-hero">
+	<div class="hero-copy">
+		<p class="eyebrow">GRATIS FAKTURASKABELON · UDEN TILMELDING</p>
+		<h1>En faktura. Færdig.</h1>
+		<p class="hero-description">Skriv, tjek og hent din PDF. Gratis og uden tilmelding.</p>
+		<div class="hero-buttons">
+			<Button href="/generator/" size="lg">Lav min faktura <ArrowRight size={18} /></Button><a
+				href="#skabeloner">Se skabeloner</a
 			>
-				Se priser og funktioner
-			</a>
 		</div>
 	</div>
-
-	<!-- Invoice mockup -->
-	<div class="relative hidden justify-center lg:flex">
-		<div
-			class="border-border bg-card shadow-primary/5 relative w-full max-w-sm rotate-[2deg] rounded-lg border p-8 shadow-xl"
+	<div class="document-stage">
+		<p class="stage-note note-left">Rediger direkte<br />i skabelonen <Pencil size={20} /></p>
+		<a
+			class="sample-invoice"
+			href="/generator/"
+			aria-label="Lav din egen faktura med denne skabelon"
 		>
-			<div class="border-border mb-6 flex items-start justify-between border-b pb-4">
+			<div class="sample-top">
 				<div>
-					<p class="text-muted-foreground text-xs tracking-wider uppercase">Faktura</p>
-					<p class="mt-1 text-lg" style="font-family: var(--font-display)">2026-0042</p>
+					<strong>Nordlys Studio</strong>
+					<p>Frederiksgade 12<br />8000 Aarhus C<br />CVR 12345678</p>
 				</div>
-				<div class="text-right">
-					<p class="text-muted-foreground text-xs">Dato</p>
-					<p class="text-sm font-medium">23. jul 2026</p>
-				</div>
-			</div>
-			<div class="mb-6 space-y-1">
-				<p class="text-muted-foreground text-xs tracking-wider uppercase">Fra</p>
-				<p class="text-sm font-medium">Ahir Design Studio ApS</p>
-				<p class="text-muted-foreground text-xs">CVR 42833716</p>
-			</div>
-			<div class="mb-6 space-y-2">
-				<div class="border-border flex justify-between border-b pb-2 text-sm">
-					<span class="text-muted-foreground">Webdesign - landingsside</span>
-					<span class="font-medium">8.000,00</span>
-				</div>
-				<div class="border-border flex justify-between border-b pb-2 text-sm">
-					<span class="text-muted-foreground">Konsultation (4 timer)</span>
-					<span class="font-medium">2.400,00</span>
+				<div class="sample-meta">
+					<h2>FAKTURA</h2>
+					<dl>
+						<dt>Fakturanr.</dt>
+						<dd>2026-0042</dd>
+						<dt>Fakturadato</dt>
+						<dd>23.10.2026</dd>
+						<dt>Forfaldsdato</dt>
+						<dd>31.10.2026</dd>
+					</dl>
 				</div>
 			</div>
-			<div class="space-y-1.5 text-sm">
-				<div class="text-muted-foreground flex justify-between">
-					<span>Subtotal ekskl. moms</span>
-					<span>10.400,00 kr.</span>
+			<div class="sample-customer">
+				<span>KØBER (MODTAGER)</span><strong>Klar Media ApS</strong>
+				<p>Ryesgade 10<br />2200 København N</p>
+			</div>
+			<div class="sample-table">
+				<div class="sample-table-head">
+					<span>Beskrivelse</span><span>Antal</span><span>Enhedspris</span><span>Beløb</span>
 				</div>
-				<div class="text-muted-foreground flex justify-between">
-					<span>Moms (25%)</span>
-					<span>2.600,00 kr.</span>
+				<div class="sample-row highlighted">
+					<span>Grafisk design <Pencil size={13} /></span><span>4 timer</span><span>750,00 kr.</span
+					><span>3.000,00 kr.</span>
 				</div>
-				<div class="border-border mt-2 flex justify-between border-t pt-2 text-base font-semibold">
-					<span>Total</span>
-					<span>13.000,00 kr.</span>
+				<div class="sample-row">
+					<span>Rådgivning</span><span>2 timer</span><span>600,00 kr.</span><span>1.200,00 kr.</span
+					>
 				</div>
 			</div>
-			<div
-				class="bg-accent text-accent-foreground absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold"
-			>
-				✓
+			<div class="sample-totals">
+				<p><span>Subtotal (ekskl. moms)</span><span>4.200,00 kr.</span></p>
+				<p><span>Moms (25%)</span><span>1.050,00 kr.</span></p>
+				<p class="sample-total"><strong>Total</strong><strong>5.250,00 kr.</strong></p>
 			</div>
-		</div>
+			<span class="sample-caption">Eksempel på en faktura</span>
+		</a>
+		<p class="stage-note note-right">
+			Download som PDF,<br />klar til din kunde <Download size={20} />
+		</p>
 	</div>
-</section>
-
-<!-- Trust band: single horizontal line, not a card grid -->
-<section class="border-border bg-secondary/40 border-y">
-	<div class="mx-auto max-w-6xl px-6 py-5">
-		<div
-			class="text-muted-foreground flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm"
-		>
-			<span class="flex items-center gap-2">
-				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
-				Automatisk moms-beregning (25%)
-			</span>
-			<span class="flex items-center gap-2">
-				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
-				CVR-opslag fra CVR-registret
-			</span>
-			<span class="flex items-center gap-2">
-				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
-				Understøtter Momsloven § 52a
-			</span>
-			<span class="flex items-center gap-2">
-				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
-				Uden vandmærke
-			</span>
-		</div>
+	<div class="benefit-strip">
+		<span><FileText size={21} /> Automatisk momsberegning</span><span
+			><Search size={21} /> CVR-opslag fra registret</span
+		><span><Download size={21} /> PDF uden vandmærke</span>
 	</div>
 </section>
 
 <!-- Free template downloads -->
-<section class="mx-auto max-w-6xl px-6 py-16">
+<section id="skabeloner" class="mx-auto max-w-6xl px-6 py-16">
 	<div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
 		<div class="flex flex-col justify-center">
 			<h2 class="text-3xl leading-tight font-semibold tracking-tight">
@@ -446,3 +412,239 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	.home-hero {
+		overflow: hidden;
+	}
+	.hero-copy {
+		text-align: center;
+		padding: 32px 24px 24px;
+	}
+	.eyebrow {
+		font-size: 11px;
+		letter-spacing: 0.13em;
+		color: #777;
+		margin-bottom: 18px;
+	}
+	h1 {
+		font-size: clamp(46px, 6.3vw, 84px);
+		line-height: 1.06;
+		font-weight: 750;
+		letter-spacing: -0.055em;
+	}
+	.hero-description {
+		margin-top: 22px;
+		color: #606060;
+		font-size: clamp(17px, 2vw, 23px);
+	}
+	.hero-buttons {
+		display: flex;
+		gap: 32px;
+		align-items: center;
+		justify-content: center;
+		margin-top: 32px;
+	}
+	.hero-buttons :global(a:first-child) {
+		min-height: 50px;
+		padding: 0 30px;
+		border-radius: 4px;
+		background: #f45112;
+		color: #171717;
+	}
+	.hero-buttons > a {
+		font-size: 14px;
+		font-weight: 600;
+		text-underline-offset: 5px;
+		text-decoration: underline;
+	}
+	.document-stage {
+		display: flex;
+		justify-content: center;
+		position: relative;
+		padding: 18px 24px 0;
+		background: #f2f2f0;
+		margin-top: 20px;
+	}
+	.sample-invoice {
+		display: block;
+		background: white;
+		width: 710px;
+		padding: 32px 48px 18px;
+		box-shadow: 0 8px 40px #00000012;
+		color: #242424;
+		font-size: 12px;
+		border-radius: 4px 4px 0 0;
+		position: relative;
+	}
+	.sample-top {
+		display: flex;
+		justify-content: space-between;
+		gap: 20px;
+	}
+	.sample-top p,
+	.sample-customer p {
+		line-height: 1.6;
+	}
+	.sample-meta h2 {
+		font-size: 30px;
+		letter-spacing: 0.13em;
+		font-weight: 600;
+		text-align: right;
+		margin-bottom: 16px;
+	}
+	.sample-meta dl {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 5px 26px;
+		font-size: 11px;
+	}
+	.sample-meta dd {
+		text-align: right;
+	}
+	.sample-customer {
+		margin-top: 18px;
+	}
+	.sample-customer > span {
+		display: block;
+		font-size: 10px;
+		margin-bottom: 6px;
+	}
+	.sample-customer strong {
+		display: block;
+	}
+	.sample-table {
+		margin-top: 30px;
+	}
+	.sample-table-head,
+	.sample-row {
+		display: grid;
+		grid-template-columns: 2fr 0.8fr 1fr 1.1fr;
+		gap: 12px;
+		align-items: center;
+		padding: 12px 8px;
+	}
+	.sample-table-head {
+		background: #f4f4f2;
+		text-transform: uppercase;
+		font-size: 9px;
+		font-weight: 600;
+	}
+	.sample-row {
+		border-bottom: 1px solid #eee;
+	}
+	.sample-row > span:not(:first-child),
+	.sample-table-head > span:not(:first-child) {
+		text-align: right;
+		white-space: nowrap;
+	}
+	.highlighted {
+		outline: 1px solid #e64900;
+		outline-offset: -1px;
+	}
+	.highlighted > span:first-child {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.highlighted :global(svg) {
+		color: #c43c00;
+	}
+	.sample-totals {
+		margin: 22px 0 0 auto;
+		width: 52%;
+	}
+	.sample-totals p {
+		display: flex;
+		justify-content: space-between;
+		gap: 14px;
+		margin: 8px 0;
+	}
+	.sample-total {
+		border-top: 1px solid #ddd;
+		padding-top: 12px;
+		font-size: 14px;
+	}
+	.sample-caption {
+		display: block;
+		color: #888;
+		font-size: 10px;
+		margin-top: 20px;
+	}
+	.stage-note {
+		position: absolute;
+		top: 48%;
+		color: #666;
+		font-size: 15px;
+		line-height: 1.6;
+	}
+	.stage-note :global(svg) {
+		margin-top: 16px;
+		color: #c43c00;
+	}
+	.note-left {
+		right: calc(50% + 390px);
+	}
+	.note-right {
+		left: calc(50% + 390px);
+	}
+	.benefit-strip {
+		display: flex;
+		justify-content: center;
+		padding: 26px 24px;
+		border-block: 1px solid #e4e4e0;
+		gap: 60px;
+		font-size: 13px;
+	}
+	.benefit-strip span {
+		display: flex;
+		gap: 16px;
+		align-items: center;
+	}
+	@media (max-width: 1100px) {
+		.stage-note {
+			display: none;
+		}
+	}
+	@media (max-width: 600px) {
+		.hero-copy {
+			padding-top: 44px;
+		}
+		.eyebrow {
+			font-size: 9px;
+		}
+		.hero-buttons {
+			gap: 24px;
+		}
+		.document-stage {
+			padding: 16px 14px 0;
+		}
+		.sample-invoice {
+			padding: 24px 18px 16px;
+			font-size: 10px;
+		}
+		.sample-meta h2 {
+			font-size: 23px;
+		}
+		.sample-meta dl {
+			font-size: 9px;
+			gap: 4px 10px;
+		}
+		.sample-table-head,
+		.sample-row {
+			gap: 7px;
+			padding-inline: 4px;
+		}
+		.sample-table-head {
+			font-size: 8px;
+		}
+		.sample-totals {
+			width: 68%;
+		}
+		.benefit-strip {
+			flex-direction: column;
+			gap: 16px;
+			padding: 22px 28px;
+		}
+	}
+</style>

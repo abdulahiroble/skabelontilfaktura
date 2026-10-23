@@ -22,7 +22,13 @@
 		onVatModeChange: (mode: VatMode) => void;
 	};
 
-	let { invoice, t, onLanguageChange, onCurrencyChange, onVatModeChange }: Props = $props();
+	let {
+		invoice = $bindable(),
+		t,
+		onLanguageChange,
+		onCurrencyChange,
+		onVatModeChange
+	}: Props = $props();
 
 	const currencies: Currency[] = ['DKK', 'EUR', 'USD'];
 	const vatModes: VatMode[] = [

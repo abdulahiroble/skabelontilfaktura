@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Download, Printer, LoaderCircle, FileDown } from '@lucide/svelte';
+	import {
+		ArrowLeft,
+		Eye,
+		Pencil,
+		Download,
+		Printer,
+		LoaderCircle,
+		FileDown
+	} from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
 	import InvoicePreview from '$lib/components/invoice/InvoicePreview.svelte';
 	import InvoiceForm from '$lib/components/invoice/InvoiceForm.svelte';
@@ -277,12 +285,18 @@
 	{@html jsonLdScript}
 </svelte:head>
 
-<div class="generator-shell mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+<div class="generator-shell">
 	<!-- Sticky action bar (hidden when printing) -->
 	<div
-		class="generator-actions bg-background border-border no-print sticky top-16 z-30 mb-6 flex flex-wrap items-center justify-between gap-3 border-b py-3"
+		style:top={data.user ? '64px' : '0px'}
+		class="generator-actions bg-background border-border no-print sticky top-16 z-30 flex flex-wrap items-center justify-between gap-3 border-b px-6 py-3"
 	>
 		<div class="flex min-w-0 flex-wrap items-center gap-3">
+			<a href="/" class="back-link" aria-label="Tilbage til forsiden"
+				><ArrowLeft size={16} /><span>Tilbage</span></a
+			>
+			<a href="/" class="editor-brand">skabelontilfaktura<span>.dk</span></a>
+			<strong class="invoice-title">Faktura {store.data.invoiceNumber}</strong>
 			<p class="text-muted-foreground inline-flex items-center gap-2 text-xs sm:text-sm">
 				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
 				<span role="status"
@@ -391,31 +405,31 @@
 	{/if}
 
 	<div
-		class="mobile-switch border-border bg-secondary/40 mb-6 grid grid-cols-2 rounded-lg border p-1 lg:hidden"
+		class="mobile-switch border-border bg-secondary/40 grid grid-cols-2 border-b p-1"
 		aria-label="Visning"
 	>
 		<button
 			type="button"
 			aria-pressed={mobileView === 'editor'}
-			onclick={() => (mobileView = 'editor')}>Rediger faktura</button
+			onclick={() => (mobileView = 'editor')}><Pencil size={14} /> Rediger faktura</button
 		>
 		<button
 			type="button"
 			aria-pressed={mobileView === 'preview'}
-			onclick={() => (mobileView = 'preview')}>Se forhåndsvisning</button
+			onclick={() => (mobileView = 'preview')}><Eye size={14} /> Se forhåndsvisning</button
 		>
 	</div>
-	<!-- Two-column layout: editor (left) + live preview (right) -->
-	<div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-8">
+	<!-- Document editor and synchronized preview share the same draft. -->
+	<div class="invoice-views">
 		<!-- Editor column (hidden when printing) -->
-		<div class="editor-column no-print" class:mobile-hidden={mobileView !== 'editor'}>
+		<div class="editor-column no-print" class:view-hidden={mobileView !== 'editor'}>
 			<InvoiceForm {store} />
 		</div>
 
-		<!-- Live preview column (the only thing visible when printing) -->
+		<!-- Preserve the existing invoice preview and PDF template rendering. -->
 		<aside
-			class="preview-column lg:sticky lg:top-40 lg:self-start"
-			class:mobile-hidden={mobileView !== 'preview'}
+			class="preview-column mx-auto max-w-3xl px-4 py-8"
+			class:view-hidden={mobileView !== 'preview'}
 			aria-label="Forhåndsvisning af faktura"
 		>
 			<div class="mb-3 flex items-center justify-between">
@@ -439,7 +453,7 @@
 	</div>
 
 	<!-- FAQ and related guides: SEO content below the invoice app -->
-	<div class="mx-auto mt-16 max-w-3xl sm:mt-20">
+	<div class="mx-auto my-16 max-w-3xl px-6 sm:my-20">
 		<section>
 			<h2 class="text-2xl font-bold tracking-tight">
 				Ofte stillede spørgsmål om at lave en faktura
@@ -494,6 +508,60 @@
 </div>
 
 <style>
+	.editor-brand {
+		font-size: 17px;
+		font-weight: 700;
+		letter-spacing: -0.6px;
+		margin-right: 12px;
+	}
+	.editor-brand span {
+		color: #c43c00;
+	}
+	.generator-actions {
+		top: 0;
+	}
+	@media (max-width: 600px) {
+		.editor-brand {
+			display: none;
+		}
+	}
+	.generator-shell {
+		max-width: 1480px;
+		margin: auto;
+	}
+	.view-hidden {
+		display: none;
+	}
+	.back-link {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		font-size: 12px;
+		color: #666;
+	}
+	.invoice-title {
+		font-size: 14px;
+		margin-right: 18px;
+	}
+	.mobile-switch {
+		display: flex;
+		gap: 6px;
+		justify-content: center;
+		background: #f9f9f7;
+	}
+	.mobile-switch button {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+		justify-content: center;
+		padding: 0 18px;
+	}
+	.generator-shell :global(.primary-download) {
+		background: #f45112;
+		color: #171717;
+		border-radius: 4px;
+	}
+
 	.generator-shell :global(input:not([type='file'])),
 	.generator-shell :global(select) {
 		min-height: 44px;
@@ -517,9 +585,6 @@
 		box-shadow: 0 1px 3px #26334a12;
 	}
 	@media (max-width: 1023px) {
-		.mobile-hidden {
-			display: none;
-		}
 		.generator-actions {
 			position: static;
 		}

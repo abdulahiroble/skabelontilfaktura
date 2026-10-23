@@ -16,7 +16,12 @@
  * Workers this is per-isolate best-effort (not globally shared).
  */
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { validateVies, type ViesResult } from '$lib/server/vies/client';
+import {
+	validateVies,
+	normalizeVatNumber,
+	EU_COUNTRY_CODES,
+	type ViesResult
+} from '$lib/server/vies/client';
 
 /** Maximum validations allowed per IP within the rolling window. */
 const RATE_LIMIT_MAX = 10;
@@ -69,14 +74,17 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		return json({ error: 'Ugyldig JSON-body' }, { status: 400 });
 	}
 
-	const { countryCode, vatNumber } = body as { countryCode?: unknown; vatNumber?: unknown };
+	const { countryCode, vatNumber } = (body ?? {}) as { countryCode?: unknown; vatNumber?: unknown };
 	if (
 		typeof countryCode !== 'string' ||
-		!/^[A-Za-z]{2}$/.test(countryCode) ||
+		!EU_COUNTRY_CODES.has(countryCode.trim().toUpperCase()) ||
 		typeof vatNumber !== 'string' ||
-		vatNumber.trim() === ''
+		!/^[A-Z0-9]{2,20}$/.test(normalizeVatNumber(vatNumber, countryCode))
 	) {
-		return json({ error: 'Landekode (2 bogstaver) og momsnummer skal angives' }, { status: 400 });
+		return json(
+			{ error: 'Angiv et gyldigt momsnummer og en understøttet EU-landekode (eller XI).' },
+			{ status: 400 }
+		);
 	}
 
 	const result: ViesResult | null = await validateVies(countryCode, vatNumber);

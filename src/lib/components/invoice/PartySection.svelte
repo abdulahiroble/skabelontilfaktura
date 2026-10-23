@@ -33,13 +33,29 @@
 		role?: 'seller' | 'buyer';
 		/** Seller CVR is required when the invoice uses standard VAT. */
 		requiresCvr?: boolean;
+		compact?: boolean;
 	};
 
-	let { party, title, t, role = 'seller', requiresCvr = false }: Props = $props();
+	let {
+		party = $bindable(),
+		title,
+		t,
+		role = 'seller',
+		requiresCvr = false,
+		compact = false
+	}: Props = $props();
 
 	// One lookup/validation container per component instance — never shared.
 	const cvrLookup = createCvrLookup();
 	const vies = createViesValidation();
+	let observedCvr: string | undefined;
+	$effect(() => {
+		if (party.cvr !== observedCvr) {
+			observedCvr = party.cvr;
+			cvrLookup.reset();
+			vies.reset();
+		}
+	});
 
 	/**
 	 * Parse a value like "SE1234567890" or "DE 12345678" into a normalized
@@ -73,8 +89,9 @@
 	const showVies = $derived(role === 'buyer' && foreignVat !== null);
 
 	async function handleCvrLookup() {
-		const result = await cvrLookup.lookup(party.cvr ?? '');
-		if (result) {
+		const requestedCvr = party.cvr ?? '';
+		const result = await cvrLookup.lookup(requestedCvr);
+		if (result && party.cvr === requestedCvr) {
 			// Auto-fill the party fields from the registry result. We avoid
 			// overwriting fields the user has deliberately cleared (empty
 			// strings from the API are still written — that matches "registry
@@ -94,7 +111,7 @@
 	}
 </script>
 
-<section class="party-section">
+<section class="party-section" class:compact>
 	<h2 class="text-foreground mb-4 text-base font-semibold">
 		{@render title()}
 	</h2>
@@ -178,7 +195,7 @@
 					maxlength="20"
 					class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground min-w-[10rem] flex-1 rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
 					bind:value={party.cvr}
-					placeholder="12345678"
+					placeholder={compact ? t('party.cvr') : '12345678'}
 				/>
 
 				{#if isDanishCvr}
@@ -220,7 +237,7 @@
 
 			<!-- CVR lookup feedback -->
 			{#if cvrLookup.error}
-				<p class="text-destructive mt-1.5 text-xs">{cvrLookup.error}</p>
+				<p role="status" class="text-destructive mt-1.5 text-xs">{cvrLookup.error}</p>
 			{:else if cvrLookup.result}
 				<p class="text-muted-foreground mt-1.5 inline-flex items-center gap-1 text-xs">
 					<Check size={12} />
@@ -230,7 +247,7 @@
 
 			<!-- VIES validation feedback -->
 			{#if vies.error}
-				<p class="text-destructive mt-1.5 text-xs">{vies.error}</p>
+				<p role="status" class="text-destructive mt-1.5 text-xs">{vies.error}</p>
 			{:else if vies.result}
 				{#if vies.result.valid}
 					<p
@@ -250,50 +267,117 @@
 			{/if}
 		</div>
 
-		<div>
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-email-{role}">
-				{t('party.email')}
-				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
-			</label>
-			<input
-				id="party-email-{role}"
-				type="email"
-				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
-				bind:value={party.email}
-				placeholder="navn@firma.dk"
-				autocomplete="email"
-			/>
-		</div>
+		<details class="contact-fields sm:col-span-2" open={!compact}>
+			<summary>{t('party.email')} / {t('party.phone')} / EAN</summary>
+			<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+				<div>
+					<label class="text-foreground mb-1 block text-sm font-medium" for="party-email-{role}">
+						{t('party.email')}
+						<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
+					</label>
+					<input
+						id="party-email-{role}"
+						type="email"
+						class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
+						bind:value={party.email}
+						placeholder="navn@firma.dk"
+						autocomplete="email"
+					/>
+				</div>
 
-		<div>
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-phone-{role}">
-				{t('party.phone')}
-				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
-			</label>
-			<input
-				id="party-phone-{role}"
-				type="tel"
-				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
-				bind:value={party.phone}
-				placeholder="+45 12 34 56 78"
-				autocomplete="tel"
-			/>
-		</div>
+				<div>
+					<label class="text-foreground mb-1 block text-sm font-medium" for="party-phone-{role}">
+						{t('party.phone')}
+						<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
+					</label>
+					<input
+						id="party-phone-{role}"
+						type="tel"
+						class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
+						bind:value={party.phone}
+						placeholder="+45 12 34 56 78"
+						autocomplete="tel"
+					/>
+				</div>
 
-		<div>
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-ean-{role}">
-				{t('party.ean')}
-				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
-			</label>
-			<input
-				id="party-ean-{role}"
-				type="text"
-				inputmode="numeric"
-				maxlength="13"
-				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
-				bind:value={party.ean}
-				placeholder="5790000000000"
-			/>
-		</div>
+				<div>
+					<label class="text-foreground mb-1 block text-sm font-medium" for="party-ean-{role}">
+						{t('party.ean')}
+						<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
+					</label>
+					<input
+						id="party-ean-{role}"
+						type="text"
+						inputmode="numeric"
+						maxlength="13"
+						class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
+						bind:value={party.ean}
+						placeholder="5790000000000"
+					/>
+				</div>
+			</div>
+		</details>
 	</div>
 </section>
+
+<style>
+	.contact-fields summary {
+		cursor: pointer;
+		font-size: 12px;
+		color: var(--muted-foreground);
+		padding: 10px 0;
+	}
+	.party-section:not(.compact) .contact-fields > summary {
+		display: none;
+	}
+	.compact > h2 {
+		font-size: 11px;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: #626262;
+		margin-bottom: 10px;
+	}
+	.compact > div {
+		gap: 8px;
+	}
+	.compact :global(label) {
+		font-size: 10px;
+		color: #666;
+	}
+	.compact :global(label span.text-xs) {
+		display: none;
+	}
+	.compact :global(input) {
+		background: white;
+		padding: 7px 8px;
+		border-radius: 2px;
+		border-style: dashed;
+		box-shadow: none;
+		min-width: 0;
+	}
+	.compact :global(input:hover),
+	.compact :global(input:focus) {
+		border-color: var(--ring);
+		border-style: solid;
+	}
+	@media (min-width: 801px) {
+		.compact :global(label) {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+		}
+		.compact :global(input) {
+			min-height: 32px !important;
+			height: 32px;
+			font-size: 12px;
+		}
+		.compact > div {
+			gap: 5px;
+		}
+	}
+</style>

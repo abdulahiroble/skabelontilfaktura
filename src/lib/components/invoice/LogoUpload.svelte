@@ -8,7 +8,7 @@
 
 	const MAX_LOGO_BYTES = 1024 * 1024;
 
-	let { invoice, t }: Props = $props();
+	let { invoice = $bindable(), t }: Props = $props();
 	let error = $state('');
 
 	function handleLogoChange(event: Event) {

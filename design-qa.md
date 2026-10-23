@@ -1,0 +1,74 @@
+# Homepage and generator redesign QA
+
+final result: passed
+
+## Visual target and evidence
+
+Selected target: option 3, `/Users/abdulahiroble/.codex/generated_images/01a16882-5876-7973-8144-a7c3be4d9d5d/exec-4835a967-be3d-4476-8ceb-679c6fa47ab2.png`.
+
+Evidence directory: `/Users/abdulahiroble/.codex/visualizations/2026/10/23/01a16882-5876-7973-8144-a7c3be4d9d5d/`.
+
+- `homepage-desktop.png`, `generator-desktop.png`: 1440 × 1024 CSS/pixels, 1× density.
+- `homepage-mobile.png`, `generator-mobile.png`, `generator-mobile-preview.png`: 390 × 844 CSS/pixels, 1× density.
+- `homepage-comparison.png`, `generator-comparison.png`: source and implementation combined for composition review.
+- `document-detail-comparison.png`: readable focused source/implementation document comparison.
+
+Source is a 1054 × 1494 concept board containing two differently sized page crops, not two literal 1440 × 1024 screenshots. Comparison crops remove the board margins and scale proportionally to equal widths without stretching. Therefore compare composition and content rather than asserting pixel identity. Desktop invoice uses fictional populated test data, standard VAT, DKK, Danish, and one line (4 × 750). Source's editor contains an inconsistent second line and total; implementation correctly computes the actual lines. Mobile has no supplied reference and was checked for responsive usability.
+
+## Findings and iteration history
+
+1. Initial desktop editor had excessive vertical density from the original visible labels, redundant document heading, and duplicate marketing navigation. Fixed: desktop compact fields retain accessible labels, optional contact details use disclosure controls, invoice heading sits with metadata, and the guest generator uses a single action header. Signed-in users retain account navigation. Subsequent desktop captures show document and settings side by side, with totals visible at 1440 × 1024.
+2. Initial homepage spacing pushed the benefit strip below the intended composition. Reduced hero and sample-document spacing. Final homepage capture shows the hero, invoice and beginning of the benefit strip; the rest follows naturally on scroll.
+3. Initial total component retained a boxed card style. Removed its local background, border and padding in the document context. Post-fix document comparison shows plain aligned totals and rules.
+4. Development console reported existing unbound object-mutation warnings during editing. Declared editable child data props bindable and bound party data explicitly. Type checking passes without warnings; no runtime errors were reported in browser checks.
+
+No remaining blocking P0/P1/P2 findings for the requested production adaptation.
+
+## Required fidelity surfaces
+
+- Typography: existing Hanken Grotesk supplies a close clean sans match, scoped to these pages; heavy tight homepage headline and spaced invoice title. Mobile headline wraps deliberately. Accessible field labels remain available when visually hidden on desktop.
+- Layout: centered homepage CTA and paper example; gray document workspace and right inspector; responsive stacked editor and separate live preview. Extra controls and taller settings preserve existing features rather than reproducing the concept's omissions.
+- Colors: white/neutral gray, black text and orange accent. Dark text on orange actions intentionally improves contrast versus the concept's white text. Focus borders remain visible.
+- Assets: the invoice is actual text/table/form UI. Existing icon library provides file/search/download/pencil icons; no fabricated artwork or rasterized form controls. Standard icons replace decorative handwritten arrows.
+- Copy: Danish hero matches the selected direction. Existing guides, downloads, FAQ, SEO metadata and structured data retained. Generator retains its English language mode. Sample explicitly labeled as an example.
+
+## Functional checks
+
+Verified in the in-app browser:
+
+- Homepage primary CTA opens the generator.
+- Invoice fields update totals; 4 × 750 gives 3,000 subtotal, 750 VAT, 3,750 total.
+- Add/remove line; 10% discount gives 2,700 subtotal.
+- EUR and non-VAT mode update displayed currency and total.
+- Danish/English switching and modern/minimalist preview switching.
+- Draft survives reload with entered business details.
+- Standard PDF and compressed PDF download; pdf-lib parsed both as valid one-page files (3,004 and 1,947 bytes in the tested state).
+- Print action opens a PDF blob in a new tab.
+- Reset confirmation can be cancelled without losing the draft.
+- Mobile editor and preview render without horizontal overflow; mobile homepage width equals viewport (390px).
+- Browser error log: no errors.
+
+Static validation: `npm run check` (zero errors/warnings), `npm run build` (including Cloudflare types), ESLint for changed Svelte files, and `git diff --check` passed.
+
+## Preserved features and test limits
+
+Original store, invoice validation, VAT calculations, PDF renderer and entitlement logic are preserved. CVR/VIES handlers and lookup state were hardened in the release follow-up below. Existing CVR/VIES lookup controls, all VAT modes, currencies, language, item discounts, logo upload/removal, all payment fields, saved clients, business-profile prefill, cloud saving and reset remain wired to their original behavior.
+
+CVR/VIES network responses were verified in the release follow-up below. Logo file upload and signed-in cloud persistence were not exercised end to end. Signed-in navigation and cloud controls were inspected in code. A physical printer was not exercised.
+
+## Follow-up polish
+
+The concept's handwritten annotations are represented by readable text and existing icons. Existing lower homepage content remains available below the new hero. Account-only workflows remain an authenticated UAT limitation.
+
+
+## Release follow-up — 2026-10-23
+
+- Fixed VIES outages/malformed responses being interpreted as invalid VAT numbers; unavailable checks now retain manual-entry fallback. Increased the upstream timeout to 25 seconds.
+- Reject unsupported countries and malformed request bodies, including JSON null. Removed GB from VIES countries while retaining XI.
+- CVR upstream failures now return an availability error, distinct from a genuine missing company; fallback and returned company identity are checked.
+- Editing an identifier clears old feedback, and delayed lookup responses cannot overwrite a newer identifier.
+- `node scripts/test-lookups.mjs` passed provider success, invalid, unavailable, malformed, fallback and identity-mismatch checks. Svelte check (zero errors/warnings), build, changed-file ESLint and diff whitespace checks passed.
+- Browser end-to-end: CVR autofill, valid EU VAT, invalid EU VAT and feedback reset verified. API malformed-input responses verified.
+- Deployed with `wrangler deploy --keep-vars`; version `379547c5-1815-42e6-a90d-1c1724012448`. Previous rollback version: `ff17226c-f7fe-4e73-83b4-0fdb02733859`.
+- Production homepage and generator rendering verified, homepage CTA verified, production CVR autofill verified, production CVR and VIES endpoints both returned HTTP 200 with expected registered company data. Production browser console had no errors.
+- Production screenshots saved in the task visualization directory as `production-homepage.png` and `production-generator.png`.

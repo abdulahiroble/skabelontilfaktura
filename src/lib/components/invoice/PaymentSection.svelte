@@ -16,7 +16,7 @@
 		t: (key: string) => string;
 	};
 
-	let { invoice, t }: Props = $props();
+	let { invoice = $bindable(), t }: Props = $props();
 </script>
 
 <section>

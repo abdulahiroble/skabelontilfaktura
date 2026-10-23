@@ -37,6 +37,7 @@ export interface ViesValidation {
  */
 export function createViesValidation(): ViesValidation {
 	let loading = $state(false);
+	let requestId = 0;
 	let result = $state<ViesValidationResult | null>(null);
 	let error = $state<string | null>(null);
 
@@ -58,6 +59,8 @@ export function createViesValidation(): ViesValidation {
 			return null;
 		}
 
+		const currentRequest = ++requestId;
+		result = null;
 		loading = true;
 		error = null;
 
@@ -68,8 +71,11 @@ export function createViesValidation(): ViesValidation {
 				body: JSON.stringify({ countryCode: country, vatNumber })
 			});
 
+			if (currentRequest !== requestId) return null;
+
 			if (!response.ok) {
 				const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+				if (currentRequest !== requestId) return null;
 				// 502 → VIES unreachable; 429 → rate limited; 400 → bad input.
 				error =
 					payload?.error ??
@@ -79,19 +85,23 @@ export function createViesValidation(): ViesValidation {
 			}
 
 			const data = (await response.json()) as ViesValidationResult;
+			if (currentRequest !== requestId) return null;
 			result = data;
 			return data;
 		} catch {
+			if (currentRequest !== requestId) return null;
 			// Network failure — surface a clear message.
 			error = 'Netværksfejl under VIES-validering.';
 			result = null;
 			return null;
 		} finally {
-			loading = false;
+			if (currentRequest === requestId) loading = false;
 		}
 	}
 
 	function reset(): void {
+		requestId++;
+		loading = false;
 		result = null;
 		error = null;
 	}

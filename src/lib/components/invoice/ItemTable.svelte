@@ -26,7 +26,7 @@
 		onRemove: (id: string) => void;
 	};
 
-	let { items, t, onAdd, onRemove }: Props = $props();
+	let { items = $bindable(), t, onAdd, onRemove }: Props = $props();
 </script>
 
 <section>
@@ -34,7 +34,9 @@
 
 	<div class="grid gap-3">
 		{#each items as item, index (item.id)}
-			<div class="border-border grid grid-cols-2 gap-3 rounded-lg border p-3 sm:grid-cols-3">
+			<div
+				class="item-row border-border grid grid-cols-2 gap-3 rounded-lg border p-3 sm:grid-cols-3"
+			>
 				<label class="col-span-2 sm:col-span-3">
 					<span class="text-muted-foreground mb-1 block text-xs font-medium">
 						{t('items.description')} *

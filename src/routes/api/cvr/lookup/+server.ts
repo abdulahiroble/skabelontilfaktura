@@ -16,7 +16,7 @@
  * adequate for protecting the upstream community API from accidental abuse.
  */
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { lookupCvr, type CvrResult } from '$lib/server/cvr/client';
+import { lookupCvr, CvrUnavailableError, type CvrResult } from '$lib/server/cvr/client';
 
 /** Maximum lookups allowed per IP within the rolling window. */
 const RATE_LIMIT_MAX = 10;
@@ -74,11 +74,19 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		return json({ error: 'CVR skal være 8 cifre' }, { status: 400 });
 	}
 
-	const result: CvrResult | null = await lookupCvr(cvr);
+	let result: CvrResult | null;
+	try {
+		result = await lookupCvr(cvr);
+	} catch (error) {
+		if (!(error instanceof CvrUnavailableError)) throw error;
+		return json(
+			{ error: 'CVR-registret kunne ikke kontaktes. Prøv igen eller indtast manuelt.' },
+			{ status: 502 }
+		);
+	}
 
 	if (!result) {
-		// Either not found or the upstream API was unavailable — in both cases the
-		// UI should fall back to manual entry.
+		// Providers completed the lookup but did not find a company.
 		return json({ error: 'Ingen virksomhed fundet for dette CVR' }, { status: 404 });
 	}
 

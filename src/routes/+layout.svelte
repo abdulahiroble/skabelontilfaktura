@@ -11,7 +11,7 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<link rel="apple-touch-icon" href={favicon} />
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 	<link rel="sitemap" href="/sitemap.xml" />
 	<meta name="theme-color" content="#f45112" />
 </svelte:head>

@@ -50,7 +50,9 @@
 <div class="flex min-h-screen flex-col">
 	<header class="border-border bg-background/95 sticky top-0 z-50 border-b backdrop-blur">
 		<div class="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-			<a href="/" class="font-semibold">skabelontilfaktura.dk</a>
+			<a href="/" class="text-xl font-semibold tracking-tight"
+				>skabelontilfaktura<span class="text-accent text-sm">.dk</span></a
+			>
 			<nav class="hidden items-center gap-5 text-sm md:flex">
 				<a href="/konto/" class="text-muted-foreground hover:text-foreground">Overblik</a>
 				<a href="/generator/" class="text-muted-foreground hover:text-foreground">Ny faktura</a>
@@ -99,7 +101,7 @@
 			<a href="/indstillinger/" class="text-muted-foreground whitespace-nowrap">Indstillinger</a>
 		</nav>
 	</header>
-	<main class="flex-1">
+	<main class="bg-secondary/30 flex-1 pb-12">
 		<div class="mx-auto max-w-6xl px-4 py-4">
 			{#if !isProOrHigher}
 				<UpgradePrompt />

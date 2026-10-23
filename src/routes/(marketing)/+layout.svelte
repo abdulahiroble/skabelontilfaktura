@@ -34,9 +34,6 @@
 <div
 	class="flex min-h-screen flex-col"
 	class:generator-page={page.url.pathname.startsWith('/generator') && !data.user}
-	class:document-design={page.url.pathname === '/' ||
-		page.url.pathname === '/generator/' ||
-		page.url.pathname === '/generator'}
 >
 	<header class="border-border/60 bg-background/90 sticky top-0 z-50 border-b backdrop-blur-md">
 		<div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
@@ -208,34 +205,5 @@
 <style>
 	.generator-page > header {
 		display: none;
-	}
-	.document-design {
-		--background: #fff;
-		--foreground: #171717;
-		--card: #fff;
-		--card-foreground: #171717;
-		--primary: #f45112;
-		--primary-foreground: #171717;
-		--accent: #e64900;
-		--accent-foreground: #fff;
-		--secondary: #f3f3f1;
-		--muted: #f5f5f3;
-		--muted-foreground: #626262;
-		--border: #e3e3df;
-		--input: #d9d9d5;
-		--ring: #c43c00;
-		--font-display: 'Hanken Grotesk', Arial, sans-serif;
-		background: white;
-		color: #171717;
-	}
-	.document-design :global(h1),
-	.document-design :global(h2),
-	.document-design :global(h3) {
-		font-family: var(--font-display);
-	}
-	.document-design :global(a:focus-visible),
-	.document-design :global(summary:focus-visible) {
-		outline: 2px solid var(--ring);
-		outline-offset: 4px;
 	}
 </style>

@@ -16,7 +16,7 @@
 	]);
 
 	const lt = String.fromCharCode(60);
-	const jsonLdScript = `${lt}script type="application/ld+json">${JSON.stringify([breadcrumb])}${lt}/script`;
+	const jsonLdScript = `${lt}script type="application/ld+json">${JSON.stringify([breadcrumb])}${lt}/script>`;
 </script>
 
 <svelte:head>

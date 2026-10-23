@@ -35,7 +35,7 @@ const PAGE_WIDTH = 595.28;
 const PAGE_HEIGHT = 841.89;
 
 /** Uniform side margin in points. */
-const MARGIN = 50;
+const MARGIN = 40;
 
 /** Right edge of the content area. */
 const RIGHT_EDGE = PAGE_WIDTH - MARGIN;
@@ -51,27 +51,26 @@ const ACCENT_BAR_HEIGHT = 6;
 /* -------------------------------------------------------------------------- */
 
 const SIZE_TITLE = 24;
-const SIZE_H1 = 13;
 const SIZE_BODY = 10;
-const SIZE_TABLE_HEADER = 9;
-const SIZE_TABLE_BODY = 9;
+const SIZE_TABLE_HEADER = 7;
+const SIZE_TABLE_BODY = 10;
 const SIZE_SMALL = 8;
 
 const LINE_GAP = 4;
-const SECTION_GAP = 22;
+const SECTION_GAP = 30;
 
 /* -------------------------------------------------------------------------- */
 /* Colors                                                                     */
 /* -------------------------------------------------------------------------- */
 
-const TEXT = rgb(0.13, 0.15, 0.17);
-const MUTED = rgb(0.42, 0.45, 0.5);
+const TEXT = rgb(0.145, 0.145, 0.145);
+const MUTED = rgb(0.38, 0.38, 0.38);
 const DIVIDER = rgb(0.85, 0.87, 0.9);
-const TABLE_HEADER_BG = rgb(0.95, 0.96, 0.97);
-const FALLBACK_BRAND = rgb(0.16, 0.22, 0.35);
+const TABLE_HEADER_BG = rgb(0.957, 0.957, 0.949);
+const FALLBACK_BRAND = TEXT;
 
 /** Fallback accent bar color for the "modern" template when no brand color set. */
-const MODERN_ACCENT_FALLBACK = rgb(0.15, 0.39, 0.92);
+const MODERN_ACCENT_FALLBACK = rgb(0.957, 0.318, 0.071);
 
 /* -------------------------------------------------------------------------- */
 /* Label dictionaries (Danish / English)                                      */
@@ -113,17 +112,17 @@ const LABELS: Record<InvoiceLanguage, Labels> = {
 		proforma: 'PROFORMAFAKTURA',
 		creditNote: 'KREDITNOTA',
 		proformaNote: 'Proformafaktura - ikke en regning',
-		invoiceNumber: 'Fakturanummer',
-		date: 'Dato',
+		invoiceNumber: 'Fakturanr.',
+		date: 'Fakturadato',
 		dueDate: 'Forfaldsdato',
 		deliveryDate: 'Leveringsdato',
 		seller: 'Sælger',
-		buyer: 'Køber',
+		buyer: 'Køber (modtager)',
 		description: 'Beskrivelse',
 		quantity: 'Antal',
 		unitPrice: 'Enhedspris',
 		amount: 'Beløb',
-		subtotal: 'Subtotal',
+		subtotal: 'Subtotal (ekskl. moms)',
 		vat: 'Moms',
 		total: 'Total',
 		paymentTerms: 'Betalingsbetingelser',
@@ -131,7 +130,7 @@ const LABELS: Record<InvoiceLanguage, Labels> = {
 		accountNo: 'Kontonr.',
 		mobilepay: 'MobilePay',
 		bankAccount: 'Bankkonto',
-		cvr: 'CVR-nr.',
+		cvr: 'CVR',
 		ean: 'EAN',
 		notes: 'Noter',
 		creditNoteRef: 'Kreditnota vedrører faktura',
@@ -236,7 +235,19 @@ async function embedLogo(doc: PDFDocument, dataUrl: string | undefined): Promise
 function wrapText(font: PDFFont, text: string, size: number, maxWidth: number): string[] {
 	const clean = text.replace(/\s+/g, ' ').trim();
 	if (!clean) return [];
-	const words = clean.split(' ');
+	const words = clean.split(' ').flatMap((word) => {
+		const chunks: string[] = [];
+		let chunk = '';
+		for (const char of word) {
+			if (chunk && font.widthOfTextAtSize(chunk + char, size) > maxWidth) {
+				chunks.push(chunk);
+				chunk = '';
+			}
+			chunk += char;
+		}
+		if (chunk) chunks.push(chunk);
+		return chunks;
+	});
 	const lines: string[] = [];
 	let line = '';
 	for (const word of words) {
@@ -339,7 +350,17 @@ function drawBlock(
 	color: RGB = TEXT,
 	font: PDFFont = ctx.font
 ): void {
-	for (const line of lines) drawLine(ctx, line, x, size, { font, color });
+	for (const line of lines) {
+		for (const wrapped of wrapText(
+			font,
+			line,
+			size,
+			x === MARGIN ? CONTENT_WIDTH : RIGHT_EDGE - x
+		)) {
+			ensureSpace(ctx, size + LINE_GAP);
+			drawLine(ctx, wrapped, x, size, { font, color });
+		}
+	}
 }
 
 /** Draw a horizontal divider line spanning the content width. */
@@ -386,47 +407,39 @@ function renderHeader(ctx: RenderCtx, data: InvoiceData, labels: Labels): void {
 	const isProforma = data.isProforma === true;
 	const title = isCredit ? labels.creditNote : isProforma ? labels.proforma : labels.invoice;
 
-	drawLineRight(ctx, title, RIGHT_EDGE, SIZE_TITLE, {
-		font: ctx.bold,
-		color: ctx.brand,
-		gap: SIZE_TITLE + 6
-	});
-	if (isProforma) {
-		drawLineRight(ctx, labels.proformaNote, RIGHT_EDGE, SIZE_SMALL, {
-			color: MUTED,
-			gap: SIZE_SMALL + 6
+	// Letter spacing is confined to the title; labels and values have separate columns.
+	const titleSize = title.length > 12 ? 18 : SIZE_TITLE;
+	const tracking = 2.5;
+	const titleWidth = ctx.bold.widthOfTextAtSize(title, titleSize) + tracking * (title.length - 1);
+	let titleX = RIGHT_EDGE - titleWidth;
+	for (const char of title) {
+		ctx.page.drawText(char, {
+			x: titleX,
+			y: PAGE_HEIGHT - ctx.y - titleSize,
+			size: titleSize,
+			font: ctx.bold,
+			color: ctx.brand
 		});
+		titleX += ctx.bold.widthOfTextAtSize(char, titleSize) + tracking;
 	}
-	drawLineRight(ctx, `${labels.invoiceNumber}: ${data.invoiceNumber}`, RIGHT_EDGE, SIZE_BODY, {
-		gap: SIZE_BODY + LINE_GAP
-	});
-	drawLineRight(
-		ctx,
-		`${labels.date}: ${formatDate(data.issueDate, data.language)}`,
-		RIGHT_EDGE,
-		SIZE_BODY,
-		{ gap: SIZE_BODY + LINE_GAP }
-	);
-	drawLineRight(
-		ctx,
-		`${labels.dueDate}: ${formatDate(data.dueDate, data.language)}`,
-		RIGHT_EDGE,
-		SIZE_BODY,
-		{ gap: SIZE_BODY + LINE_GAP }
-	);
-	if (data.deliveryDate) {
-		drawLineRight(
-			ctx,
-			`${labels.deliveryDate}: ${formatDate(data.deliveryDate, data.language)}`,
-			RIGHT_EDGE,
-			SIZE_BODY,
-			{ gap: SIZE_BODY + LINE_GAP }
-		);
-	}
-	if (isCredit && data.creditNoteRef) {
-		drawLineRight(ctx, `${labels.creditNoteRef}: ${data.creditNoteRef}`, RIGHT_EDGE, SIZE_BODY, {
-			gap: SIZE_BODY + LINE_GAP
-		});
+	ctx.y += titleSize + 22;
+	if (isProforma) drawLineRight(ctx, labels.proformaNote, RIGHT_EDGE, SIZE_SMALL, { color: MUTED });
+	const meta = [
+		[labels.invoiceNumber, data.invoiceNumber],
+		[labels.date, formatDate(data.issueDate, data.language)],
+		[labels.dueDate, formatDate(data.dueDate, data.language)]
+	];
+	if (data.deliveryDate)
+		meta.push([labels.deliveryDate, formatDate(data.deliveryDate, data.language)]);
+	if (isCredit && data.creditNoteRef) meta.push([labels.creditNoteRef, data.creditNoteRef]);
+	for (const [label, value] of meta) {
+		const valueLines = wrapText(ctx.font, value, SIZE_BODY, 75);
+		const labelLines = wrapText(ctx.font, label, SIZE_BODY, 70);
+		const top = ctx.y;
+		drawBlock(ctx, labelLines, RIGHT_EDGE - 150, SIZE_BODY);
+		ctx.y = top;
+		for (const line of valueLines) drawLineRight(ctx, line, RIGHT_EDGE, SIZE_BODY);
+		ctx.y = top + Math.max(labelLines.length, valueLines.length) * (SIZE_BODY + LINE_GAP) + 4;
 	}
 }
 
@@ -449,8 +462,12 @@ function renderSeller(
 	}
 	const lines = partyLines(data.seller, labels, data.language, true);
 	if (lines.length) {
-		drawLine(ctx, lines[0], MARGIN, SIZE_BODY, { font: ctx.bold });
-		drawBlock(ctx, lines.slice(1), MARGIN, SIZE_BODY, TEXT);
+		for (const line of wrapText(ctx.bold, lines[0], SIZE_BODY, 240))
+			drawLine(ctx, line, MARGIN, SIZE_BODY, { font: ctx.bold });
+		for (const line of lines.slice(1)) {
+			for (const part of wrapText(ctx.font, line, SIZE_BODY, 240))
+				drawLine(ctx, part, MARGIN, SIZE_BODY);
+		}
 	}
 }
 
@@ -460,47 +477,49 @@ function renderBuyer(ctx: RenderCtx, data: InvoiceData, labels: Labels): void {
 	drawLine(ctx, labels.buyer.toUpperCase(), MARGIN, SIZE_SMALL, { color: MUTED });
 	const lines = partyLines(data.buyer, labels, data.language);
 	if (lines.length) {
-		drawLine(ctx, lines[0], MARGIN, SIZE_BODY, { font: ctx.bold });
-		drawBlock(ctx, lines.slice(1), MARGIN, SIZE_BODY, TEXT);
+		for (const line of wrapText(ctx.bold, lines[0], SIZE_BODY, 240))
+			drawLine(ctx, line, MARGIN, SIZE_BODY, { font: ctx.bold });
+		for (const line of lines.slice(1)) {
+			for (const part of wrapText(ctx.font, line, SIZE_BODY, 240))
+				drawLine(ctx, part, MARGIN, SIZE_BODY);
+		}
 	}
 	ctx.y += SECTION_GAP;
 }
 
 /** Column x-positions for the line-items table. */
-const COL_QTY = 370;
-const COL_UNIT = 460;
-const COL_AMOUNT = RIGHT_EDGE;
+const COL_QTY = 337;
+const COL_UNIT = 443;
+const COL_AMOUNT = RIGHT_EDGE - 7;
 
 /** Render the table header row. */
 function drawTableHeader(ctx: RenderCtx, labels: Labels): void {
-	const headerHeight = SIZE_TABLE_HEADER + 12;
+	const headerHeight = 30;
 	ctx.page.drawRectangle({
 		x: MARGIN,
-		y: PAGE_HEIGHT - ctx.y - headerHeight + 2,
+		y: PAGE_HEIGHT - ctx.y - headerHeight,
 		width: CONTENT_WIDTH,
 		height: headerHeight,
 		color: TABLE_HEADER_BG
 	});
-	drawLine(ctx, labels.description, MARGIN, SIZE_TABLE_HEADER, {
+	ctx.y += 10;
+	drawLine(ctx, labels.description.toUpperCase(), MARGIN + 7, SIZE_TABLE_HEADER, {
 		font: ctx.bold,
-		color: MUTED,
 		gap: 0
 	});
-	drawLineRight(ctx, labels.quantity, COL_QTY, SIZE_TABLE_HEADER, {
+	drawLineRight(ctx, labels.quantity.toUpperCase(), COL_QTY, SIZE_TABLE_HEADER, {
 		font: ctx.bold,
-		color: MUTED,
 		gap: 0
 	});
-	drawLineRight(ctx, labels.unitPrice, COL_UNIT, SIZE_TABLE_HEADER, {
+	drawLineRight(ctx, labels.unitPrice.toUpperCase(), COL_UNIT, SIZE_TABLE_HEADER, {
 		font: ctx.bold,
-		color: MUTED,
 		gap: 0
 	});
-	drawLineRight(ctx, labels.amount, COL_AMOUNT, SIZE_TABLE_HEADER, {
+	drawLineRight(ctx, labels.amount.toUpperCase(), COL_AMOUNT, SIZE_TABLE_HEADER, {
 		font: ctx.bold,
-		color: MUTED,
-		gap: headerHeight
+		gap: 0
 	});
+	ctx.y += headerHeight - 10;
 }
 
 /** Render the full line-items table with automatic pagination. */
@@ -511,45 +530,47 @@ function renderTable(
 	labels: Labels
 ): void {
 	drawTableHeader(ctx, labels);
-	const descMaxWidth = COL_QTY - MARGIN - 14;
+	const descMaxWidth = 240;
 
 	for (const item of items) {
 		const descLines = wrapText(ctx.font, item.description || '-', SIZE_TABLE_BODY, descMaxWidth);
-		const rowLines = Math.max(1, descLines.length);
-		const rowHeight = rowLines * (SIZE_TABLE_BODY + LINE_GAP) + 8;
-
-		// Paginate: if this row does not fit, start a new page and repeat the header.
-		if (ctx.y + rowHeight > PAGE_HEIGHT - MARGIN) {
-			addPage(ctx);
-			drawTableHeader(ctx, labels);
-		}
-
-		const rowTop = ctx.y;
-		// Description (wrapped, left-aligned).
-		for (const line of descLines) {
-			drawLine(ctx, line, MARGIN, SIZE_TABLE_BODY, { gap: SIZE_TABLE_BODY + LINE_GAP });
-		}
-		// If the description produced no lines, reserve a single line of height.
-		if (descLines.length === 0) ctx.y += SIZE_TABLE_BODY + LINE_GAP;
-
-		const lineTotal = calcLineTotal(item);
-		// Numeric cells: drawn vertically centered-ish against the row top.
-		const cellY = rowTop + (rowHeight - (SIZE_TABLE_BODY + LINE_GAP)) / 2;
-		drawCellRight(ctx, `${formatQty(item.quantity)} ${item.unit || ''}`.trim(), COL_QTY, cellY);
-		drawCellRight(
-			ctx,
-			formatCurrency(item.unitPrice, data.currency, data.language),
-			COL_UNIT,
-			cellY
+		const maxLines = Math.floor(
+			(PAGE_HEIGHT - MARGIN - ctx.topInset - 54) / (SIZE_TABLE_BODY + LINE_GAP)
 		);
-		drawCellRight(
-			ctx,
-			formatCurrency(lineTotal, data.currency, data.language),
-			COL_AMOUNT,
-			cellY,
-			ctx.bold
-		);
-		ctx.y = rowTop + rowHeight;
+		const chunks: string[][] = [];
+		for (let i = 0; i < descLines.length; i += maxLines)
+			chunks.push(descLines.slice(i, i + maxLines));
+		if (!chunks.length) chunks.push(['-']);
+		for (const [chunkIndex, chunk] of chunks.entries()) {
+			const rowHeight = chunk.length * (SIZE_TABLE_BODY + LINE_GAP) + 24;
+			if (ctx.y + rowHeight > PAGE_HEIGHT - MARGIN) {
+				addPage(ctx);
+				drawTableHeader(ctx, labels);
+			}
+			const rowTop = ctx.y;
+			ctx.y += 12;
+			for (const line of chunk) drawLine(ctx, line, MARGIN + 7, SIZE_TABLE_BODY);
+			if (chunkIndex === 0) {
+				const lineTotal = calcLineTotal(item);
+				// Numeric cells: drawn vertically centered-ish against the row top.
+				const cellY = rowTop + 12;
+				drawCellRight(ctx, `${formatQty(item.quantity)} ${item.unit || ''}`.trim(), COL_QTY, cellY);
+				drawCellRight(
+					ctx,
+					formatCurrency(item.unitPrice, data.currency, data.language),
+					COL_UNIT,
+					cellY
+				);
+				drawCellRight(
+					ctx,
+					formatCurrency(lineTotal, data.currency, data.language),
+					COL_AMOUNT,
+					cellY,
+					ctx.font
+				);
+			}
+			ctx.y = rowTop + rowHeight;
+		}
 	}
 	drawDivider(ctx);
 }
@@ -578,47 +599,33 @@ function renderTotals(ctx: RenderCtx, data: InvoiceData, labels: Labels): void {
 	const totals = calculateTotals(data.items, data.vatMode);
 	ensureSpace(ctx, 90);
 
-	// Subtotal.
-	drawLineRight(
-		ctx,
-		`${labels.subtotal}: ${formatCurrency(totals.subtotal, data.currency, data.language)}`,
-		COL_AMOUNT,
-		SIZE_BODY,
-		{ gap: SIZE_BODY + LINE_GAP }
-	);
-
-	// VAT line / special-mode label.
-	if (totals.vatAmount !== 0) {
-		drawLineRight(
-			ctx,
-			`${labels.vat} (${Math.round(totals.vatRate * 100)}%): ${formatCurrency(
-				totals.vatAmount,
-				data.currency,
-				data.language
-			)}`,
-			COL_AMOUNT,
-			SIZE_BODY,
-			{ gap: SIZE_BODY + LINE_GAP }
-		);
-	}
+	ctx.y += 12;
+	const totalRow = (label: string, amount: number, bold = false) => {
+		const font = bold ? ctx.bold : ctx.font;
+		const size = bold ? 12 : SIZE_BODY;
+		drawLine(ctx, label, 287, size, { font, gap: 0 });
+		drawLineRight(ctx, formatCurrency(amount, data.currency, data.language), RIGHT_EDGE, size, {
+			font,
+			gap: 22
+		});
+	};
+	totalRow(labels.subtotal, totals.subtotal);
+	if (data.vatMode !== 'ikke_momsregistreret')
+		totalRow(`${labels.vat} (${Math.round(totals.vatRate * 100)}%)`, totals.vatAmount);
 	if (totals.label) {
-		// Special mode note (momsfritaget / reverse / kunstnermoms).
-		const labelLines = wrapText(ctx.font, totals.label, SIZE_SMALL, 260);
-		for (const line of labelLines) {
-			drawLineRight(ctx, line, COL_AMOUNT, SIZE_SMALL, { color: MUTED, gap: SIZE_SMALL + 2 });
+		for (const line of wrapText(ctx.font, totals.label, SIZE_SMALL, RIGHT_EDGE - 287)) {
+			drawLine(ctx, line, 287, SIZE_SMALL, { color: MUTED });
 		}
 	}
+	ctx.page.drawLine({
+		start: { x: 287, y: PAGE_HEIGHT - ctx.y },
+		end: { x: RIGHT_EDGE, y: PAGE_HEIGHT - ctx.y },
+		thickness: 0.5,
+		color: DIVIDER
+	});
+	ctx.y += 12;
+	totalRow(labels.total, totals.total, true);
 
-	drawDivider(ctx);
-
-	// Grand total (bold, larger).
-	drawLineRight(
-		ctx,
-		`${labels.total}: ${formatCurrency(totals.total, data.currency, data.language)}`,
-		COL_AMOUNT,
-		SIZE_H1,
-		{ font: ctx.bold, color: ctx.brand, gap: SIZE_H1 + 6 }
-	);
 	ctx.y += SECTION_GAP;
 }
 
@@ -629,7 +636,7 @@ function renderFooterSections(ctx: RenderCtx, data: InvoiceData, labels: Labels)
 	const hasTerms = data.paymentTerms;
 	const hasNotes = data.notes && data.notes.trim();
 
-	ensureSpace(ctx, 72);
+	ensureSpace(ctx, 160);
 
 	// Payment details column.
 	if (hasBank || hasMobilepay) {
@@ -733,7 +740,7 @@ export async function renderInvoicePdf(
 	renderSeller(sellerCtx, logo, data, labels);
 	renderHeader(ctx, data, labels);
 	// Reconcile cursor with the seller column height.
-	ctx.y = Math.max(ctx.y, sellerCtx.y) + SECTION_GAP;
+	ctx.y = Math.max(ctx.y, sellerCtx.y) + 22;
 
 	// Parties + table + totals.
 	renderBuyer(ctx, data, labels);

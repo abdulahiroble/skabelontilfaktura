@@ -75,7 +75,7 @@
 	// parsers don't mistake the JSON-LD string for a real inline script block.
 	// Content is built from trusted schema.org objects (no user input).
 	const lt = String.fromCharCode(60);
-	const jsonLdScript = `${lt}script type="application/ld+json">${JSON.stringify(jsonLd)}${lt}/script`;
+	const jsonLdScript = `${lt}script type="application/ld+json">${JSON.stringify(jsonLd)}${lt}/script>`;
 </script>
 
 <svelte:head>

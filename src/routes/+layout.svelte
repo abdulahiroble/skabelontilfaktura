@@ -13,7 +13,7 @@
 	<link rel="icon" href={favicon} />
 	<link rel="apple-touch-icon" href={favicon} />
 	<link rel="sitemap" href="/sitemap.xml" />
-	<meta name="theme-color" content="#BD8A2E" />
+	<meta name="theme-color" content="#f45112" />
 </svelte:head>
 
 <AnalyticsScripts measurementId={data.gaMeasurementId} />

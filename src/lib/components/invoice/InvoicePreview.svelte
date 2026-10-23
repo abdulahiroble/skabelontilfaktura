@@ -37,14 +37,30 @@
 			{#if invoice.seller.cvr}<p>{t('party.cvr')}: {invoice.seller.cvr}</p>{/if}
 		</div>
 		<div class="text-right">
-			<h2>{invoice.language === 'da' ? 'FAKTURA' : 'INVOICE'}</h2>
-			<p>{invoice.invoiceNumber}</p>
-			<p>
-				{t('payment.issueDate')}:
+			<h2>
+				{invoice.isCreditNote
+					? invoice.language === 'da'
+						? 'KREDITNOTA'
+						: 'CREDIT NOTE'
+					: invoice.isProforma
+						? invoice.language === 'da'
+							? 'PROFORMAFAKTURA'
+							: 'PROFORMA INVOICE'
+						: invoice.language === 'da'
+							? 'FAKTURA'
+							: 'INVOICE'}
+			</h2>
+			<p class="meta-row">
+				<span>{invoice.language === 'da' ? 'Fakturanr.' : 'Invoice no.'}</span><span
+					>{invoice.invoiceNumber}</span
+				>
+			</p>
+			<p class="meta-row">
+				<span>{t('payment.issueDate')}</span>
 				<span class="whitespace-nowrap">{displayDate(invoice.issueDate)}</span>
 			</p>
-			<p>
-				{t('payment.dueDate')}:
+			<p class="meta-row">
+				<span>{t('payment.dueDate')}</span>
 				<span class="whitespace-nowrap">{displayDate(invoice.dueDate)}</span>
 			</p>
 		</div>
@@ -62,8 +78,8 @@
 		<thead
 			><tr
 				><th>{t('items.description')}</th><th>{t('items.quantity')}</th><th
-					>{t('items.lineTotal')}</th
-				></tr
+					>{t('items.unitPrice')}</th
+				><th>{t('items.lineTotal')}</th></tr
 			></thead
 		>
 		<tbody>
@@ -74,6 +90,7 @@
 							(invoice.language === 'da' ? 'Din vare eller ydelse' : 'Your product or service')}</td
 					>
 					<td>{item.quantity} {item.unit}</td>
+					<td>{money(item.unitPrice)}</td>
 					<td>{money(calcLineTotal(item))}</td>
 				</tr>
 			{/each}
@@ -102,13 +119,19 @@
 				{t('payment.regNr')}: {invoice.regNr} · {t('payment.kontonr')}: {invoice.kontonr}
 			</p>{/if}
 		{#if invoice.mobilepay}<p>MobilePay: {invoice.mobilepay}</p>{/if}
+		{#if invoice.notes}<p class="mt-4">{invoice.notes}</p>{/if}
 	</footer>
 </div>
 
 <style>
+	.meta-row {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+	}
 	.invoice-paper {
-		background: #fffefa;
-		color: #28303b;
+		background: #ffffff;
+		color: #252525;
 		padding: clamp(1.25rem, 4vw, 2.5rem);
 		min-height: 640px;
 		font-size: 12px;
@@ -143,7 +166,7 @@
 		font-size: 10px;
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
-		background: #f0f1ef;
+		background: #f4f4f2;
 	}
 	th,
 	td {

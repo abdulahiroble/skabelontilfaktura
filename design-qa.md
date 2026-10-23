@@ -72,3 +72,33 @@ The concept's handwritten annotations are represented by readable text and exist
 - Deployed with `wrangler deploy --keep-vars`; version `379547c5-1815-42e6-a90d-1c1724012448`. Previous rollback version: `ff17226c-f7fe-4e73-83b4-0fdb02733859`.
 - Production homepage and generator rendering verified, homepage CTA verified, production CVR autofill verified, production CVR and VIES endpoints both returned HTTP 200 with expected registered company data. Production browser console had no errors.
 - Production screenshots saved in the task visualization directory as `production-homepage.png` and `production-generator.png`.
+
+## Site-wide design and PDF export follow-up — 2026-10-23
+
+final result: passed
+
+### Findings and fixes
+
+- P1: new design tokens were limited to two routes. Moved the white/neutral/orange palette and Hanken heading typography into the root theme, covering marketing, articles, login, consent and account routes. Removed the obsolete Fraunces font download.
+- P1: login was an unstyled narrow form in the old palette. Added a responsive white document panel, larger inputs, consistent CTA and guest-generator link; login/signup behavior remains intact.
+- P1: PDF renderer used a separate compact layout and blue fallback. Updated the shared client/server renderer to the reference's spaced title, metadata columns, four-column gray table, separate totals labels/values and monochrome default. Preserved modern branding, logos, document types, VAT modes and compression.
+- P1: four existing JSON-LD strings omitted the closing tag bracket, causing blank initial loads. Fixed templates index, invoice requirements, Google Docs and PDF guides. All 24 public routes now return parseable content with headings.
+- P2: preview lacked unit prices. Added the fourth column and metadata alignment; neutral paper and title treatments now follow the export.
+- P2: long words and descriptions could exceed columns/pages. Added wrapping and page continuation for individual long items, plus paginated notes.
+
+### Visual evidence and scope
+
+Compared the user's attached invoice reference with `pdf-design-comparison.png` in the task visualization directory. Cropped out surrounding website controls and normalized both paper regions to 600px wide. Same sample line items and amounts; the test uses a valid seller CVR instead of the mock number. Export omits editing outlines/icons, and adds payment details below the reference's crop. The initial comparison's overly wide metadata column was narrowed and the header-to-buyer spacing reduced before the final comparison. Typography, neutral colors, layout and table/totals alignment reviewed; no image assets are needed for the text-based invoice.
+
+Login reviewed at 1280px and 390px widths; signup toggle, guest navigation and generator download exercised. Pricing and the repaired invoice-requirements article inspected in browser. Generated PDFs visually inspected for default, English proforma/modern, multi-page rows and the actual browser-downloaded result. Minor font metric differences between Hanken UI and standard PDF Helvetica remain; they do not change the document hierarchy.
+
+### Validation
+
+- Svelte check: zero errors/warnings.
+- Build including Cloudflare type check: passed.
+- Changed-file ESLint: passed.
+- `node scripts/test-pdf.mjs`: standard/compressed, pagination, English/EUR, modern, proforma, credit note, all VAT modes and invalid-CVR rejection passed.
+- Actual browser Download PDF produced a readable A4 export with the new layout and correct totals.
+- Anonymous public-page coverage: 24 routes. Account route theme inheritance inspected in code; authenticated workflows were not exercised and are not claimed verified.
+
+Deployment: Cloudflare version `23f12be0-182d-44fc-a6b3-3c672b7b4c55`, using `--keep-vars`. Live login and repaired article visually verified; no browser console errors. Screenshot: `unified-login-live.png` in the task visualization directory.

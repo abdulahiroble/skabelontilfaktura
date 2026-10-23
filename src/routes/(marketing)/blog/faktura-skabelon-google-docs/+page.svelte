@@ -70,7 +70,7 @@
 	const jsonLd = [article, howTo, breadcrumb];
 
 	const lt = String.fromCharCode(60);
-	const jsonLdScript = `${lt}script type="application/ld+json">${JSON.stringify(jsonLd)}${lt}/script`;
+	const jsonLdScript = `${lt}script type="application/ld+json">${JSON.stringify(jsonLd)}${lt}/script>`;
 </script>
 
 <svelte:head>

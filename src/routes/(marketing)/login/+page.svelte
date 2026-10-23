@@ -82,95 +82,138 @@
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
-<div class="mx-auto w-full max-w-sm px-4 py-16">
-	<div class="space-y-6">
-		<div class="space-y-2">
-			<h1 class="text-2xl font-bold">{mode === 'login' ? 'Log ind' : 'Opret bruger'}</h1>
-			<p class="text-muted-foreground text-sm">
-				{mode === 'login'
-					? 'Velkommen tilbage. Log ind for at få adgang til dine fakturaer og indstillinger.'
-					: 'Opret en gratis bruger for at gemme dine fakturaer på tværs af enheder.'}
-			</p>
-		</div>
+<section class="auth-workspace">
+	<div class="auth-paper">
+		<div class="space-y-8">
+			<div class="space-y-3">
+				<p class="auth-eyebrow">DIN FAKTURAKONTO</p>
+				<h1 class="text-4xl font-semibold tracking-tight">
+					{mode === 'login' ? 'Log ind' : 'Opret bruger'}
+				</h1>
+				<p class="text-muted-foreground text-sm">
+					{mode === 'login'
+						? 'Velkommen tilbage. Log ind for at få adgang til dine fakturaer og indstillinger.'
+						: 'Opret en gratis bruger for at gemme dine fakturaer på tværs af enheder.'}
+				</p>
+			</div>
 
-		<form
-			class="space-y-4"
-			onsubmit={(e) => {
-				e.preventDefault();
-				submit();
-			}}
-		>
-			{#if mode === 'signup'}
+			<form
+				class="space-y-4"
+				onsubmit={(e) => {
+					e.preventDefault();
+					submit();
+				}}
+			>
+				{#if mode === 'signup'}
+					<div class="space-y-1.5">
+						<label for="name" class="text-sm font-medium">Navn</label>
+						<input
+							id="name"
+							type="text"
+							autocomplete="name"
+							required
+							bind:value={name}
+							class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring h-12 w-full rounded-md border px-3 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+							placeholder="Dit fulde navn"
+						/>
+					</div>
+				{/if}
+
 				<div class="space-y-1.5">
-					<label for="name" class="text-sm font-medium">Navn</label>
+					<label for="email" class="text-sm font-medium">E-mail</label>
 					<input
-						id="name"
-						type="text"
-						autocomplete="name"
+						id="email"
+						type="email"
+						autocomplete="email"
 						required
-						bind:value={name}
-						class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring h-9 w-full rounded-md border px-3 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
-						placeholder="Dit fulde navn"
+						bind:value={email}
+						class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring h-12 w-full rounded-md border px-3 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+						placeholder="navn@eksempel.dk"
 					/>
 				</div>
-			{/if}
 
-			<div class="space-y-1.5">
-				<label for="email" class="text-sm font-medium">E-mail</label>
-				<input
-					id="email"
-					type="email"
-					autocomplete="email"
-					required
-					bind:value={email}
-					class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring h-9 w-full rounded-md border px-3 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
-					placeholder="navn@eksempel.dk"
-				/>
+				<div class="space-y-1.5">
+					<label for="password" class="text-sm font-medium">Adgangskode</label>
+					<input
+						id="password"
+						type="password"
+						autocomplete={mode === 'login' ? 'current-password' : 'new-password'}
+						required
+						minlength={mode === 'signup' ? 8 : undefined}
+						bind:value={password}
+						class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring h-12 w-full rounded-md border px-3 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+						placeholder="••••••••"
+					/>
+				</div>
+
+				{#if error}
+					<p class="text-destructive text-sm" role="alert">{error}</p>
+				{/if}
+
+				<Button type="submit" class="h-12 w-full" disabled={submitting}>
+					{submitting ? 'Et øjeblik…' : mode === 'login' ? 'Log ind' : 'Opret bruger'}
+				</Button>
+			</form>
+
+			<div class="text-muted-foreground text-center text-sm">
+				{#if mode === 'login'}
+					<span>Har du ingen konto? </span>
+					<button
+						type="button"
+						class="text-primary hover:underline"
+						onclick={() => switchMode('signup')}
+					>
+						Opret en gratis bruger
+					</button>
+				{:else}
+					<span>Har du allerede en konto? </span>
+					<button
+						type="button"
+						class="text-primary hover:underline"
+						onclick={() => switchMode('login')}
+					>
+						Log ind i stedet
+					</button>
+				{/if}
 			</div>
-
-			<div class="space-y-1.5">
-				<label for="password" class="text-sm font-medium">Adgangskode</label>
-				<input
-					id="password"
-					type="password"
-					autocomplete={mode === 'login' ? 'current-password' : 'new-password'}
-					required
-					minlength={mode === 'signup' ? 8 : undefined}
-					bind:value={password}
-					class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring h-9 w-full rounded-md border px-3 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
-					placeholder="••••••••"
-				/>
-			</div>
-
-			{#if error}
-				<p class="text-destructive text-sm" role="alert">{error}</p>
-			{/if}
-
-			<Button type="submit" class="w-full" disabled={submitting}>
-				{submitting ? 'Et øjeblik…' : mode === 'login' ? 'Log ind' : 'Opret bruger'}
-			</Button>
-		</form>
-
-		<div class="text-muted-foreground text-center text-sm">
-			{#if mode === 'login'}
-				<span>Har du ingen konto? </span>
-				<button
-					type="button"
-					class="text-primary hover:underline"
-					onclick={() => switchMode('signup')}
-				>
-					Opret en gratis bruger
-				</button>
-			{:else}
-				<span>Har du allerede en konto? </span>
-				<button
-					type="button"
-					class="text-primary hover:underline"
-					onclick={() => switchMode('login')}
-				>
-					Log ind i stedet
-				</button>
-			{/if}
 		</div>
 	</div>
-</div>
+
+	<p class="auth-guest">
+		Vil du bare lave en faktura? <a href="/generator/">Fortsæt uden konto</a>
+	</p>
+</section>
+
+<style>
+	.auth-workspace {
+		background: var(--secondary);
+		padding: clamp(2.5rem, 7vw, 5rem) 1rem;
+		min-height: 72vh;
+	}
+	.auth-paper {
+		margin: 0 auto;
+		max-width: 480px;
+		background: var(--card);
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		padding: clamp(1.5rem, 4vw, 3rem);
+		box-shadow: 0 8px 40px #00000005;
+	}
+	.auth-eyebrow {
+		color: var(--muted-foreground);
+		font-size: 0.7rem;
+		letter-spacing: 0.13em;
+		font-weight: 600;
+	}
+	.auth-guest {
+		text-align: center;
+		margin: 1.5rem auto 0;
+		font-size: 0.875rem;
+		color: var(--muted-foreground);
+	}
+	.auth-guest a {
+		color: var(--foreground);
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+</style>

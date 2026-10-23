@@ -71,7 +71,13 @@
 		</div>
 	</div>
 	<div class="document-stage">
-		<p class="stage-note note-left">Rediger direkte<br />i skabelonen <Pencil size={20} /></p>
+		<img
+			class="stage-note note-left"
+			src="/images/edit-annotation.webp"
+			alt="Rediger direkte i skabelonen"
+			width="180"
+			height="114"
+		/>
 		<a
 			class="sample-invoice"
 			href="/generator/"
@@ -118,9 +124,13 @@
 			</div>
 			<span class="sample-caption">Eksempel på en faktura</span>
 		</a>
-		<p class="stage-note note-right">
-			Download som PDF,<br />klar til din kunde <Download size={20} />
-		</p>
+		<img
+			class="stage-note note-right"
+			src="/images/download-annotation.webp"
+			alt="Download som PDF, klar til brug"
+			width="180"
+			height="115"
+		/>
 	</div>
 	<div class="benefit-strip">
 		<span><FileText size={21} /> Automatisk momsberegning</span><span
@@ -573,20 +583,16 @@
 	}
 	.stage-note {
 		position: absolute;
-		top: 48%;
-		color: #666;
-		font-size: 15px;
-		line-height: 1.6;
-	}
-	.stage-note :global(svg) {
-		margin-top: 16px;
-		color: #c43c00;
+		top: 43%;
+		width: 180px;
+		height: auto;
+		pointer-events: none;
 	}
 	.note-left {
-		right: calc(50% + 390px);
+		right: calc(50% + 370px);
 	}
 	.note-right {
-		left: calc(50% + 390px);
+		left: calc(50% + 370px);
 	}
 	.benefit-strip {
 		display: flex;

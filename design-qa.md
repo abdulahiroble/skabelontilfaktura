@@ -102,3 +102,9 @@ Login reviewed at 1280px and 390px widths; signup toggle, guest navigation and g
 - Anonymous public-page coverage: 24 routes. Account route theme inheritance inspected in code; authenticated workflows were not exercised and are not claimed verified.
 
 Deployment: Cloudflare version `23f12be0-182d-44fc-a6b3-3c672b7b4c55`, using `--keep-vars`. Live login and repaired article visually verified; no browser console errors. Screenshot: `unified-login-live.png` in the task visualization directory.
+
+## Handwritten annotations — 2026-10-23
+
+final result: passed
+
+Restored handwritten Danish note assets and thin curved orange arrows from the user's supplied crops. Replaced generic text/icon callouts on the homepage, including the requested "Download som PDF, klar til brug" copy. Transparent optimized WebP assets avoid rectangular background seams; accessible alternative text retained. Desktop screenshot `handwritten-annotations.png` shows both arrows ending beside the highlighted row. Existing narrow-screen behavior hides decorative callouts below 1100px. Svelte check, build, ESLint and whitespace checks passed.

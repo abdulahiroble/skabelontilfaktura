@@ -94,36 +94,34 @@
 	}
 </script>
 
-<section class="border-border bg-card rounded-lg border p-4 sm:p-6">
+<section class="party-section">
 	<h2 class="text-foreground mb-4 text-base font-semibold">
 		{@render title()}
 	</h2>
 
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 		<div class="sm:col-span-2">
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-name-{party.name}">
+			<label class="text-foreground mb-1 block text-sm font-medium" for="party-name-{role}">
 				{t('party.name')} <span class="text-destructive">*</span>
 			</label>
 			<input
-				id="party-name-{party.name}"
+				id="party-name-{role}"
 				type="text"
 				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
 				bind:value={party.name}
+				required
 				placeholder={t('party.name')}
 				autocomplete="organization"
 			/>
 		</div>
 
 		<div class="sm:col-span-2">
-			<label
-				class="text-foreground mb-1 block text-sm font-medium"
-				for="party-address-{party.name}"
-			>
+			<label class="text-foreground mb-1 block text-sm font-medium" for="party-address-{role}">
 				{t('party.address')}
 				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
-				id="party-address-{party.name}"
+				id="party-address-{role}"
 				type="text"
 				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
 				bind:value={party.address}
@@ -133,12 +131,12 @@
 		</div>
 
 		<div>
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-postal-{party.name}">
+			<label class="text-foreground mb-1 block text-sm font-medium" for="party-postal-{role}">
 				{t('party.postalCode')}
 				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
-				id="party-postal-{party.name}"
+				id="party-postal-{role}"
 				type="text"
 				inputmode="numeric"
 				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
@@ -149,12 +147,12 @@
 		</div>
 
 		<div>
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-city-{party.name}">
+			<label class="text-foreground mb-1 block text-sm font-medium" for="party-city-{role}">
 				{t('party.city')}
 				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
-				id="party-city-{party.name}"
+				id="party-city-{role}"
 				type="text"
 				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
 				bind:value={party.city}
@@ -164,7 +162,7 @@
 		</div>
 
 		<div class="sm:col-span-2">
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-cvr-{party.name}">
+			<label class="text-foreground mb-1 block text-sm font-medium" for="party-cvr-{role}">
 				{t('party.cvr')}
 				{#if requiresCvr}
 					<span class="text-destructive">*</span>
@@ -174,10 +172,10 @@
 			</label>
 			<div class="flex flex-wrap items-center gap-2">
 				<input
-					id="party-cvr-{party.name}"
+					id="party-cvr-{role}"
 					type="text"
-					inputmode="numeric"
-					maxlength="14"
+					inputmode={role === 'seller' ? 'numeric' : 'text'}
+					maxlength="20"
 					class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground min-w-[10rem] flex-1 rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
 					bind:value={party.cvr}
 					placeholder="12345678"
@@ -253,12 +251,12 @@
 		</div>
 
 		<div>
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-email-{party.name}">
+			<label class="text-foreground mb-1 block text-sm font-medium" for="party-email-{role}">
 				{t('party.email')}
 				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
-				id="party-email-{party.name}"
+				id="party-email-{role}"
 				type="email"
 				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
 				bind:value={party.email}
@@ -268,12 +266,12 @@
 		</div>
 
 		<div>
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-phone-{party.name}">
+			<label class="text-foreground mb-1 block text-sm font-medium" for="party-phone-{role}">
 				{t('party.phone')}
 				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
-				id="party-phone-{party.name}"
+				id="party-phone-{role}"
 				type="tel"
 				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
 				bind:value={party.phone}
@@ -283,12 +281,12 @@
 		</div>
 
 		<div>
-			<label class="text-foreground mb-1 block text-sm font-medium" for="party-ean-{party.name}">
+			<label class="text-foreground mb-1 block text-sm font-medium" for="party-ean-{role}">
 				{t('party.ean')}
 				<span class="text-muted-foreground text-xs font-normal">({t('common.optional')})</span>
 			</label>
 			<input
-				id="party-ean-{party.name}"
+				id="party-ean-{role}"
 				type="text"
 				inputmode="numeric"
 				maxlength="13"

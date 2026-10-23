@@ -34,7 +34,17 @@
 
 	const t = $derived(createTranslator(language));
 
-	const totals = $derived(calculateTotals(items, vatMode, vatRate));
+	const totals = $derived(
+		calculateTotals(
+			items.map((item) => ({
+				...item,
+				quantity: Number.isFinite(item.quantity) ? item.quantity : 0,
+				unitPrice: Number.isFinite(item.unitPrice) ? item.unitPrice : 0
+			})),
+			vatMode,
+			vatRate
+		)
+	);
 	const formatted = $derived(formatTotals(totals, currency, language));
 
 	const hasItems = $derived(items.length > 0);

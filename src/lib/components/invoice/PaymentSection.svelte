@@ -19,7 +19,7 @@
 	let { invoice, t }: Props = $props();
 </script>
 
-<section class="border-border bg-card rounded-lg border p-4 sm:p-6">
+<section>
 	<h2 class="text-foreground mb-4 text-base font-semibold">{t('section.payment')}</h2>
 
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -80,6 +80,7 @@
 			<input
 				id="inv-due-date"
 				type="date"
+				min={invoice.issueDate}
 				class="border-border bg-background focus:border-ring focus:ring-ring text-foreground w-full rounded-md border px-3 py-2 text-sm shadow-sm outline-none focus:ring-1"
 				bind:value={invoice.dueDate}
 			/>

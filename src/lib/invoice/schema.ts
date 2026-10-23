@@ -54,11 +54,11 @@ const isoDateString = z
 
 export const InvoiceItemSchema = z.object({
 	id: z.string().optional(),
-	description: z.string().min(1, { message: 'Beskrivelse skal udfyldes' }),
+	description: z.string().trim().min(1, { message: 'Beskrivelse skal udfyldes' }),
 	quantity: z.number({ error: 'Antal skal være et tal' }).positive({
 		message: 'Antal skal være positivt'
 	}),
-	unit: z.string().min(1).default('stk'),
+	unit: z.string().trim().min(1).default('stk'),
 	unitPrice: z
 		.number({ error: 'Stykpris skal være et tal' })
 		.min(0, { message: 'Stykpris må ikke være negativ' }),
@@ -71,7 +71,7 @@ export const InvoiceItemSchema = z.object({
 /* -------------------------------------------------------------------------- */
 
 export const InvoicePartySchema = z.object({
-	name: z.string().min(1, { message: 'Navn skal udfyldes' }),
+	name: z.string().trim().min(1, { message: 'Navn skal udfyldes' }),
 	address: z.string().optional(),
 	postalCode: z.string().optional(),
 	city: z.string().optional(),
@@ -97,13 +97,26 @@ export const InvoicePartySchema = z.object({
 
 export const InvoiceDataSchema = z
 	.object({
-		invoiceNumber: z.string().min(1, { message: 'Fakturanummer skal udfyldes' }),
-		series: z.string().min(1),
+		invoiceNumber: z.string().trim().min(1, { message: 'Fakturanummer skal udfyldes' }),
+		series: z.string().trim().min(1),
 		issueDate: isoDateString,
 		dueDate: isoDateString,
-		deliveryDate: isoDateString.optional(),
+		deliveryDate: isoDateString.optional().or(z.literal('')),
 		seller: InvoicePartySchema,
-		buyer: InvoicePartySchema,
+		buyer: InvoicePartySchema.extend({
+			cvr: z
+				.string()
+				.optional()
+				.refine(
+					(value) =>
+						!value ||
+						validateCvr(value) ||
+						/^(AT|BE|BG|CY|CZ|DE|EE|EL|ES|FI|FR|HR|HU|IE|IT|LT|LU|LV|MT|NL|PL|PT|RO|SE|SI|SK)[A-Z0-9]{2,14}$/i.test(
+							value.replace(/[\s.-]/g, '')
+						),
+					{ message: 'Ugyldigt CVR- eller EU-momsnummer' }
+				)
+		}),
 		items: z.array(InvoiceItemSchema).min(1, { message: 'Tilføj mindst én linje' }),
 		currency: CurrencySchema,
 		vatMode: VatModeSchema,

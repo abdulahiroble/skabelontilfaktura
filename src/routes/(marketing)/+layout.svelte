@@ -39,7 +39,7 @@
 				</span>
 				<span class="text-accent text-sm">.dk</span>
 			</a>
-			<nav class="hidden items-center gap-7 sm:flex">
+			<nav aria-label="Hovednavigation" class="hidden items-center gap-7 lg:flex">
 				{#each navLinks as link (link.href)}
 					<a
 						href={link.href}
@@ -83,7 +83,30 @@
 						Log ind
 					</a>
 				{/if}
-				<Button size="sm" href={data.user ? '/konto/' : '/generator/'}>
+				<details class="relative lg:hidden">
+					<summary
+						class="border-border flex min-h-11 cursor-pointer items-center rounded-md border px-3 text-sm font-medium"
+						>Menu</summary
+					>
+					<nav
+						aria-label="Mobilnavigation"
+						class="bg-background border-border absolute top-14 right-0 z-50 grid w-56 rounded-lg border p-2 shadow-lg"
+					>
+						{#each navLinks as link (link.href)}<a
+								class="hover:bg-secondary flex min-h-11 items-center rounded px-3 text-sm"
+								href={link.href}>{link.label}</a
+							>{/each}
+						<a
+							class="flex min-h-11 items-center px-3 text-sm"
+							href={data.user ? '/konto/' : '/login/'}>{data.user ? 'Min konto' : 'Log ind'}</a
+						>
+					</nav>
+				</details>
+				<Button
+					class="hidden sm:inline-flex"
+					size="sm"
+					href={data.user ? '/konto/' : '/generator/'}
+				>
 					{data.user ? 'Åbn konto' : 'Lav faktura'}
 				</Button>
 			</div>

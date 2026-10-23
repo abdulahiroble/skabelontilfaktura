@@ -53,7 +53,7 @@
 </script>
 
 <section class="settings-shell border-border bg-secondary/20 rounded-lg border p-4 sm:p-5">
-	<div class="settings-grid grid grid-cols-1 gap-4">
+	<div class="settings-grid grid grid-cols-2 gap-4">
 		<div class="min-w-0">
 			<label
 				class="text-muted-foreground mb-1.5 block text-xs font-semibold tracking-wide uppercase"
@@ -136,9 +136,9 @@
 		container-type: inline-size;
 	}
 
-	@container (min-width: 28rem) {
+	@container (min-width: 40rem) {
 		.settings-grid {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-columns: repeat(4, minmax(0, 1fr));
 		}
 	}
 </style>

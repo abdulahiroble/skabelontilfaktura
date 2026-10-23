@@ -45,6 +45,7 @@ export interface InvoiceStore {
 	readonly isValid: boolean;
 	/** Whether a draft has been loaded from localStorage. */
 	readonly hydrated: boolean;
+	readonly storageStatus: 'saving' | 'saved' | 'error';
 	/** Replace the entire draft (e.g. when loading a saved template). */
 	setData(next: InvoiceData): void;
 	/** Append a new empty line item and return its id. */
@@ -73,6 +74,7 @@ export interface InvoiceStore {
 export function createInvoiceStore(autoHydrate = true): InvoiceStore {
 	let data = $state<InvoiceData>(createDefaultInvoice());
 	let hydrated = $state(false);
+	let storageStatus = $state<'saving' | 'saved' | 'error'>('saving');
 
 	// Recompute validation every time the draft changes. SafeParse means UI
 	// never throws on partial input.
@@ -86,6 +88,7 @@ export function createInvoiceStore(autoHydrate = true): InvoiceStore {
 	function scheduleSave(): void {
 		if (typeof localStorage === 'undefined') return;
 		if (saveTimer) clearTimeout(saveTimer);
+		storageStatus = 'saving';
 		saveTimer = setTimeout(() => {
 			saveTimer = null;
 			persist();
@@ -96,19 +99,27 @@ export function createInvoiceStore(autoHydrate = true): InvoiceStore {
 		if (typeof localStorage === 'undefined') return;
 		try {
 			localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(data));
+			storageStatus = 'saved';
 		} catch {
-			// Quota or serialization failure — silently ignore; nothing is lost
-			// from the in-memory draft.
+			storageStatus = 'error';
 		}
 	}
 
 	// Re-run scheduleSave whenever any deep field of `data` changes.
-	$effect.root(() => {
-		$effect(() => {
-			// Touch the serialised form so any nested mutation is observed.
-			void JSON.stringify(data);
-			if (hydrated) scheduleSave();
-		});
+	$effect(() => {
+		void JSON.stringify(data);
+		if (hydrated) scheduleSave();
+		return () => {
+			if (saveTimer) clearTimeout(saveTimer);
+		};
+	});
+	$effect(() => {
+		const flush = () => saveToStorage();
+		window.addEventListener('pagehide', flush);
+		return () => {
+			window.removeEventListener('pagehide', flush);
+			saveToStorage();
+		};
 	});
 
 	function loadFromStorage(): void {
@@ -196,6 +207,9 @@ export function createInvoiceStore(autoHydrate = true): InvoiceStore {
 		},
 		get isValid() {
 			return isValid;
+		},
+		get storageStatus() {
+			return storageStatus;
 		},
 		get hydrated() {
 			return hydrated;

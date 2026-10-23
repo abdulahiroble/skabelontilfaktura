@@ -13,6 +13,7 @@
 	 * itself is intentionally not implemented (separate task).
 	 */
 	import { Plus, Trash2 } from '@lucide/svelte';
+	import { calcLineTotal } from '$lib/invoice/moms';
 	import type { InvoiceItem } from '$lib/invoice/types';
 
 	type Props = {
@@ -26,19 +27,9 @@
 	};
 
 	let { items, t, onAdd, onRemove }: Props = $props();
-
-	function lineTotal(item: InvoiceItem): number {
-		const gross = item.quantity * item.unitPrice;
-		const discount = gross * ((item.discount ?? 0) / 100);
-		return Math.max(0, gross - discount);
-	}
-
-	function vatPercent(rate: number): string {
-		return `${(rate * 100).toFixed(0)}%`;
-	}
 </script>
 
-<section class="border-border bg-card rounded-lg border p-4 sm:p-6">
+<section>
 	<h2 class="text-foreground mb-4 text-base font-semibold">{t('section.items')}</h2>
 
 	<div class="grid gap-3">
@@ -91,20 +82,6 @@
 				</label>
 				<label>
 					<span class="text-muted-foreground mb-1 block text-xs font-medium">
-						{t('items.vatRate')} *
-					</span>
-					<select
-						class="border-border bg-background focus:border-ring focus:ring-ring text-foreground h-11 w-full rounded-md border px-3 text-sm outline-none focus:ring-1"
-						bind:value={item.vatRate}
-					>
-						<option value={0.25}>{vatPercent(0.25)}</option>
-						<option value={0}>{vatPercent(0)}</option>
-						<option value={0.05}>{vatPercent(0.05)}</option>
-						<option value={0.12}>{vatPercent(0.12)}</option>
-					</select>
-				</label>
-				<label>
-					<span class="text-muted-foreground mb-1 block text-xs font-medium">
 						{t('items.discount')} ({t('common.optional')})
 					</span>
 					<div class="relative">
@@ -128,11 +105,11 @@
 					</span>
 					<div class="flex h-11 items-center justify-between gap-2">
 						<span class="text-foreground text-sm font-medium tabular-nums">
-							{lineTotal(item).toFixed(2)}
+							{Number.isFinite(calcLineTotal(item)) ? calcLineTotal(item).toFixed(2) : '—'}
 						</span>
 						<button
 							type="button"
-							class="text-muted-foreground hover:text-destructive hover:bg-accent/50 inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
+							class="text-muted-foreground hover:text-destructive hover:bg-accent/50 inline-flex h-11 w-11 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
 							onclick={() => onRemove(item.id ?? '')}
 							disabled={items.length <= 1}
 							aria-label={`${t('common.remove')} ${index + 1}`}
@@ -148,7 +125,7 @@
 
 	<button
 		type="button"
-		class="text-muted-foreground hover:text-foreground hover:bg-accent/50 mt-3 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors"
+		class="text-muted-foreground hover:text-foreground hover:bg-accent/50 mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors"
 		onclick={onAdd}
 	>
 		<Plus size={15} />

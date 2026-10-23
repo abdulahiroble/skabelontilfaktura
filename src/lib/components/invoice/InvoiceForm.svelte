@@ -25,13 +25,14 @@
 	import ValidationWarnings from './ValidationWarnings.svelte';
 
 	let { store = createInvoiceStore() }: { store?: InvoiceStore } = $props();
+	let confirmingReset = $state(false);
 	const t = $derived(createTranslator(store.data.language));
 </script>
 
-<div class="space-y-10 sm:space-y-12">
+<div class="space-y-7 sm:space-y-8">
 	<header class="space-y-3">
-		<p class="text-accent text-xs font-medium tracking-wider uppercase sm:text-sm">
-			Gratis og lovlig
+		<p class="text-primary text-xs font-medium tracking-wider uppercase sm:text-sm">
+			Gratis · Uden tilmelding
 		</p>
 		<h1 class="text-foreground text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">
 			{t('app.title')}
@@ -48,11 +49,9 @@
 		onVatModeChange={store.setVatMode}
 	/>
 
-	<ValidationWarnings validation={store.validation} {t} locale={store.data.language} />
-
 	<!-- 01 — Sælger -->
-	<section class="border-border border-t pt-8 sm:pt-10">
-		<p class="text-accent mb-4 text-xs font-medium tracking-wider uppercase">01 — Indhold</p>
+	<section class="border-border border-t pt-6 sm:pt-7">
+		<p class="text-primary mb-4 text-xs font-medium tracking-wider uppercase">01 — Afsender</p>
 		<PartySection
 			party={store.data.seller}
 			{t}
@@ -67,8 +66,8 @@
 	</section>
 
 	<!-- 02 — Køber -->
-	<section class="border-border border-t pt-8 sm:pt-10">
-		<p class="text-accent mb-4 text-xs font-medium tracking-wider uppercase">02 — Modtager</p>
+	<section class="border-border border-t pt-6 sm:pt-7">
+		<p class="text-primary mb-4 text-xs font-medium tracking-wider uppercase">02 — Modtager</p>
 		<PartySection party={store.data.buyer} {t} role="buyer">
 			{#snippet title()}
 				{t('section.buyer')}
@@ -77,14 +76,14 @@
 	</section>
 
 	<!-- 03 — Linjer -->
-	<section class="border-border border-t pt-8 sm:pt-10">
-		<p class="text-accent mb-4 text-xs font-medium tracking-wider uppercase">03 — Linjer</p>
+	<section class="border-border border-t pt-6 sm:pt-7">
+		<p class="text-primary mb-4 text-xs font-medium tracking-wider uppercase">03 — Linjer</p>
 		<ItemTable items={store.data.items} {t} onAdd={store.addItem} onRemove={store.removeItem} />
 	</section>
 
 	<!-- 04 — Total -->
-	<section class="border-border border-t pt-8 sm:pt-10">
-		<p class="text-accent mb-4 text-xs font-medium tracking-wider uppercase">04 — Total</p>
+	<section class="border-border border-t pt-6 sm:pt-7">
+		<p class="text-primary mb-4 text-xs font-medium tracking-wider uppercase">04 — Total</p>
 		<TotalsSummary
 			items={store.data.items}
 			vatMode={store.data.vatMode}
@@ -95,16 +94,37 @@
 	</section>
 
 	<!-- 05 — Betaling -->
-	<section class="border-border border-t pt-8 sm:pt-10">
-		<p class="text-accent mb-4 text-xs font-medium tracking-wider uppercase">05 — Betaling</p>
+	<section class="border-border border-t pt-6 sm:pt-7">
+		<p class="text-primary mb-4 text-xs font-medium tracking-wider uppercase">05 — Betaling</p>
 		<PaymentSection invoice={store.data} {t} />
 	</section>
 
-	<div class="border-border flex justify-end border-t pt-8 sm:pt-10">
+	<ValidationWarnings validation={store.validation} {t} locale={store.data.language} />
+	<div class="border-border flex flex-wrap items-center justify-end gap-3 border-t pt-6">
+		{#if confirmingReset}
+			<p class="text-sm">
+				{store.data.language === 'da'
+					? 'Slet kladden? Det kan ikke fortrydes.'
+					: 'Delete this draft? This cannot be undone.'}
+			</p>
+			<button
+				type="button"
+				class="min-h-11 px-3 text-sm underline"
+				onclick={() => (confirmingReset = false)}
+				>{store.data.language === 'da' ? 'Annuller' : 'Cancel'}</button
+			>
+		{/if}
 		<button
 			type="button"
-			class="text-muted-foreground hover:text-destructive text-sm font-medium underline-offset-4 hover:underline"
-			onclick={store.resetForm}
+			class="text-muted-foreground hover:text-destructive min-h-11 px-3 text-sm font-medium underline-offset-4 hover:underline"
+			onclick={() => {
+				if (confirmingReset) {
+					store.resetForm();
+					confirmingReset = false;
+				} else {
+					confirmingReset = true;
+				}
+			}}
 		>
 			{t('button.reset')}
 		</button>

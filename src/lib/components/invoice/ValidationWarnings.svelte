@@ -33,6 +33,14 @@
 		// the schema's embedded Danish messages.
 		const leaf = issue.path[issue.path.length - 1];
 		switch (leaf) {
+			case 'unit':
+			case 'invoiceNumber':
+			case 'series':
+				return `${t(leaf === 'unit' ? 'items.unit' : leaf === 'series' ? 'payment.series' : 'payment.invoiceNumber')}: ${t('common.required')}`;
+			case 'discount':
+				return locale === 'da'
+					? 'Rabat skal være mellem 0 og 100 %'
+					: 'Discount must be between 0 and 100%';
 			case 'name':
 				return t('validation.nameRequired');
 			case 'description':
@@ -72,7 +80,19 @@
 	}
 
 	const messages = $derived(
-		validation.success ? [] : validation.error.issues.map((issue) => localize(issue))
+		validation.success
+			? []
+			: validation.error.issues.map((issue) => {
+					const section =
+						issue.path[0] === 'seller'
+							? t('section.seller')
+							: issue.path[0] === 'buyer'
+								? t('section.buyer')
+								: issue.path[0] === 'items'
+									? `${t('section.items')} ${Number(issue.path[1]) + 1}`
+									: '';
+					return section ? `${section}: ${localize(issue)}` : localize(issue);
+				})
 	);
 </script>
 

@@ -1,28 +1,7 @@
 <script lang="ts">
-	/**
-	 * Generator route.
-	 *
-	 * Renders the `InvoiceForm` component in a two-column layout: the editable
-	 * form on the left and a **live PDF preview** on the right. The preview is
-	 * regenerated from the shared reactive invoice store, debounced at 500 ms so
-	 * typing does not thrash the pdf-lib renderer. The resulting bytes are turned
-	 * into a Blob URL and displayed in an `<iframe>`; old URLs are revoked to
-	 * avoid memory leaks.
-	 *
-	 * The sticky action bar offers three actions:
-	 *  - **Print** — opens the generated PDF itself in a new tab for reliable
-	 *    browser printing without an extra blank page.
-	 *  - **Download PDF** — standard (maximally compatible) download.
-	 *  - **Download (komprimeret)** — same PDF saved with pdf-lib object streams
-	 *    for a smaller file size.
-	 *
-	 * PDF rendering is fully client-side via pdf-lib. The shared store lives in
-	 * localStorage and is hydrated once on mount, so the preview always matches
-	 * the persisted draft.
-	 */
-	import { onDestroy } from 'svelte';
-	import { Download, Printer, LoaderCircle, FileDown, FileText } from '@lucide/svelte';
+	import { Download, Printer, LoaderCircle, FileDown } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import InvoicePreview from '$lib/components/invoice/InvoicePreview.svelte';
 	import InvoiceForm from '$lib/components/invoice/InvoiceForm.svelte';
 	import { createInvoiceStore } from '$lib/invoice/store.svelte';
 	import { buildMeta, faqPageSchema, howToSchema } from '$lib/seo';
@@ -46,7 +25,7 @@
 		{
 			question: 'Kan jeg selv lave en faktura?',
 			answer:
-				'Ja, det må du gerne. En faktura skal blandt andet indeholde fakturadato, et unikt fakturanummer, dit firmanavn, adresse og CVR-nummer, kundens navn og adresse samt en beskrivelse af varerne eller ydelsen med antal og pris — og til sidst momsgrundlag, momssats og momsbeløb. Generatoren her udfylder alle felterne for dig, og CVR-opslaget henter automatisk virksomhedens oplysninger, mens du skriver.',
+				'Ja, det må du gerne. En faktura skal blandt andet indeholde fakturadato, et unikt fakturanummer, dit firmanavn, adresse og CVR-nummer, kundens navn og adresse samt en beskrivelse af varerne eller ydelsen med antal og pris — og til sidst momsgrundlag, momssats og momsbeløb. Udfyld felterne her, og brug knappen Slå op ved CVR-nummeret til at hente virksomhedens oplysninger.',
 			link: '/blog/krav-til-faktura/',
 			linkLabel: 'Se den fulde liste over krav til en faktura'
 		},
@@ -161,78 +140,9 @@
 		};
 	});
 
-	/* ----------------------------------------------------------------------- */
-	/* Live preview                                                            */
-	/* ----------------------------------------------------------------------- */
-
-	/** Object URL of the most recently rendered preview PDF (or null). */
-	let previewUrl = $state<string | null>(null);
-	/** True while a debounced regeneration is pending/in-flight. */
-	let previewLoading = $state(false);
-	/** Pending debounce timer handle (cleared on re-run / teardown). */
-	let previewTimeout: ReturnType<typeof setTimeout> | null = null;
-	let previewGeneration = 0;
-
-	/**
-	 * Regenerate the preview whenever the reactive draft changes. The deep
-	 * serialisation touch ensures any nested mutation (line items, party fields,
-	 * settings) re-triggers the effect. Each run clears the previous pending
-	 * timer, giving us a 500 ms debounce.
-	 */
-	$effect(() => {
-		// Touch the full serialised form so every nested field is observed.
-		const data = store.data;
-		void JSON.stringify(data);
-		const generation = ++previewGeneration;
-
-		if (previewTimeout) clearTimeout(previewTimeout);
-		if (!store.isValid) {
-			if (previewUrl) URL.revokeObjectURL(previewUrl);
-			previewUrl = null;
-			previewLoading = false;
-			return;
-		}
-		previewLoading = true;
-
-		previewTimeout = setTimeout(async () => {
-			previewTimeout = null;
-			try {
-				const { renderInvoicePdf } = await import('$lib/pdf/renderer');
-				const bytes = await renderInvoicePdf(data);
-				// Copy into a fresh ArrayBuffer-backed view so the bytes satisfy the
-				// strict DOM BlobPart typing (pdf-lib returns Uint8Array<ArrayBufferLike>).
-				const buffer = new ArrayBuffer(bytes.byteLength);
-				new Uint8Array(buffer).set(bytes);
-				const blob = new Blob([buffer], { type: 'application/pdf' });
-				if (generation !== previewGeneration) return;
-				// Revoke the previous URL before creating a new one to avoid leaks.
-				if (previewUrl) URL.revokeObjectURL(previewUrl);
-				previewUrl = URL.createObjectURL(blob);
-			} catch {
-				if (generation !== previewGeneration) return;
-				if (previewUrl) URL.revokeObjectURL(previewUrl);
-				previewUrl = null;
-			} finally {
-				if (generation === previewGeneration) previewLoading = false;
-			}
-		}, 500);
-
-		// Cleanup runs on every re-run AND on component teardown.
-		return () => {
-			if (previewTimeout) {
-				clearTimeout(previewTimeout);
-				previewTimeout = null;
-			}
-		};
-	});
-
-	/** Revoke the final preview URL when the component is destroyed. */
-	onDestroy(() => {
-		if (previewUrl) {
-			URL.revokeObjectURL(previewUrl);
-			previewUrl = null;
-		}
-	});
+	let mobileView = $state<'editor' | 'preview'>('editor');
+	let downloadError = $state('');
+	let moreActions = $state(false);
 
 	/* ----------------------------------------------------------------------- */
 	/* Download actions                                                        */
@@ -243,7 +153,8 @@
 	 * object-stream optimisation for a smaller file.
 	 */
 	async function downloadPdf(compressed = false) {
-		if (!store.isValid) return;
+		if (!store.isValid || loading || compressedLoading) return;
+		downloadError = '';
 
 		if (compressed) {
 			compressedLoading = true;
@@ -265,7 +176,10 @@
 			a.href = url;
 			a.download = `${store.data.invoiceNumber}.pdf`;
 			a.click();
-			URL.revokeObjectURL(url);
+			window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+		} catch {
+			downloadError =
+				'PDF’en kunne ikke genereres. Kontrollér felterne, og prøv igen. Brug almindelige bogstaver i stedet for emoji og specialtegn.';
 		} finally {
 			if (compressed) {
 				compressedLoading = false;
@@ -363,16 +277,21 @@
 	{@html jsonLdScript}
 </svelte:head>
 
-<div class="mx-auto max-w-7xl px-4 py-10 sm:py-14">
+<div class="generator-shell mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
 	<!-- Sticky action bar (hidden when printing) -->
 	<div
-		class="bg-background/95 border-border supports-[backdrop-filter]:bg-background/70 no-print sticky top-14 z-30 -mx-4 mb-10 flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3 backdrop-blur sm:mb-14"
+		class="generator-actions bg-background border-border no-print sticky top-16 z-30 mb-6 flex flex-wrap items-center justify-between gap-3 border-b py-3"
 	>
 		<div class="flex min-w-0 flex-wrap items-center gap-3">
 			<p class="text-muted-foreground inline-flex items-center gap-2 text-xs sm:text-sm">
 				<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
-				<span class="hidden sm:inline">Din kladde gemmes automatisk i din browser.</span>
-				<span class="sm:hidden">Kladde gemmes</span>
+				<span role="status"
+					>{store.storageStatus === 'error'
+						? 'Kladden kan ikke gemmes. Hold siden åben.'
+						: store.storageStatus === 'saving'
+							? 'Gemmer kladde…'
+							: 'Kladde gemt i denne browser'}</span
+				>
 			</p>
 			{#if canSaveToCloud && data.clients.length > 0}
 				<select
@@ -387,8 +306,12 @@
 				</select>
 			{/if}
 		</div>
-		<div class="ml-auto flex flex-wrap items-center gap-2">
+		<div
+			class="action-buttons flex flex-wrap items-center gap-2"
+			class:extra-actions-open={moreActions}
+		>
 			<Button
+				class="secondary-action"
 				variant="ghost"
 				size="sm"
 				onclick={handlePrint}
@@ -398,6 +321,7 @@
 				Udskriv
 			</Button>
 			<Button
+				class="secondary-action"
 				variant="outline"
 				size="sm"
 				onclick={() => downloadPdf(true)}
@@ -412,6 +336,7 @@
 				{/if}
 			</Button>
 			<Button
+				class="primary-download order-first lg:order-none"
 				size="sm"
 				onclick={() => downloadPdf(false)}
 				disabled={!store.isValid || loading || compressedLoading}
@@ -424,6 +349,13 @@
 					Download PDF
 				{/if}
 			</Button>
+			<button
+				type="button"
+				class="border-border order-first min-h-11 rounded-md border px-3 text-sm font-medium lg:hidden"
+				aria-expanded={moreActions}
+				onclick={() => (moreActions = !moreActions)}
+				>{moreActions ? 'Færre valg' : 'Flere valg'}</button
+			>
 			{#if canSaveToCloud}
 				<Button
 					size="sm"
@@ -441,12 +373,12 @@
 		</div>
 	</div>
 
-	{#if cloudError || printError}
+	{#if cloudError || printError || downloadError}
 		<div
 			class="bg-destructive/10 text-destructive no-print mb-6 rounded-md p-3 text-sm"
 			role="alert"
 		>
-			{cloudError || printError}
+			{cloudError || printError || downloadError}
 		</div>
 	{/if}
 
@@ -458,72 +390,51 @@
 		</div>
 	{/if}
 
+	<div
+		class="mobile-switch border-border bg-secondary/40 mb-6 grid grid-cols-2 rounded-lg border p-1 lg:hidden"
+		aria-label="Visning"
+	>
+		<button
+			type="button"
+			aria-pressed={mobileView === 'editor'}
+			onclick={() => (mobileView = 'editor')}>Rediger faktura</button
+		>
+		<button
+			type="button"
+			aria-pressed={mobileView === 'preview'}
+			onclick={() => (mobileView = 'preview')}>Se forhåndsvisning</button
+		>
+	</div>
 	<!-- Two-column layout: editor (left) + live preview (right) -->
-	<div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
+	<div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-8">
 		<!-- Editor column (hidden when printing) -->
-		<div class="no-print">
+		<div class="editor-column no-print" class:mobile-hidden={mobileView !== 'editor'}>
 			<InvoiceForm {store} />
 		</div>
 
 		<!-- Live preview column (the only thing visible when printing) -->
-		<aside class="preview-column lg:sticky lg:top-24 lg:self-start">
-			<div
-				class="border-border bg-card relative flex min-h-[420px] flex-col overflow-hidden rounded-lg border shadow-sm sm:min-h-[600px]"
-			>
-				<!-- Preview header (hidden when printing) -->
-				<div class="border-border no-print flex items-center justify-between border-b px-4 py-2.5">
-					<span class="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-						Live preview
-					</span>
-					{#if !store.isValid}
-						<span class="text-muted-foreground text-xs">Udfyld de påkrævede felter</span>
-					{:else if previewLoading}
-						<span class="text-muted-foreground flex items-center gap-1.5 text-xs">
-							<LoaderCircle size={12} class="animate-spin" />
-							Opdaterer…
-						</span>
-					{:else}
-						<span
-							class="text-foreground text-sm tabular-nums"
-							style="font-family: var(--font-display)">{store.data.invoiceNumber}</span
-						>
-					{/if}
-				</div>
-
-				<!-- PDF iframe or loading placeholder -->
-				{#if !store.isValid}
-					<div
-						class="text-muted-foreground flex flex-1 flex-col items-center justify-center gap-3 p-8 text-center"
-						aria-live="polite"
-					>
-						<div
-							class="bg-secondary text-foreground flex h-12 w-12 items-center justify-center rounded-full"
-						>
-							<FileText size={22} />
-						</div>
-						<div class="space-y-1">
-							<p class="text-foreground text-sm font-medium">Din faktura vises her</p>
-							<p class="max-w-xs text-sm">
-								Udfyld sælger, modtager og mindst én fakturalinje for at se forhåndsvisningen.
-							</p>
-						</div>
-					</div>
-				{:else if previewUrl}
-					<iframe
-						title="Faktura preview"
-						src={previewUrl}
-						class="preview-frame h-[600px] w-full flex-1 lg:h-[750px]"
-					></iframe>
-				{:else}
-					<div
-						class="text-muted-foreground flex flex-1 flex-col items-center justify-center gap-3 p-6"
-						aria-live="polite"
-					>
-						<LoaderCircle size={24} class="animate-spin" />
-						<p class="text-sm">Genererer forhåndsvisning…</p>
-					</div>
-				{/if}
+		<aside
+			class="preview-column lg:sticky lg:top-40 lg:self-start"
+			class:mobile-hidden={mobileView !== 'preview'}
+			aria-label="Forhåndsvisning af faktura"
+		>
+			<div class="mb-3 flex items-center justify-between">
+				<span class="text-sm font-semibold">Din faktura</span>
+				<span class="text-muted-foreground inline-flex items-center gap-1.5 text-xs"
+					><span class="bg-primary h-1.5 w-1.5 rounded-full"></span> Opdateres, mens du skriver</span
+				>
 			</div>
+			<div class="border-border bg-secondary/40 rounded-xl border p-3 sm:p-5">
+				<InvoicePreview invoice={store.data} />
+			</div>
+			<p class="text-muted-foreground mt-3 text-center text-xs">
+				Kladdevisning. Download PDF for det endelige layout.
+			</p>
+			{#if !store.isValid}
+				<p class="text-muted-foreground mt-2 text-center text-xs">
+					Udfyld de påkrævede felter for at downloade.
+				</p>
+			{/if}
 		</aside>
 	</div>
 
@@ -581,3 +492,66 @@
 		</section>
 	</div>
 </div>
+
+<style>
+	.generator-shell :global(input:not([type='file'])),
+	.generator-shell :global(select) {
+		min-height: 44px;
+	}
+	.generator-shell :global(button) {
+		min-height: 44px;
+	}
+	.generator-shell :global(button:focus-visible),
+	.generator-shell :global(a:focus-visible) {
+		outline: 2px solid var(--ring);
+		outline-offset: 4px;
+	}
+	.mobile-switch button {
+		min-height: 44px;
+		font-size: 14px;
+		font-weight: 600;
+		border-radius: 6px;
+	}
+	.mobile-switch button[aria-pressed='true'] {
+		background: var(--card);
+		box-shadow: 0 1px 3px #26334a12;
+	}
+	@media (max-width: 1023px) {
+		.mobile-hidden {
+			display: none;
+		}
+		.generator-actions {
+			position: static;
+		}
+		.action-buttons {
+			width: 100%;
+		}
+		.action-buttons :global(.primary-download) {
+			flex: 1;
+		}
+		.action-buttons :global(.secondary-action) {
+			display: none;
+		}
+		.extra-actions-open :global(.secondary-action) {
+			display: inline-flex;
+		}
+	}
+	@media (max-width: 479px) {
+		.generator-actions {
+			gap: 0.5rem;
+		}
+		.action-buttons {
+			margin-left: auto;
+		}
+		.generator-shell :global(input),
+		.generator-shell :global(select) {
+			font-size: 16px;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.generator-shell :global(*) {
+			animation: none !important;
+			transition: none !important;
+		}
+	}
+</style>

@@ -60,7 +60,6 @@ CVR/VIES network responses were verified in the release follow-up below. Logo fi
 
 The concept's handwritten annotations are represented by readable text and existing icons. Existing lower homepage content remains available below the new hero. Account-only workflows remain an authenticated UAT limitation.
 
-
 ## Release follow-up — 2026-10-23
 
 - Fixed VIES outages/malformed responses being interpreted as invalid VAT numbers; unavailable checks now retain manual-entry fallback. Increased the upstream timeout to 25 seconds.

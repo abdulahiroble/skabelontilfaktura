@@ -354,9 +354,9 @@ Complete cleanup after restoring the key.
 
    ```ts
    await autumn.billing.update({
-     customerId,
-     planId,
-     cancelAction: 'cancel_immediately'
+   	customerId,
+   	planId,
+   	cancelAction: 'cancel_immediately'
    });
    ```
 
@@ -365,8 +365,8 @@ Complete cleanup after restoring the key.
 
    ```ts
    await autumn.customers.delete({
-     customerId,
-     deleteInStripe: true
+   	customerId,
+   	deleteInStripe: true
    });
    ```
 
@@ -382,12 +382,12 @@ Complete cleanup after restoring the key.
 
 ## Failure taxonomy
 
-| Result | Meaning |
-|---|---|
-| PASS | Real deployed behavior completed with persistent/external evidence |
-| FAIL | Expected behavior was attempted and did not complete |
-| BLOCKED | Required credential, dashboard access, or environment was unavailable |
-| NOT TESTED | The workflow was intentionally skipped; explain why |
+| Result     | Meaning                                                               |
+| ---------- | --------------------------------------------------------------------- |
+| PASS       | Real deployed behavior completed with persistent/external evidence    |
+| FAIL       | Expected behavior was attempted and did not complete                  |
+| BLOCKED    | Required credential, dashboard access, or environment was unavailable |
+| NOT TESTED | The workflow was intentionally skipped; explain why                   |
 
 Special billing labels:
 
@@ -409,15 +409,16 @@ Use this structure:
 Overall: PASS / FAIL / BLOCKED
 Live Stripe recommendation: CONNECT / DO NOT CONNECT
 
-| Gate or feature | Result | Evidence |
-|---|---|---|
-| Stripe sandbox checkout | PASS | ... |
-| Autumn plan activation | PASS | ... |
-| Automatic webhook delivery | FAIL | ... |
-| Local entitlement persistence | ... | ... |
-| Advertised feature | ... | ... |
+| Gate or feature               | Result | Evidence |
+| ----------------------------- | ------ | -------- |
+| Stripe sandbox checkout       | PASS   | ...      |
+| Autumn plan activation        | PASS   | ...      |
+| Automatic webhook delivery    | FAIL   | ...      |
+| Local entitlement persistence | ...    | ...      |
+| Advertised feature            | ...    | ...      |
 
 ## Cleanup
+
 - Live key restored: yes/no/not applicable
 - Sandbox subscription canceled: yes/no
 - Autumn/Stripe test customer deleted: yes/no
@@ -426,9 +427,11 @@ Live Stripe recommendation: CONNECT / DO NOT CONNECT
 - Browser/log artifacts removed: yes/no
 
 ## Blockers
+
 - ...
 
 ## Next action
+
 - ...
 ```
 

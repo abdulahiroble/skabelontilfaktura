@@ -26,7 +26,7 @@
 	let next = '';
 	if (typeof window !== 'undefined') {
 		const raw = new URLSearchParams(window.location.search).get('next');
-		next = raw && raw.startsWith('/') && !raw.startsWith('//') ? raw : '';
+		next = raw && raw.startsWith('/') && !raw.startsWith('//') && !raw.includes('\\') ? raw : '';
 	}
 
 	async function submit() {
@@ -44,9 +44,8 @@
 				error = translateError(result.error.message ?? result.error.code ?? 'unknown');
 				return;
 			}
-			window.location.href = next || '/generator/';
-		} catch (e) {
-			console.error('[login] auth request failed', e);
+			window.location.href = next || '/konto/';
+		} catch {
 			error = 'Der gik noget galt. Prøv igen om lidt.';
 		} finally {
 			submitting = false;
@@ -86,14 +85,14 @@
 	<div class="auth-paper">
 		<div class="space-y-8">
 			<div class="space-y-3">
-				<p class="auth-eyebrow">DIN FAKTURAKONTO</p>
+				<p class="auth-eyebrow">DINE KØB OG DOWNLOADS</p>
 				<h1 class="text-4xl font-semibold tracking-tight">
 					{mode === 'login' ? 'Log ind' : 'Opret bruger'}
 				</h1>
 				<p class="text-muted-foreground text-sm">
 					{mode === 'login'
-						? 'Velkommen tilbage. Log ind for at få adgang til dine fakturaer og indstillinger.'
-						: 'Opret en gratis bruger for at gemme dine fakturaer på tværs af enheder.'}
+						? 'Log ind for at finde dine købte filer eller fortsætte til betaling.'
+						: 'Opret en konto, så du kan købe og hente Fakturapakken igen. Generatoren kræver ikke en konto.'}
 				</p>
 			</div>
 
@@ -153,6 +152,18 @@
 				<Button type="submit" class="h-12 w-full" disabled={submitting}>
 					{submitting ? 'Et øjeblik…' : mode === 'login' ? 'Log ind' : 'Opret bruger'}
 				</Button>
+				{#if mode === 'login'}
+					<p class="text-center text-sm">
+						<a href="/adgang/" class="text-primary underline">Glemt adgangskode?</a>
+					</p>
+				{:else}
+					<p class="text-muted-foreground text-xs">
+						Læs hvordan vi behandler dine oplysninger i <a
+							href="/privatlivspolitik/"
+							class="underline">privatlivspolitikken</a
+						>.
+					</p>
+				{/if}
 			</form>
 
 			<div class="text-muted-foreground text-center text-sm">

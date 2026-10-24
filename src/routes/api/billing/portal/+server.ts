@@ -32,8 +32,7 @@ export const POST: RequestHandler = async ({ locals, platform }) => {
 				: undefined;
 		console.error('[billing] Customer portal failed', {
 			status: status ?? null,
-			code: /insufficient_scopes/i.test(message) ? 'insufficient_scopes' : null,
-			message: message.slice(0, 500)
+			code: /insufficient_scopes/i.test(message) ? 'insufficient_scopes' : null
 		});
 		if (status === 429) {
 			return json(

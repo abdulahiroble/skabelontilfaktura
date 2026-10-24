@@ -18,9 +18,15 @@ import { createAuth } from '$lib/server/auth';
 export const handle: Handle = async ({ event, resolve }) => {
 	// Default to no authenticated user for this request.
 	event.locals.user = null;
+	if (event.url.pathname.startsWith('/adgang')) {
+		event.setHeaders({ 'Cache-Control': 'private, no-store', 'Referrer-Policy': 'no-referrer' });
+	}
 
 	const env = event.platform?.env;
-	if (event.url.pathname === '/api/autumn/webhook') {
+	if (
+		event.url.pathname === '/api/autumn/webhook' ||
+		event.url.pathname === '/api/internal/billing/reconcile'
+	) {
 		return resolve(event);
 	}
 	if (!env?.DATABASE_URL) {
@@ -41,9 +47,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 				name: session.user.name ?? undefined
 			};
 		}
-	} catch (error) {
+	} catch {
 		// Transient error (e.g. DB unavailable): do NOT clear the session cookie.
-		console.error('[hooks.server] Session validation failed:', error);
+		console.error('[hooks.server] Session validation failed');
 	}
 
 	return resolve(event);

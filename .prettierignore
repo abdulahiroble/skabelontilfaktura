@@ -13,3 +13,5 @@ skabelontilfaktura-prd.md
 .mcp.json
 .playwright-mcp
 drizzle
+tmp
+outputs

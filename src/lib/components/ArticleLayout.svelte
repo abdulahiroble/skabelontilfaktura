@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
+	import FakturapakkeOffer from '$lib/components/FakturapakkeOffer.svelte';
 
 	interface Props {
 		title: string;
@@ -73,4 +74,7 @@
 		Skabelontilfaktura.dk er et værktøj til at generere fakturaer og udgør ikke juridisk rådgivning.
 		Brugeren er selv ansvarlig for overholdelse af gældende lovgivning.
 	</p>
+	<div class="mt-10">
+		<FakturapakkeOffer source="article" />
+	</div>
 </article>

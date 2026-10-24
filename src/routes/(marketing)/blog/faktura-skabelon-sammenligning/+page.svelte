@@ -260,12 +260,10 @@
 			<div class="border-border rounded-xl border p-5">
 				<h3 class="font-semibold">"Min virksomhed har omsætning over 300.000 DKK"</h3>
 				<p class="text-muted-foreground mt-2 text-sm">
-					Fra 2026 kræver loven digital bogføring. Her bør du overveje
-					<a href="/pris/" class="text-primary font-medium hover:underline"
-						>skabelontilfaktura.dk Pro</a
-					>
-					med cloud-arkiv, klientdatabase og CSV-eksport, eller et registreret bogføringssystem som Dinero
-					eller e-conomic.
+					For relevante personligt ejede virksomheder gælder digital bogføringspligt fra 2026, når
+					nettoomsætningen overstiger 300.000 kr. i to på hinanden følgende indkomstår. Undersøg et
+					bogføringssystem som Dinero eller e-conomic. Vores generator og Fakturapakken erstatter
+					ikke digital bogføring.
 				</p>
 			</div>
 
@@ -317,7 +315,7 @@
 				>
 			</li>
 			<li>
-				<a href="/pris/" class="text-primary hover:underline">Priser på Pro</a>
+				<a href="/pris/" class="text-primary hover:underline">Se Fakturapakken</a>
 			</li>
 		</ul>
 	</div>

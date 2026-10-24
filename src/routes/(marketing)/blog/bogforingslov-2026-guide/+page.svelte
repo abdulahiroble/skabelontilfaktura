@@ -305,30 +305,30 @@
 		<section>
 			<h2 class="text-2xl font-bold tracking-tight">Hvordan hjælper skabelontilfaktura.dk?</h2>
 			<p class="mb-4">
-				Skabelontilfaktura.dk hjælper med fakturering og administration, men er ikke et registreret
-				bogføringssystem. Vores <strong>Pro-abonnement</strong> inkluderer:
+				Skabelontilfaktura.dk hjælper dig med at lave dokumenter, men er ikke et bogføringssystem.
+				Du kan vælge:
 			</p>
 			<ul class="list-disc space-y-2 pl-6">
 				<li>
-					<strong>CSV-eksport</strong> - hent fakturaposteringer til videre behandling hos revisor eller
-					i dit regnskabssystem.
+					<strong>Gratis generator</strong> - opret en faktura og hent den som PDF.
 				</li>
 				<li>
-					<strong>Cloud-arkiv</strong> af fakturaer og PDF-filer på tværs af enheder.
+					<strong>Gratis enkle skabeloner</strong> til Word, Excel og PDF.
 				</li>
 				<li>
-					<strong>Klientdatabase</strong> - hold styr på alle dine kunder på tværs af enheder.
+					<strong>Fakturapakken</strong> - matchende faktura, tilbud og kreditnota til Word.
 				</li>
 				<li>
-					<strong>Automatisk nummerering</strong> - fakturanumre, der følger bogføringslovens krav.
+					<strong>Excel med formler</strong> i Fakturapakken - beregn moms og total.
 				</li>
 				<li>
-					<strong>Rykkermails</strong> - send næste rykkertrin fra den gemte faktura.
+					<strong>En kort guide</strong> og tekst til en venlig betalingspåmindelse i Fakturapakken.
 				</li>
 			</ul>
 			<p class="mt-4">
-				Til <strong>49 DKK om måneden</strong> får du et enkelt værktøj til at gemme og administrere fakturaer.
-				Brug et registreret bogføringssystem eller en revisor til de krav, der ligger ud over faktureringen.
+				Fakturapakken koster <strong>99 kr. inkl. moms som engangsbetaling</strong>. Den indeholder
+				ikke cloud-opbevaring. Du skal selv gemme og bogføre dokumenterne. Brug en
+				bogføringsløsning, der opfylder de krav, der gælder for din virksomhed.
 			</p>
 		</section>
 
@@ -355,10 +355,10 @@
 		<section class="border-border bg-muted/30 rounded-xl border p-8 text-center">
 			<h2 class="text-2xl font-bold">Vil du have bedre styr på fakturaerne?</h2>
 			<p class="text-muted-foreground mt-2">
-				Opgrader til Pro og få cloud-arkiv, klientdatabase, CSV-eksport og rykkerflow.
+				Få et samlet sæt redigerbare filer til Word og Excel. Ingen abonnement.
 			</p>
 			<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-				<Button size="lg" href="/pris/">Se Pro-prisen</Button>
+				<Button size="lg" href="/pris/">Se Fakturapakken · 99 kr.</Button>
 				<Button size="lg" variant="outline" href="/generator/">Lav en faktura gratis</Button>
 			</div>
 		</section>

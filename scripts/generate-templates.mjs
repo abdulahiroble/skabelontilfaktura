@@ -206,7 +206,7 @@ function buildXlsx() {
 	const noteRow = payRow + 6;
 	put(
 		`A${noteRow}`,
-		'Er du momsfritaget, sættes momssatsen i cellen til venstre for "Moms 25%" til 0%. Fakturanumre skal være fortløbende.'
+		'Opkræver du ikke moms, ændres momsformlen til =0 og teksten til den relevante årsag. Kontrollér fakturanumre mod din bogføring.'
 	);
 
 	// Build sheet XML from the cell map, tracking the used range.
@@ -219,8 +219,20 @@ function buildXlsx() {
 			.filter(([ref]) => rowOf(ref) === r)
 			.map(([ref, cell]) => {
 				const isFormula = String(cell.value).startsWith('=');
-				const valueXml = isFormula ? `<f>${cell.value.slice(1)}</f>` : `<v>${cell.value}</v>`;
-				return `<c r="${ref}"${cell.format ? ' s="1"' : ''}>${valueXml}</c>`;
+				const number =
+					typeof cell.value === 'string' && /^\d+,\d+$/.test(cell.value)
+						? Number(cell.value.replace(',', '.'))
+						: typeof cell.value === 'number'
+							? cell.value
+							: null;
+				const escapeXml = (value) =>
+					String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+				const valueXml = isFormula
+					? `<f>${escapeXml(cell.value.slice(1))}</f><v>0</v>`
+					: number !== null
+						? `<v>${number}</v>`
+						: `<is><t xml:space="preserve">${escapeXml(cell.value)}</t></is>`;
+				return `<c r="${ref}"${!isFormula && number === null ? ' t="inlineStr"' : ''}${cell.format ? ' s="1"' : ''}>${valueXml}</c>`;
 			})
 			.join('');
 		rowsXml.push(`<row r="${r}">${rowCells}</row>`);
@@ -228,12 +240,12 @@ function buildXlsx() {
 
 	const sheet = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-	<sheetData>${rowsXml.join('')}</sheetData>
 	<cols>
 		<col min="1" max="1" width="38" customWidth="1"/>
 		<col min="2" max="3" width="12" customWidth="1"/>
 		<col min="4" max="6" width="18" customWidth="1"/>
 	</cols>
+	<sheetData>${rowsXml.join('')}</sheetData>
 </worksheet>`;
 
 	const workbook = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -244,6 +256,7 @@ function buildXlsx() {
 	const workbookRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 	<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+	<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
 </Relationships>`;
 
 	const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -433,7 +446,9 @@ function writeZip(name, files) {
 }
 
 mkdirSync(OUT_DIR, { recursive: true });
-writeZip('faktura-skabelon.docx', buildDocx());
+if (!process.argv.includes('--xlsx-only')) writeZip('faktura-skabelon.docx', buildDocx());
 writeZip('faktura-skabelon.xlsx', buildXlsx());
-writeFileSync(join(OUT_DIR, 'faktura-skabelon.pdf'), buildPdf(), 'latin1');
-console.log('wrote static/templates/faktura-skabelon.pdf');
+if (!process.argv.includes('--xlsx-only')) {
+	writeFileSync(join(OUT_DIR, 'faktura-skabelon.pdf'), buildPdf(), 'latin1');
+	console.log('wrote static/templates/faktura-skabelon.pdf');
+}

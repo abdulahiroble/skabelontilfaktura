@@ -23,6 +23,7 @@ export async function sendEmail(params: EmailParams, env?: Env): Promise<boolean
 	try {
 		const response = await fetch(MAILEROO_SEND_URL, {
 			method: 'POST',
+			signal: AbortSignal.timeout(15_000),
 			headers: {
 				Authorization: `Bearer ${apiKey}`,
 				'Content-Type': 'application/json'
@@ -47,8 +48,8 @@ export async function sendEmail(params: EmailParams, env?: Env): Promise<boolean
 
 		const result = (await response.json()) as { success?: boolean };
 		return result.success === true;
-	} catch (error) {
-		console.error('[email] Maileroo request failed', error);
+	} catch {
+		console.error('[email] Maileroo request failed');
 		return false;
 	}
 }

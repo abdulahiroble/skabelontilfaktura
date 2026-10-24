@@ -14,7 +14,7 @@
 
 	const navLinks = [
 		{ href: '/generator/', label: 'Fakturagenerator' },
-		{ href: '/pris/', label: 'Priser' },
+		{ href: '/pris/', label: 'Fakturapakken · 99 kr.' },
 		{ href: '/blog/', label: 'Guides' }
 	];
 
@@ -84,7 +84,7 @@
 						href="/login/"
 						class="text-muted-foreground hover:text-foreground hidden text-sm font-medium transition-colors sm:inline"
 					>
-						Log ind
+						Mine køb
 					</a>
 				{/if}
 				<details class="relative lg:hidden">
@@ -144,7 +144,7 @@
 						skabelontilfaktura.dk
 					</p>
 					<p class="text-muted-foreground max-w-xs text-sm leading-relaxed">
-						Danmarks nemmeste fakturaskabelon. Gratis, lovlig, og klar på 60 sekunder.
+						Lav en faktura gratis i browseren, eller køb et samlet sæt dokumenter til Word og Excel.
 					</p>
 				</div>
 				<div class="space-y-2.5">
@@ -159,7 +159,7 @@
 					<a
 						href="/pris/"
 						class="text-muted-foreground hover:text-foreground block text-sm transition-colors"
-						>Priser</a
+						>Fakturapakken</a
 					>
 					<a
 						href="/revisor/"
@@ -170,6 +170,16 @@
 				<div class="space-y-2.5">
 					<p class="text-muted-foreground text-xs font-semibold tracking-wider uppercase">Viden</p>
 					<a
+						href="/blog/faktura-skabelon-word/"
+						class="text-muted-foreground hover:text-foreground block text-sm transition-colors"
+						>Gratis Word-skabelon</a
+					>
+					<a
+						href="/blog/faktura-skabelon-excel/"
+						class="text-muted-foreground hover:text-foreground block text-sm transition-colors"
+						>Gratis Excel-skabelon</a
+					>
+					<a
 						href="/blog/"
 						class="text-muted-foreground hover:text-foreground block text-sm transition-colors"
 						>Guides</a
@@ -179,6 +189,11 @@
 					<p class="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
 						Juridisk
 					</p>
+					<a
+						href="/handelsbetingelser/"
+						class="text-muted-foreground hover:text-foreground block text-sm transition-colors"
+						>Handelsbetingelser</a
+					>
 					<a
 						href="/privatlivspolitik/"
 						class="text-muted-foreground hover:text-foreground block text-sm transition-colors"
@@ -191,6 +206,12 @@
 					>
 				</div>
 			</div>
+			<p class="text-muted-foreground mt-8 text-xs">
+				Ace Solutions · CVR 46295218 · Avedøreholmen 96C, 2650 Hvidovre ·
+				<a href="mailto:kontakt@skabelontilfaktura.dk" class="underline"
+					>kontakt@skabelontilfaktura.dk</a
+				>
+			</p>
 			<div class="border-border mt-10 border-t pt-6">
 				<p class="text-muted-foreground/80 max-w-3xl text-xs leading-relaxed">
 					Skabelontilfaktura.dk er et værktøj til at generere fakturaer og udgør ikke juridisk

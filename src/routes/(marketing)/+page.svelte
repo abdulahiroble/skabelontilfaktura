@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { buildMeta, softwareApplicationSchema, organizationSchema } from '$lib/seo';
 	import { BRANCHES } from '$lib/branches';
+	import FakturapakkeOffer from '$lib/components/FakturapakkeOffer.svelte';
 
 	const branchCount = BRANCHES.length;
 
@@ -191,10 +192,10 @@
 	<div class="grid gap-12 lg:grid-cols-3 lg:gap-8">
 		<div class="lg:col-span-1">
 			<p class="text-accent mb-2 text-sm font-medium">01</p>
-			<h2 class="text-2xl leading-tight">Alt hvad loven kræver, automatisk</h2>
+			<h2 class="text-2xl leading-tight">De vigtige fakturafelter samlet</h2>
 			<p class="text-muted-foreground mt-4 text-sm leading-relaxed">
-				Fakturanummer, momsbeløb, forfaldsdato, CVR. Vi kender reglerne i Momsloven, så du ikke
-				behøver.
+				Fakturanummer, momsbeløb, forfaldsdato og CVR. Felterne hjælper dig på vej. Du kontrollerer
+				oplysningerne, før du sender.
 			</p>
 		</div>
 		<div class="lg:col-span-1">
@@ -214,6 +215,8 @@
 		</div>
 	</div>
 </section>
+
+<FakturapakkeOffer source="homepage" />
 
 <!-- Internal links: templates by trade + guides -->
 <section class="border-border bg-secondary/40 border-y">

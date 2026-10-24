@@ -41,7 +41,7 @@
 		{
 			question: 'Hvor længe skal man gemme sine fakturaer?',
 			answer:
-				'Bogføringsloven kræver, at du opbevarer dine fakturaer og regnskabsmateriale i 5 år. Fra januar 2026 stilles der desuden krav om digital bogføring for virksomheder med en omsætning på over 300.000 DKK. Pro giver et cloud-arkiv og eksportmuligheder, men du er selv ansvarlig for at sikre, at din samlede bogføringsløsning opfylder kravene.'
+				'Regnskabsmateriale skal som udgangspunkt opbevares i fem år fra udgangen af det relevante regnskabsår. Fra 2026 gælder digital bogføringspligt også for relevante personligt ejede virksomheder med over 300.000 kr. i nettoomsætning i to på hinanden følgende indkomstår. Generatoren og Fakturapakken er ikke bogføringssystemer; gem selv dine dokumenter, og undersøg de krav, der gælder for din virksomhed.'
 		},
 		{
 			question: 'Hvordan beregner man moms på en faktura?',
@@ -177,10 +177,11 @@
 	<div class="not-prose border-border bg-muted/30 mt-16 rounded-xl border p-6">
 		<h2 class="text-2xl font-semibold">Klar til at sende din første faktura?</h2>
 		<p class="text-muted-foreground mt-3">
-			Vores fakturaskabelon er gratis at bruge og overholder alle danske regler - inklusiv
-			automatisk momsberegning, CVR-opslag og PDF-download. Se også vores
-			<a href="/pris/" class="text-primary font-medium hover:underline">priser</a>
-			for Pro, hvis du har brug for cloud-arkiv og klientdatabase.
+			Generatoren er gratis med momsberegning, CVR-opslag og PDF-download. Vil du genbruge dine egne
+			Word- og Excel-filer, kan du købe
+			<a href="/pris/" class="text-primary font-medium hover:underline"
+				>Fakturapakken til 99 kr. inkl. moms</a
+			>. Det er én betaling, ikke et abonnement.
 		</p>
 		<div class="mt-4 flex flex-wrap gap-3">
 			<Button href="/generator/">Lav en gratis faktura</Button>
@@ -198,7 +199,7 @@
 				>
 			</li>
 			<li>
-				<a href="/pris/" class="text-primary hover:underline">Priser på Pro</a>
+				<a href="/pris/" class="text-primary hover:underline">Se Fakturapakken</a>
 			</li>
 		</ul>
 	</div>

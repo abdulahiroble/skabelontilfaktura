@@ -10,6 +10,8 @@ declare global {
 		}
 
 		interface Locals {
+			/** Server-only, set by the scheduled Worker entry, never from HTTP. */
+			kitScheduled?: { scheduledTime: number };
 			db?: Database;
 			user: { id: string; email: string; name?: string } | null;
 		}
@@ -31,6 +33,15 @@ declare global {
 	 * (PUBLIC_APP_URL); locally put them in `.dev.vars`.
 	 */
 	interface Env {
+		KIT_PREFLIGHT_ENABLED?: string;
+		KIT_PREFLIGHT_SECRET?: string;
+		KIT_PREFLIGHT_EMAIL_SHA256?: string;
+		KIT_PREFLIGHT_DEADLINE?: string;
+		KIT_RECONCILIATION_ENABLED?: string;
+		/** Default closed until sandbox payment, tax and live webhook gates pass. */
+		KIT_CHECKOUT_ENABLED?: string;
+		/** A verified, active Stripe tax rate: Danish VAT 25%, inclusive. */
+		KIT_VAT_RATE_ID?: string;
 		DATABASE_URL: string;
 		BETTER_AUTH_SECRET: string;
 		PUBLIC_APP_URL?: string;

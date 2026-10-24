@@ -1,230 +1,219 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
-	import AffiliateCta from '$lib/components/AffiliateCta.svelte';
 	import { startCheckout } from '$lib/billing/checkout-client';
+	import { trackEvent } from '$lib/analytics';
 	import { buildMeta } from '$lib/seo';
+	import { KIT } from '$lib/billing/kit';
 
 	const meta = buildMeta({
-		title: 'Priser - gratis og Pro',
+		title: 'Fakturapakken – Word og Excel til 99 kr.',
 		description:
-			'Lav fakturaer gratis. Pro koster 49 DKK/måned og giver cloud-arkiv, klientdatabase, automatisk nummerering, rykkerflow og regnskabseksport.',
-		canonical: '/pris/',
-		ogType: 'website'
+			'Køb faktura, tilbud og kreditnota i Word samt Excel med momsberegning. Guide og betalingspåmindelse medfølger. 99 kr. inkl. moms, én betaling.',
+		canonical: '/pris/'
+	});
+	let purchasing = $state(false);
+	let checkoutError = $state('');
+	let availability = $state<'checking' | 'open' | 'closed'>('checking');
+	const contents = [
+		['Faktura med og uden moms', 'To Word-skabeloner. Vælg den, der passer til dit salg.'],
+		['Tilbud og kreditnota', 'To matchende Word-skabeloner til før og efter fakturaen.'],
+		[
+			'Excel med beregninger',
+			'Fire dokumentark og et udfyldt regneeksempel. Moms og total beregnes med formler.'
+		],
+		[
+			'Guide og betalingspåmindelse',
+			'Kom godt i gang, tjek oplysningerne, og send en venlig påmindelse uden gebyrer.'
+		]
+	];
+	onMount(() => {
+		trackEvent('kit_viewed', { item_id: KIT.id, currency: KIT.currency, value: KIT.price });
+		const controller = new AbortController();
+		fetch('/api/billing/availability', { signal: controller.signal })
+			.then(async (response) => {
+				const result = (await response.json()) as { available?: unknown };
+				availability = response.ok && result.available === true ? 'open' : 'closed';
+			})
+			.catch(() => {
+				if (!controller.signal.aborted) availability = 'closed';
+			});
+		return () => controller.abort();
 	});
 
-	let purchasingPlan = $state<string | null>(null);
-	let checkoutError = $state('');
-
-	/**
-	 * Purchase handler for the pricing buttons.
-	 *
-	 * POSTs to `/api/billing/checkout` with the chosen plan id and redirects
-	 * to the returned Stripe checkout URL. The server responds 401 when the
-	 * visitor is not signed in, in which case we route to the login page
-	 * (Better Auth has no login UI yet — the marketing layout shows a "Log
-	 * ind" nav link to `/login/`).
-	 */
-	async function purchase(planId: string) {
-		if (purchasingPlan) return;
-		purchasingPlan = planId;
+	async function purchase() {
+		if (purchasing || availability !== 'open') return;
+		purchasing = true;
 		checkoutError = '';
+		trackEvent('kit_checkout_requested', {
+			item_id: KIT.id,
+			currency: KIT.currency,
+			value: KIT.price
+		});
 		try {
-			const result = await startCheckout(planId);
+			const result = await startCheckout(KIT.id);
 			if ('error' in result) {
 				if (result.status === 401) {
-					window.location.href = `/login/?next=${encodeURIComponent('/pris/')}`;
+					window.location.href = '/login/?next=%2Fpris%2F';
 					return;
 				}
 				checkoutError = result.error;
+				trackEvent('kit_checkout_failed', { code: result.code ?? 'UNKNOWN' });
 				return;
 			}
+			trackEvent('begin_checkout', { item_id: KIT.id, currency: KIT.currency, value: KIT.price });
 			window.location.href = result.paymentUrl;
 		} finally {
-			purchasingPlan = null;
+			purchasing = false;
 		}
 	}
-
-	// Editorial pricing data — feature copy kept in Danish, rendered inline
-	// with accent dots rather than as card bullet lists.
-	const proFeatures = [
-		'Cloud-arkiv og fakturahistorik',
-		'Klientdatabase med autofyld',
-		'Automatisk fakturanummerering',
-		'Betalingsstatus og rykkerflow',
-		'Regnskabseksport som CSV'
-	];
-
-	const gratisFeatures = [
-		'Ubegrænsede fakturaer',
-		'PDF uden vandmærke',
-		'CVR-opslag',
-		'Automatisk moms',
-		'Dansk og engelsk'
-	];
 </script>
 
 <svelte:head>
 	<title>{meta.title}</title>
 	<meta name="description" content={meta.description} />
 	<link rel="canonical" href={meta.canonical} />
-	<meta name="robots" content={meta.robots} />
-
-	<meta property="og:type" content={meta.ogType} />
 	<meta property="og:title" content={meta.title} />
 	<meta property="og:description" content={meta.description} />
 	<meta property="og:url" content={meta.canonical} />
-	<meta property="og:site_name" content="skabelontilfaktura.dk" />
-	<meta property="og:locale" content="da_DK" />
-
-	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={meta.title} />
-	<meta name="twitter:description" content={meta.description} />
+	<meta property="og:type" content="website" />
 </svelte:head>
 
-<!-- Hero: left-aligned, editorial -->
-<section class="mx-auto max-w-6xl px-6 pt-20 pb-12 lg:pt-28">
-	<p class="text-primary mb-5 text-sm font-medium tracking-wide">Enkelt og gennemsigtigt</p>
-	<h1 class="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">Priser</h1>
-	<p class="text-muted-foreground mt-6 max-w-xl text-lg leading-relaxed">
-		Lav fakturaer gratis. Opgrader, når du vil gemme dem og holde styr på betalingerne.
-	</p>
-</section>
-
-<!-- Baseline: Gratis as a footnote, not a card -->
-<section class="mx-auto max-w-6xl px-6">
-	<div class="border-border border-b pb-6">
-		<p class="text-muted-foreground text-sm leading-relaxed">
-			<span class="text-foreground font-medium" style="font-family: var(--font-display)"
-				>Gratis til den hurtige faktura.</span
-			>
-			Lav og download ubegrænsede fakturaer uden konto eller kreditkort.
+<div class="mx-auto max-w-6xl px-6 py-14 sm:py-20">
+	<header class="max-w-3xl">
+		<p class="text-accent text-sm font-medium tracking-wide">FAKTURAPAKKEN · VERSION 1.0</p>
+		<h1 class="mt-5 text-4xl leading-tight font-semibold tracking-tight sm:text-6xl">
+			Dine dokumenter.<br /><span class="text-primary italic">Ikke endnu et abonnement.</span>
+		</h1>
+		<p class="text-muted-foreground mt-6 max-w-2xl text-lg leading-relaxed">
+			Faktura, tilbud og kreditnota i et samlet sæt til Word og Excel. Download filerne, tilpas dem,
+			og gem en ny kopi til hver kundeopgave.
 		</p>
-		<div class="text-muted-foreground mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs">
-			{#each gratisFeatures as feature (feature)}
-				<span class="flex items-center gap-1.5">
-					<span class="bg-accent h-1 w-1 rounded-full"></span>
-					{feature}
-				</span>
+	</header>
+
+	<div class="mt-12 grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:gap-20">
+		<section aria-labelledby="contents">
+			<h2 id="contents" class="text-2xl">Det får du i pakken</h2>
+			<dl class="mt-6">
+				{#each contents as [title, description] (title)}
+					<div class="border-border border-t py-5">
+						<dt class="font-semibold">{title}</dt>
+						<dd class="text-muted-foreground mt-2 text-sm leading-relaxed">{description}</dd>
+					</div>
+				{/each}
+			</dl>
+			<p class="text-muted-foreground text-sm">
+				8 filer i én ZIP: 6 Word-filer, 1 Excel-fil med 5 ark og en læs-mig-fil. Ingen makroer.
+				Word-beløb udfyldes manuelt; Excel indeholder formler.
+			</p>
+		</section>
+
+		<aside
+			class="border-border border-y py-7 lg:border-y-0 lg:border-l lg:py-0 lg:pl-10"
+			aria-label="Køb Fakturapakken"
+		>
+			<p class="text-6xl font-semibold tracking-tight" style="font-family: var(--font-display)">
+				99 kr.
+			</p>
+			<p class="text-muted-foreground mt-3">Inklusive 25% moms. Én betaling.</p>
+			<p class="text-muted-foreground mt-5 text-sm leading-relaxed">
+				Du køber de færdige filer i version 1.0 til brug i din egen virksomhed. Ingen binding,
+				cloud-arkiv eller automatisk fornyelse.
+			</p>
+			<Button
+				size="lg"
+				class="mt-7 w-full"
+				onclick={purchase}
+				disabled={purchasing || availability !== 'open'}
+			>
+				{purchasing
+					? 'Åbner betaling…'
+					: availability === 'checking'
+						? 'Tjekker betaling…'
+						: availability === 'closed'
+							? 'Salget åbner snart'
+							: 'Køb og download · 99 kr.'}
+			</Button>
+			{#if availability === 'closed'}
+				<p class="text-muted-foreground mt-3 text-sm" role="status">
+					Vi færdiggør betalingen og leveringen. Der kan ikke købes endnu. Den gratis generator kan
+					bruges som normalt.
+				</p>
+			{/if}
+			<p class="text-muted-foreground mt-3 text-xs leading-relaxed">
+				Log ind eller opret en konto før betaling. Efter bekræftet betaling finder du filerne under
+				Mine køb.
+			</p>
+			<p class="text-muted-foreground mt-3 text-xs leading-relaxed">
+				Betaling via Stripe. Læs <a class="text-primary underline" href="/handelsbetingelser/"
+					>handelsbetingelserne</a
+				>. Som forbruger har du 14 dages fortrydelsesret.
+			</p>
+			{#if checkoutError}
+				<p class="text-destructive mt-5 text-sm" role="alert">{checkoutError}</p>
+			{/if}
+		</aside>
+	</div>
+
+	<section class="border-border mt-14 border-t pt-10" aria-labelledby="preview">
+		<h2 id="preview" class="text-2xl">Samme oplysninger. Tre forskellige dokumenter.</h2>
+		<p class="text-muted-foreground mt-3 max-w-2xl">
+			Eksempel på regnegangen i Excel. Alle beløb her er illustrative, ikke en faktura.
+		</p>
+		<div class="mt-6 grid gap-5 sm:grid-cols-3">
+			{#each ['TILBUD', 'FAKTURA', 'KREDITNOTA'] as title (title)}
+				<div class="border-border bg-card border p-6">
+					<p class="text-accent text-xs font-semibold tracking-wider">{title}</p>
+					<p class="mt-5 text-sm">Rådgivning · 2 timer à 750 kr.</p>
+					<dl class="text-muted-foreground mt-4 space-y-2 text-sm">
+						<div class="flex justify-between gap-2">
+							<dt>Ekskl. moms</dt>
+							<dd>{title === 'KREDITNOTA' ? '−' : ''}1.500 kr.</dd>
+						</div>
+						<div class="flex justify-between gap-2">
+							<dt>Moms 25%</dt>
+							<dd>{title === 'KREDITNOTA' ? '−' : ''}375 kr.</dd>
+						</div>
+						<div
+							class="border-border text-foreground flex justify-between gap-2 border-t pt-3 font-semibold"
+						>
+							<dt>I alt</dt>
+							<dd>{title === 'KREDITNOTA' ? '−' : ''}1.875 kr.</dd>
+						</div>
+					</dl>
+				</div>
 			{/each}
 		</div>
-	</div>
-</section>
+	</section>
 
-<!-- Pricing spread: Pro as hero, with a discoverable product tour. -->
-<section class="mx-auto max-w-6xl px-6 py-16">
-	{#if checkoutError}
-		<div
-			class="border-destructive/30 bg-destructive/10 text-destructive mb-8 rounded-lg border px-4 py-3 text-sm"
-			role="alert"
-			aria-live="assertive"
-		>
-			<p class="font-medium">Betalingen kunne ikke åbnes</p>
-			<p class="mt-1">{checkoutError}</p>
-		</div>
-	{/if}
-
-	<div class="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
-		<!-- Pro: hero tier, accent color -->
+	<section class="mt-14 grid gap-8 md:grid-cols-2" aria-label="Spørgsmål om pakken">
 		<div>
-			<p class="text-accent text-sm font-medium tracking-wide">Pro</p>
-			<div class="mt-3 flex items-baseline gap-2">
-				<span
-					class="text-6xl font-semibold tracking-tight sm:text-7xl"
-					style="font-family: var(--font-display)">49</span
-				>
-				<span class="text-muted-foreground text-lg">DKK /måned</span>
-			</div>
-			<p class="text-muted-foreground mt-5 max-w-md text-base leading-relaxed">
-				For selvstændige, der vil have styr på kunder, fakturaer og betalinger uden at skifte til et
-				fuldt regnskabsprogram.
+			<h2 class="text-xl">Skal jeg købe pakken for at lave en faktura?</h2>
+			<p class="text-muted-foreground mt-3 leading-relaxed">
+				Nej. <a href="/generator/" class="text-primary underline">Generatoren</a> og vores enkle gratis
+				skabeloner er stadig gratis. Pakken er et tilvalg til dig, der vil genbruge et samlet sæt filer.
 			</p>
-
-			<!-- Inline feature list with accent dots -->
-			<div class="mt-7 flex flex-wrap gap-x-6 gap-y-2.5 text-sm">
-				{#each proFeatures as feature (feature)}
-					<span class="flex items-center gap-2">
-						<span class="bg-accent h-1.5 w-1.5 rounded-full"></span>
-						{feature}
-					</span>
-				{/each}
-			</div>
-
-			<div class="mt-9 flex flex-wrap items-center gap-4">
-				<Button
-					size="lg"
-					class="px-7"
-					onclick={() => purchase('pro')}
-					disabled={purchasingPlan !== null}
-				>
-					{purchasingPlan === 'pro' ? 'Åbner betaling…' : 'Start Pro'}
-				</Button>
-				<Button
-					variant="outline"
-					onclick={() => purchase('pro_annual')}
-					disabled={purchasingPlan !== null}
-				>
-					{purchasingPlan === 'pro_annual' ? 'Åbner betaling…' : '490 DKK / år'}
-				</Button>
-				<span class="text-muted-foreground text-xs">To måneder gratis med årsbetaling</span>
-			</div>
 		</div>
-
-		<!-- Product tour: make every paid feature discoverable before purchase. -->
-		<div class="border-border lg:border-l lg:pl-16">
-			<p class="text-muted-foreground text-sm font-medium tracking-wide">Sådan bruges Pro</p>
-			<h2 class="mt-3 text-3xl leading-tight">Få styr på hele fakturaforløbet</h2>
-			<div class="mt-6 space-y-5 text-sm">
-				<div>
-					<p class="font-semibold">Fakturaer</p>
-					<p class="text-muted-foreground mt-1">
-						Gem PDF og fakturadata i cloud, find tidligere fakturaer og skift status.
-					</p>
-				</div>
-				<div>
-					<p class="font-semibold">Klienter</p>
-					<p class="text-muted-foreground mt-1">
-						Gem kundedata én gang og vælg klienten direkte i generatoren.
-					</p>
-				</div>
-				<div>
-					<p class="font-semibold">Eksport</p>
-					<p class="text-muted-foreground mt-1">
-						Hent bogføringsdata som CSV for en valgt regnskabsperiode.
-					</p>
-				</div>
-				<div>
-					<p class="font-semibold">Rykkere og nummerering</p>
-					<p class="text-muted-foreground mt-1">
-						Cloud-fakturaer nummereres automatisk. På fakturasiden kan du sende næste lovlige
-						rykkertrin.
-					</p>
-				</div>
-			</div>
+		<div>
+			<h2 class="text-xl">Hvilke programmer skal jeg bruge?</h2>
+			<p class="text-muted-foreground mt-3 leading-relaxed">
+				Word eller et program, der kan åbne .docx, og Excel eller et program, der kan åbne .xlsx.
+				Layout og formler kan variere i andre programmer. Softwarelicenser er ikke inkluderet.
+			</p>
 		</div>
-	</div>
-</section>
-
-<!-- Affiliate CTAs: kept exactly as before -->
-<section class="mx-auto max-w-6xl space-y-8 px-6 py-16">
-	<!-- Brug for et fuldt regnskabsprogram? Affiliate CTA after the pricing tiers. -->
-	<AffiliateCta partner="dinero" variant="card" />
-	<!-- Revisor matchmaking CTA at the bottom of the page. -->
-	<AffiliateCta partner="revisor" variant="card" />
-</section>
-
-<!-- Final CTA: clean, consistent with homepage -->
-<section class="border-border border-t">
-	<div class="mx-auto max-w-6xl px-6 py-20">
-		<div class="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
-			<div>
-				<h2 class="text-3xl leading-tight">
-					Klar til din første <span class="text-primary italic">faktura?</span>
-				</h2>
-				<p class="text-muted-foreground mt-2">
-					Det tager under et minut. Ingen konto, ingen kreditkort.
-				</p>
-			</div>
-			<Button size="lg" href="/generator/" class="px-8 py-3 text-base">Start gratis</Button>
+		<div>
+			<h2 class="text-xl">Er dette et bogføringssystem?</h2>
+			<p class="text-muted-foreground mt-3 leading-relaxed">
+				Nej. Du står selv for bogføring, korrekt nummerering og opbevaring. Pakken erstatter ikke
+				eventuelle krav om digital bogføring og er ikke personlig skatte- eller juridisk rådgivning.
+			</p>
 		</div>
-	</div>
-</section>
+		<div>
+			<h2 class="text-xl">Hvor længe kan jeg bruge filerne?</h2>
+			<p class="text-muted-foreground mt-3 leading-relaxed">
+				De downloadede filer kan du beholde og genbruge. Købet omfatter version 1.0, ikke løbende
+				opdateringer eller en garanti om fremtidig adgang til hjemmesiden. Tag selv backup.
+			</p>
+		</div>
+	</section>
+</div>

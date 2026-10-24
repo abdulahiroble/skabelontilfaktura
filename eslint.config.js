@@ -35,6 +35,8 @@ export default ts.config(
 	},
 	{
 		ignores: [
+			'tmp/',
+			'outputs/',
 			'.svelte-kit/',
 			'node_modules/',
 			'build/',

@@ -59,6 +59,7 @@ export function gtag(...args: unknown[]): void {
  */
 export function updateConsent(values: Record<string, string>): void {
 	gtag('consent', 'update', values);
+	if (typeof window !== 'undefined') window.dispatchEvent(new Event('faktura:consent-changed'));
 }
 
 /**
@@ -95,12 +96,15 @@ export function googleAnalyticsScriptTags(measurementId: string | undefined): st
 /**
  * Send a GA4 custom event from the browser.
  *
- * Uses the same `window.dataLayer` queue as the Consent Mode v2 shim, so events
- * are recorded even before the async gtag.js finishes loading. No-op on the
- * server.
+ * Send actual gtag event commands, not GTM-style objects. Optional product
+ * analytics require explicit consent and never contain invoice/customer data.
  */
 export function trackEvent(eventName: string, params: Record<string, string | number> = {}): void {
 	if (typeof window === 'undefined') return;
-	window.dataLayer = window.dataLayer || [];
-	window.dataLayer.push({ event: eventName, ...params });
+	try {
+		if (window.localStorage.getItem(CONSENT_STORAGE_KEY) !== 'accepted') return;
+	} catch {
+		return;
+	}
+	gtag('event', eventName, params);
 }

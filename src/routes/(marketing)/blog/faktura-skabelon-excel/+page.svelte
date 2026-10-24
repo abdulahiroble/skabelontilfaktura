@@ -121,6 +121,7 @@
 			<div class="mt-4 flex flex-wrap gap-3">
 				<Button href="/templates/faktura-skabelon.xlsx" download>Download .xlsx</Button>
 				<Button variant="outline" href="/skabeloner/">Se skabeloner efter erhverv</Button>
+				<Button variant="outline" href="/pris/">Se hele Fakturapakken · 99 kr.</Button>
 			</div>
 		</section>
 

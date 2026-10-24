@@ -254,7 +254,8 @@
 					<strong>Gratis fakturagenerator</strong> - lav ubegrænsede fakturaer uden vandmærke.
 				</li>
 				<li>
-					<strong>Pro-tier (49 DKK/måned)</strong> - cloud-arkiv, klientdatabase, CSV-eksport og rykkerflow.
+					<strong>Fakturapakken (99 kr. én gang)</strong> - faktura, tilbud og kreditnota til Word samt
+					Excel med beregninger.
 				</li>
 				<li>
 					<strong>Automatisk CVR-opslag</strong> - slip for at indtaste kundedata manuelt.
@@ -285,7 +286,7 @@
 			</p>
 			<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
 				<Button size="lg" href="/generator/">Lav faktura gratis</Button>
-				<Button size="lg" variant="outline" href="/pris/">Se Pro-fordele</Button>
+				<Button size="lg" variant="outline" href="/pris/">Se Fakturapakken</Button>
 			</div>
 		</section>
 

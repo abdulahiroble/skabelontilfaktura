@@ -14,6 +14,9 @@
 	import { createInvoiceStore } from '$lib/invoice/store.svelte';
 	import { buildMeta, faqPageSchema, howToSchema } from '$lib/seo';
 	import type { PageData } from './$types';
+	import { onMount } from 'svelte';
+	import { trackEvent } from '$lib/analytics';
+	import FakturapakkeOffer from '$lib/components/FakturapakkeOffer.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -151,6 +154,8 @@
 	let mobileView = $state<'editor' | 'preview'>('editor');
 	let downloadError = $state('');
 	let moreActions = $state(false);
+	let hasDownloaded = $state(false);
+	onMount(() => trackEvent('generator_viewed'));
 
 	/* ----------------------------------------------------------------------- */
 	/* Download actions                                                        */
@@ -184,6 +189,8 @@
 			a.href = url;
 			a.download = `${store.data.invoiceNumber}.pdf`;
 			a.click();
+			hasDownloaded = true;
+			trackEvent('invoice_pdf_downloaded', { compressed: compressed ? 1 : 0 });
 			window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 		} catch {
 			downloadError =
@@ -453,7 +460,20 @@
 	</div>
 
 	<!-- FAQ and related guides: SEO content below the invoice app -->
+	{#if hasDownloaded}
+		<div class="no-print">
+			<p role="status" class="text-primary mx-auto max-w-6xl px-6 pt-8 text-sm">
+				Din PDF er klar. Gem den og en backup et sikkert sted.
+			</p>
+			<FakturapakkeOffer source="pdf_download" />
+		</div>
+	{/if}
 	<div class="mx-auto my-16 max-w-3xl px-6 sm:my-20">
+		<p class="text-muted-foreground mb-8 text-sm leading-relaxed">
+			Kladden gemmes kun i denne browser, ikke i et cloud-arkiv. Rydder du browserdata eller skifter
+			enhed, kan den gå tabt. Gem selv dine færdige fakturaer. Generatoren er ikke et
+			bogføringssystem.
+		</p>
 		<section>
 			<h2 class="text-2xl font-bold tracking-tight">
 				Ofte stillede spørgsmål om at lave en faktura

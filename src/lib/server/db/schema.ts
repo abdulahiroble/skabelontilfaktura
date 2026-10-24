@@ -11,6 +11,7 @@ import {
 	uuid,
 	unique
 } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 /**
  * Drizzle schema for Faktura.
@@ -211,4 +212,73 @@ export const subscription = pgTable(
 		updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()
 	},
 	(table) => [unique('subscription_user_plan_unq').on(table.userId, table.plan)]
+);
+
+/**
+ * Immutable invoice identity, mutable verification/refund state. Financial rows
+ * RESTRICT user deletion: never cascade-delete paid history with an auth account.
+ * Environment is part of every key, so sandbox cannot grant live downloads.
+ */
+export const kitPurchase = pgTable(
+	'kit_purchase',
+	{
+		id: uuid('id').primaryKey().defaultRandom(),
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'restrict' }),
+		environment: text('environment').notNull(),
+		sku: text('sku').notNull(),
+		providerInvoiceId: text('provider_invoice_id').notNull(),
+		stripeInvoiceId: text('stripe_invoice_id').notNull(),
+		status: text('status').notNull(),
+		totalMinor: integer('total_minor').notNull(),
+		paidMinor: integer('paid_minor').notNull(),
+		refundedMinor: integer('refunded_minor').notNull().default(0),
+		assetSha256: text('asset_sha256').notNull(),
+		purchasedAt: timestamp('purchased_at', { mode: 'date' }).notNull(),
+		verifiedAt: timestamp('verified_at', { mode: 'date' }).defaultNow().notNull(),
+		reconcileAfter: timestamp('reconcile_after', { mode: 'date' })
+			.default(sql`(now() at time zone 'UTC')`)
+			.notNull(),
+		reconcileLeaseUntil: timestamp('reconcile_lease_until', { mode: 'date' }),
+		reconcileToken: uuid('reconcile_token'),
+		reconcileCheckedAt: timestamp('reconcile_checked_at', { mode: 'date' }),
+		reconcileRefundedAt: timestamp('reconcile_refunded_at', { mode: 'date' }),
+		reconcileRunId: uuid('reconcile_run_id')
+	},
+	(table) => [
+		unique('kit_purchase_environment_invoice_unq').on(table.environment, table.providerInvoiceId),
+		unique('kit_purchase_environment_stripe_unq').on(table.environment, table.stripeInvoiceId),
+		index('kit_purchase_user_environment_idx').on(table.userId, table.environment),
+		index('kit_purchase_reconcile_due_idx')
+			.on(table.environment, table.sku, table.reconcileAfter, table.id)
+			.where(sql`${table.status} in ('paid', 'review')`)
+	]
+);
+
+export const billingEvent = pgTable(
+	'billing_event',
+	{
+		environment: text('environment').notNull(),
+		messageId: text('message_id').notNull(),
+		eventType: text('event_type').notNull(),
+		processedAt: timestamp('processed_at', { mode: 'date' }).defaultNow().notNull()
+	},
+	(table) => [primaryKey({ columns: [table.environment, table.messageId] })]
+);
+
+/** A DB-enforced checkout lease also protects across tabs/Worker instances. */
+export const kitCheckout = pgTable(
+	'kit_checkout',
+	{
+		userId: text('user_id')
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		environment: text('environment').notNull(),
+		sku: text('sku').notNull(),
+		attemptId: uuid('attempt_id').notNull(),
+		paymentUrl: text('payment_url'),
+		expiresAt: timestamp('expires_at', { mode: 'date' }).notNull()
+	},
+	(table) => [primaryKey({ columns: [table.userId, table.environment, table.sku] })]
 );

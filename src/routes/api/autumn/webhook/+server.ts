@@ -1,134 +1,123 @@
 import { json, error, type RequestHandler } from '@sveltejs/kit';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
+import { KIT } from '$lib/billing/kit';
 import { getDb } from '$lib/server/db/client';
-import { subscription } from '$lib/server/db/schema';
+import { billingEvent, subscription, user } from '$lib/server/db/schema';
+import { getAutumnSecret } from '$lib/server/payments/autumn';
 import { verifyWebhook, type AutumnWebhookEnvelope } from '$lib/server/payments/webhook';
+import { billingEnvironment, kitEventIdentity } from '$lib/server/payments/kit-policy';
+import { fetchKitProofs, persistKitProofs } from '$lib/server/payments/kit-entitlements';
 
-/**
- * POST /api/autumn/webhook
- *
- * Receives Autumn billing events (delivered via Svix) and mirrors the
- * subscription state into the local `subscription` table, which drives
- * entitlements (`getEntitlements`).
- *
- * Security: the Svix signature IS the auth. This route must NOT require a
- * session cookie. `verifyWebhook` checks the `AUTUMN_WEBHOOK_SECRET` signing
- * secret plus a 5-minute timestamp window. Verification failures return 401
- * so Autumn/Svix retries are not mistakenly acked.
- *
- * Handled events:
- *   - `billing.updated` — plan activated / scheduled / updated / expired.
- *     For each `plan_changes` entry we upsert the subscription row keyed by
- *     `(user_id, plan_id)`:
- *       - `activated` → plan = plan_id, status = 'active', current_period_end
- *         = current_period_end (if any).
- *       - `expired` → status = 'expired' (so entitlements resolve to free).
- *       - `scheduled` / `updated` → mirror the subscription snapshot's status.
- *   - Unknown event types are acked (200) without side effects.
- *
- * Idempotency: re-delivered events simply re-apply the same upsert, which is
- * idempotent per (user, plan). (A `payments.autumn_event_id` UNIQUE column
- * can be added later if heavier side effects are introduced.)
- *
- * The customer ID used by Autumn is the Better Auth user ID (1:1), so
- * `data.customer_id` maps directly to `subscription.user_id`. Customer rows
- * are looked up via `subscription.autumn_customer_id` when present, falling
- * back to the user ID itself (matching the checkout endpoint, which passes
- * `customerId: user.id`).
- */
+const LEGACY_PLANS = new Set(['pro', 'pro_annual', 'business', 'lifetime_pro']);
+
 export const POST: RequestHandler = async ({ request, platform }) => {
 	const env = platform?.env;
-	if (!env?.DATABASE_URL) {
-		throw error(500, 'Database ikke konfigureret');
-	}
-
-	const rawBody = await request.text();
-	const verified = await verifyWebhook(rawBody, request.headers, env.AUTUMN_WEBHOOK_SECRET);
-	if (!verified) {
-		throw error(401, 'Ugyldig webhook-signatur');
-	}
-
-	let payload: AutumnWebhookEnvelope;
+	if (!env?.DATABASE_URL) throw error(503, 'Database unavailable');
+	if (Number(request.headers.get('content-length') ?? 0) > 256_000) throw error(413);
+	const raw = await request.text();
+	if (raw.length > 256_000) throw error(413);
+	let verified;
 	try {
-		payload = JSON.parse(verified) as AutumnWebhookEnvelope;
+		verified = await verifyWebhook(raw, request.headers, env.AUTUMN_WEBHOOK_SECRET);
 	} catch {
-		throw error(400, 'Ugyldig JSON');
+		throw error(401, 'Invalid signature configuration');
 	}
-
-	// Autumn nests the event type under `data.object` (confirmed by real
-	// deliveries and docs.useautumn.com/api-reference/webhooks/billingUpdated).
-	// Accept `data.object` and the top-level `type` for forward compatibility.
-	const eventType = payload.data?.object ?? payload.type;
-	if (eventType !== 'billing.updated' || !payload.data?.plan_changes?.length) {
-		// Unknown events are acked so Svix stops retrying.
-		return json({ received: true });
+	if (!verified) throw error(401, 'Invalid signature');
+	let payload: AutumnWebhookEnvelope;
+	let identity;
+	try {
+		payload = JSON.parse(verified);
+		identity = kitEventIdentity(payload);
+	} catch {
+		throw error(400, 'Invalid event identity');
 	}
-
+	if (!identity) return json({ received: true });
+	const messageId = request.headers.get('svix-id')!;
+	const environment = billingEnvironment(getAutumnSecret(env));
 	const db = getDb(env.DATABASE_URL);
-	// Autumn nests `customer_id` under `data` (confirmed by the captured body:
-	// `{"data":{"customer_id":"...","object":"billing.updated",...}}`).
-	const customerId = payload.data.customer_id;
-	const eventAt = payload.occurred_at
-		? new Date(
-				payload.occurred_at < 10_000_000_000 ? payload.occurred_at * 1000 : payload.occurred_at
-			)
-		: new Date();
-
-	for (const change of payload.data.plan_changes) {
-		const subscriptionSnapshot = change.subscription;
-		const purchaseSnapshot = change.purchase;
-		const planId = subscriptionSnapshot?.plan_id ?? purchaseSnapshot?.plan_id;
-		if (!planId) continue;
-
-		// `current_period_end` only exists on recurring subscription snapshots;
-		// one-off purchases (lifetime_pro / add-ons) have no billing period.
-		const currentPeriodEnd = subscriptionSnapshot?.current_period_end
-			? new Date(subscriptionSnapshot.current_period_end)
-			: null;
-		// Resolve the local user row: prefer an existing subscription row that
-		// references this Autumn customer, else treat the customer ID as the
-		// user ID (1:1 mapping).
-		const existing = await db
-			.select({ userId: subscription.userId })
-			.from(subscription)
-			.where(eq(subscription.autumnCustomerId, customerId))
-			.limit(1);
-		const userId = existing[0]?.userId ?? customerId;
-		const current = await db
-			.select({ autumnEventAt: subscription.autumnEventAt })
-			.from(subscription)
-			.where(and(eq(subscription.userId, userId), eq(subscription.plan, planId)))
-			.limit(1);
-		if (current[0]?.autumnEventAt && current[0].autumnEventAt >= eventAt) continue;
-
-		const status =
-			change.action === 'activated'
-				? 'active'
-				: change.action === 'expired'
-					? 'expired'
-					: (subscriptionSnapshot?.status ?? purchaseSnapshot?.status ?? 'active');
-
-		await db
-			.insert(subscription)
-			.values({
-				userId,
-				autumnCustomerId: customerId,
-				plan: planId,
-				status,
-				currentPeriodEnd,
-				autumnEventAt: eventAt
-			})
-			.onConflictDoUpdate({
-				target: [subscription.userId, subscription.plan],
-				set: {
-					autumnCustomerId: customerId,
-					status,
-					currentPeriodEnd,
-					autumnEventAt: eventAt,
-					updatedAt: new Date()
-				}
-			});
+	const seen = await db
+		.select({ messageId: billingEvent.messageId })
+		.from(billingEvent)
+		.where(and(eq(billingEvent.environment, environment), eq(billingEvent.messageId, messageId)))
+		.limit(1);
+	if (seen.length) return json({ received: true });
+	// Customer identity is the authenticated app user ID established at checkout.
+	// Never create accounts, match by email, or grant from an event's balance.
+	const owner = await db
+		.select({ id: user.id })
+		.from(user)
+		.where(eq(user.id, identity.customerId))
+		.limit(1);
+	if (!owner.length) return json({ received: true });
+	try {
+		const result = await fetchKitProofs(env, identity.customerId);
+		const changes = Array.isArray(payload.data.plan_changes) ? payload.data.plan_changes : [];
+		const expectsKitPayment = changes.some(
+			(change) =>
+				change.action === 'activated' &&
+				(change.purchase?.plan_id ?? change.subscription?.plan_id) === KIT.id
+		);
+		if (expectsKitPayment && !result.proofs.length) {
+			// Activation and invoice ingestion may race. Let Svix retry naturally.
+			return json(
+				{ error: 'Payment verification pending' },
+				{ status: 503, headers: { 'Retry-After': '15' } }
+			);
+		}
+		await db.transaction(async (tx) => {
+			const claimed = await tx
+				.insert(billingEvent)
+				.values({
+					environment,
+					messageId,
+					eventType: identity.type
+				})
+				.onConflictDoNothing()
+				.returning({ messageId: billingEvent.messageId });
+			if (!claimed.length) return;
+			await persistKitProofs(tx, identity.customerId, result);
+			// Preserve legacy rights, but the kit never enters the subscription table.
+			if (identity.type !== 'billing.updated') return;
+			const eventValue =
+				payload.occurred_at ?? Number(request.headers.get('svix-timestamp')) * 1000;
+			const eventAt = new Date(eventValue < 10_000_000_000 ? eventValue * 1000 : eventValue);
+			if (!Number.isFinite(eventAt.getTime())) throw new Error('Invalid event timestamp');
+			for (const change of changes) {
+				const snapshot = change.subscription ?? change.purchase;
+				if (!snapshot || !LEGACY_PLANS.has(snapshot.plan_id)) continue;
+				const period = change.subscription?.current_period_end;
+				const currentPeriodEnd = period
+					? new Date(period < 10_000_000_000 ? period * 1000 : period)
+					: null;
+				const status =
+					change.action === 'expired'
+						? 'expired'
+						: change.action === 'activated'
+							? 'active'
+							: snapshot.status;
+				await tx
+					.insert(subscription)
+					.values({
+						userId: identity.customerId,
+						autumnCustomerId: identity.customerId,
+						plan: snapshot.plan_id,
+						status,
+						currentPeriodEnd,
+						autumnEventAt: eventAt
+					})
+					.onConflictDoUpdate({
+						target: [subscription.userId, subscription.plan],
+						set: { status, currentPeriodEnd, autumnEventAt: eventAt, updatedAt: new Date() },
+						setWhere: sql`${subscription.autumnEventAt} is null or ${subscription.autumnEventAt} < ${eventAt}`
+					});
+			}
+		});
+		return json({ received: true });
+	} catch {
+		console.error('[kit webhook] Canonical reconciliation failed');
+		return json(
+			{ error: 'Verification unavailable' },
+			{ status: 503, headers: { 'Retry-After': '15' } }
+		);
 	}
-
-	return json({ received: true });
 };

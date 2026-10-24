@@ -1,0 +1,21 @@
+import app from './_sveltekit-worker.js';
+import { POST } from '../output/server/entries/endpoints/api/internal/billing/reconcile/_server.ts.js';
+
+export default {
+	...app,
+	async scheduled(controller, env, ctx) {
+		// Module-worker ScheduledController is not a DOM Event: it has no type.
+		if (typeof controller.cron !== 'string' || !Number.isFinite(controller.scheduledTime)) {
+			throw new Error('Invalid scheduled billing event');
+		}
+		// In-process call: no HTTP request, bearer token, or new secret. Public
+		// requests cannot populate SvelteKit locals and always receive 404.
+		ctx.waitUntil((async () => {
+			const result = await POST({
+				platform: { env, ctx },
+				locals: { kitScheduled: { scheduledTime: controller.scheduledTime } }
+			});
+			if (!result.ok) throw new Error('Scheduled billing reconciliation failed');
+		})());
+	}
+};

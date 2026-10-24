@@ -22,9 +22,9 @@ interface SitemapEntry {
 }
 
 const routes: SitemapEntry[] = [
-	{ path: '/', lastmod: '2026-08-20', priority: '1.0', changefreq: 'weekly' },
-	{ path: '/generator/', lastmod: '2026-08-10', priority: '0.9', changefreq: 'monthly' },
-	{ path: '/pris/', lastmod: '2026-08-10', priority: '0.8', changefreq: 'monthly' },
+	{ path: '/', lastmod: '2026-10-23', priority: '1.0', changefreq: 'weekly' },
+	{ path: '/generator/', lastmod: '2026-10-23', priority: '0.9', changefreq: 'monthly' },
+	{ path: '/pris/', lastmod: '2026-10-23', priority: '0.8', changefreq: 'monthly' },
 	{ path: '/skabeloner/', lastmod: '2026-08-20', priority: '0.9', changefreq: 'weekly' },
 	{ path: '/blog/', lastmod: '2026-08-20', priority: '0.7', changefreq: 'weekly' },
 	{

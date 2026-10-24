@@ -10,7 +10,10 @@
 	},
 	"workers_dev": true,
 	"preview_urls": true,
+	"triggers": { "crons": ["*/5 * * * *"] },
 	"vars": {
+		"KIT_CHECKOUT_ENABLED": "true",
+		"KIT_RECONCILIATION_ENABLED": "true",
 		"PUBLIC_APP_URL": "https://skabelontilfaktura.dk",
 		"PUBLIC_GA_MEASUREMENT_ID": "G-9K8CQ4KZ1F"
 	},

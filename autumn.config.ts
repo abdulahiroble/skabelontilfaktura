@@ -1,4 +1,20 @@
 import { feature, item, plan } from 'atmn';
+import { KIT } from './src/lib/billing/kit';
+
+/** Standalone download; deliberately grants NO cloud/service features. */
+export const fakturapakkenDownload = feature({
+	id: 'fakturapakken_download',
+	name: 'Fakturapakken download',
+	type: 'boolean'
+});
+
+export const fakturapakken = plan({
+	id: KIT.id,
+	name: KIT.name,
+	group: 'digital_downloads',
+	price: { amount: KIT.price, interval: 'one_off' },
+	items: [item({ featureId: fakturapakkenDownload.id })]
+});
 
 export const cloudStorage = feature({
 	id: 'cloud_storage',

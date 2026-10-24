@@ -15,9 +15,9 @@
 	const articleDates = ARTICLE_DATES.word;
 
 	const meta = buildMeta({
-		title: 'Faktura skabelon til Word (2026)',
+		title: 'Faktura skabelon Word – gratis download',
 		description:
-			'Trin-for-trin guide til at lave en fakturaskabelon i Word. Eller brug vores gratis online generator - nemmere og mere professionelt.',
+			'Download en gratis faktura skabelon til Word uden tilmelding. Hent .docx, se hvilke felter du skal udfylde, eller vælg et samlet dokumentkit.',
 		canonical: '/blog/faktura-skabelon-word/',
 		ogType: 'article'
 	});
@@ -104,8 +104,8 @@
 </svelte:head>
 
 <ArticleLayout
-	title="Faktura skabelon Word: Sådan laver du en i Microsoft Word (2026)"
-	subtitle="Trin-for-trin guide til at bygge din egen fakturaskabelon i Word - eller brug en nemmere og mere professionel online generator."
+	title="Faktura skabelon Word: Gratis download og guide"
+	subtitle="Hent en redigerbar .docx-fil uden tilmelding. Udfyld den i Word, og gem din færdige faktura som PDF."
 	category="Skabeloner"
 	datePublished={articleDates.published}
 	dateModified={articleDates.modified}
@@ -122,12 +122,21 @@
 	</nav>
 
 	<div class="space-y-8 leading-relaxed">
+		<section class="not-prose border-border bg-muted/30 rounded-xl border p-6">
+			<h2 class="text-lg font-semibold">Hent den enkle Word-skabelon gratis</h2>
+			<p class="text-muted-foreground mt-2 text-sm">
+				Redigerbare felter til afsender, kunde, fakturalinjer og betaling. Beløb og moms udfyldes
+				manuelt.
+			</p>
+			<div class="mt-4 flex flex-wrap gap-3">
+				<Button href="/templates/faktura-skabelon.docx" download>Download gratis .docx</Button>
+				<Button href="/pris/" variant="outline">Se det samlede dokumentkit · 99 kr.</Button>
+			</div>
+		</section>
 		<section>
 			<p class="mb-4">
-				At lave en faktura i Microsoft Word er en af de mest udbredte metoder blandt selvstændige og
-				små virksomheder i Danmark. Det er gratis, fleksibelt og kræver ingen særlig software. Men
-				der er også klare begrænsninger: Word kan ikke slå CVR-numre op automatisk, den kan ikke
-				beregne moms for dig, og du risikerer at lave fejl, der gør din faktura ulovlig.
+				At lave en faktura i Word giver dig en redigerbar fil, som du kan genbruge. Du skal selv
+				have et program, der kan åbne .docx, og kontrollere beløb, moms og nummerering.
 			</p>
 			<p>
 				I denne guide viser vi dig begge veje: Hvordan du selv bygger en fakturaskabelon i Word - og
@@ -210,8 +219,8 @@
 		<section>
 			<h2 class="text-2xl font-bold tracking-tight">Bedre alternativ: Online generator</h2>
 			<p class="mb-4">
-				En moderne online fakturagenerator fjerner alle de problemer, som Word-skabeloner skaber.
-				Hos skabelontilfaktura.dk får du:
+				Vil du hellere arbejde direkte i browseren, kan du bruge vores gratis generator. Hos
+				skabelontilfaktura.dk får du:
 			</p>
 			<ul class="list-disc space-y-2 pl-6">
 				<li>
@@ -222,18 +231,19 @@
 					<strong>Automatisk moms</strong> - vælg momssats (0%, 25%), så beregnes beløbene for dig.
 				</li>
 				<li>
-					<strong>Unikke fakturanumre</strong> - systemet tildeler automatisk næste ledige nummer, så
-					du aldrig får dubletter.
+					<strong>Lokal nummerserie</strong> - kontrollér altid nummeret mod din bogføring. Nummerserien
+					deles ikke mellem browsere eller enheder.
 				</li>
 				<li>
 					<strong>PDF-download uden vandmærke</strong> - din faktura ser professionel ud og er klar til
 					at sende direkte til kunden.
 				</li>
 				<li>
-					<strong>Cloud-arkiv</strong> (Pro) - samler fakturaer og PDF-filer på tværs af enheder.
+					<strong>Gratis kladde i browseren</strong> - gem selv PDF og backup, når du er færdig.
 				</li>
 				<li>
-					<strong>CSV-eksport</strong> (Pro) - hent fakturaposteringer til revisor eller regnskabssystem.
+					<strong>Fakturapakken som tilvalg</strong> - et samlet sæt filer til Word og Excel for 99 kr.
+					inkl. moms, betalt én gang.
 				</li>
 			</ul>
 			<p class="mt-4">
@@ -262,7 +272,7 @@
 			</p>
 			<div class="mt-6 flex flex-wrap items-center justify-center gap-3">
 				<Button size="lg" href="/generator/">Lav faktura gratis</Button>
-				<Button size="lg" variant="outline" href="/pris/">Se Pro-fordele</Button>
+				<Button size="lg" variant="outline" href="/pris/">Se Fakturapakken · 99 kr.</Button>
 			</div>
 		</section>
 
